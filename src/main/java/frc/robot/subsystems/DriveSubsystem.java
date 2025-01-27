@@ -36,7 +36,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public SysIdRoutine sysId;
 
-	public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+	public AHRS gyro;
 	
 	public DriveSubsystem() {
 		this.fl = new CANVenom(Constants.FL);
@@ -58,10 +58,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 		sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
 			voltage -> {
-				fl.setVoltage(voltage);
-				fr.setVoltage(voltage);
-				bl.setVoltage(voltage);
-				br.setVoltage(voltage);
+				fl.setVoltage(voltage.magnitude());
+				fr.setVoltage(-voltage.magnitude());
+				bl.setVoltage(voltage.magnitude());
+				br.setVoltage(-voltage.magnitude());
 			},
 			log -> {
 				log.motor("drive-front-right")
@@ -111,6 +111,8 @@ public class DriveSubsystem extends SubsystemBase {
 			this
 		));
 		
+		this.gyro = new AHRS(NavXComType.kMXP_SPI);
+
 		this.gyro.reset();
 	}
 
