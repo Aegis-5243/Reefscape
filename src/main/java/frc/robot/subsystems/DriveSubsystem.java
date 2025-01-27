@@ -4,17 +4,20 @@
 
 package frc.robot.subsystems;
 
-import java.util.concurrent.CancellationException;
-
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
 	/** Creates a new ExampleSubsystem. */
@@ -24,7 +27,14 @@ public class DriveSubsystem extends SubsystemBase {
 	public CANVenom bl;
 	public CANVenom br;
 
+	public DutyCycleEncoder flEncoder;
+	public DutyCycleEncoder frEncoder;
+	public DutyCycleEncoder blEncoder;
+	public DutyCycleEncoder brEncoder;
+
 	public MecanumDrive drive;
+
+	public SysIdRoutine sysId;
 
 	public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 	
@@ -39,8 +49,68 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setBrakeCoastMode(BrakeCoastMode.Brake);
 		this.br.setBrakeCoastMode(BrakeCoastMode.Brake);
 
+		this.flEncoder = new DutyCycleEncoder(Constants.FL_ENCODER);
+		this.frEncoder = new DutyCycleEncoder(Constants.FR_ENCODER);
+		this.blEncoder = new DutyCycleEncoder(Constants.BL_ENCODER);
+		this.brEncoder = new DutyCycleEncoder(Constants.BR_ENCODER);
+
 		this.drive = new MecanumDrive(fl, bl, fr, br);
 
+		sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
+			voltage -> {
+				fl.setVoltage(voltage);
+				fr.setVoltage(voltage);
+				bl.setVoltage(voltage);
+				br.setVoltage(voltage);
+			},
+			log -> {
+				log.motor("drive-front-right")
+					.voltage(
+						Units.Volts.of(
+							fr.get() * RobotController.getBatteryVoltage()
+						))
+					.linearPosition(
+						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get())))
+					.linearVelocity(
+						// TODO: FIX VELOCITY
+						Units.MetersPerSecond.of(Utilities.linearVelocity(frEncoder.get())));
+
+				log.motor("drive-front-left")
+					.voltage(
+						Units.Volts.of(
+							fl.get() * RobotController.getBatteryVoltage()
+						))
+					.linearPosition(
+						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get())))
+					.linearVelocity(
+						// TODO: FIX VELOCITY
+						Units.MetersPerSecond.of(Utilities.linearVelocity(flEncoder.get())));
+		
+				log.motor("drive-back-left")
+					.voltage(
+						Units.Volts.of(
+							bl.get() * RobotController.getBatteryVoltage()
+						))
+					.linearPosition(
+						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get())))
+					.linearVelocity(
+						// TODO: FIX VELOCITY
+						Units.MetersPerSecond.of(Utilities.linearVelocity(blEncoder.get())));
+				
+				log.motor("drive-back-right")
+					.voltage(
+						Units.Volts.of(
+							br.get() * RobotController.getBatteryVoltage()
+						))
+					.linearPosition(
+						Units.Inches.of(Utilities.rotationsToInches(brEncoder.get())))
+					.linearVelocity(
+						// TODO: FIX VELOCITY
+						Units.MetersPerSecond.of(Utilities.linearVelocity(brEncoder.get())));
+			},
+			this
+		));
+		
 		this.gyro.reset();
 	}
 

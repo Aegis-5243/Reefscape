@@ -24,6 +24,16 @@ public final class Constants {
 	public static final int BL = 3;
 	public static final int BR = 4;
 
+	public static final int FL_ENCODER = 0;
+	public static final int FR_ENCODER = 1;
+	public static final int BL_ENCODER = 2;
+	public static final int BR_ENCODER = 3;
+
+	public static final int THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
+
+	// in inches
+	public static final double WHEEL_DIAMETER = 8.0;
+
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
 
