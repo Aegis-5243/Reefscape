@@ -4,21 +4,31 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.MecanumPathPlanner;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class PathCommand extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final DriveSubsystem m_subsystem;
+	public double[][] path;
+	public MecanumPathPlanner planner;
 
 	/**
 	 * Creates a new ExampleCommand.
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public PathCommand(DriveSubsystem subsystem) {
+	public PathCommand(DriveSubsystem subsystem, double timeToSpend, double[][] path) {
 		m_subsystem = subsystem;
+		this.path = path;
+		this.planner = new MecanumPathPlanner(path);
+		
+		
+		planner.calculate(timeToSpend, 0, Constants.TRACK_WIDTH, Constants.TRACK_HEIGHT);
+		
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(subsystem);
 	}

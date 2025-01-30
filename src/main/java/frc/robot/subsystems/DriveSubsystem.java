@@ -10,7 +10,7 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,10 +27,10 @@ public class DriveSubsystem extends SubsystemBase {
 	public CANVenom bl;
 	public CANVenom br;
 
-	public DutyCycleEncoder flEncoder;
-	public DutyCycleEncoder frEncoder;
-	public DutyCycleEncoder blEncoder;
-	public DutyCycleEncoder brEncoder;
+	public Encoder flEncoder;
+	public Encoder frEncoder;
+	public Encoder blEncoder;
+	public Encoder brEncoder;
 
 	public MecanumDrive drive;
 
@@ -49,14 +49,21 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setBrakeCoastMode(BrakeCoastMode.Brake);
 		this.br.setBrakeCoastMode(BrakeCoastMode.Brake);
 
-		this.flEncoder = new DutyCycleEncoder(Constants.FL_ENCODER);
-		this.frEncoder = new DutyCycleEncoder(Constants.FR_ENCODER);
-		this.blEncoder = new DutyCycleEncoder(Constants.BL_ENCODER);
-		this.brEncoder = new DutyCycleEncoder(Constants.BR_ENCODER);
+		this.fl.setInverted(false);
+		this.fr.setInverted(true);
+		this.bl.setInverted(false);
+		this.br.setInverted(true);
 
+		this.flEncoder = new Encoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
+		this.frEncoder = new Encoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
+		this.blEncoder = new Encoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);;
+		this.brEncoder = new Encoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);;
+
+		Utilities.time.start();
+		
 		this.drive = new MecanumDrive(fl, bl, fr, br);
 
-		sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
+		this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
 			voltage -> {
 				fl.setVoltage(voltage.magnitude());
 				fr.setVoltage(-voltage.magnitude());
@@ -70,10 +77,9 @@ public class DriveSubsystem extends SubsystemBase {
 							fr.get() * RobotController.getBatteryVoltage()
 						))
 					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get())))
+						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						// TODO: FIX VELOCITY
-						Units.MetersPerSecond.of(Utilities.linearVelocity(frEncoder.get())));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(frEncoder)));
 
 				log.motor("drive-front-left")
 					.voltage(
@@ -81,10 +87,9 @@ public class DriveSubsystem extends SubsystemBase {
 							fl.get() * RobotController.getBatteryVoltage()
 						))
 					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get())))
+						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						// TODO: FIX VELOCITY
-						Units.MetersPerSecond.of(Utilities.linearVelocity(flEncoder.get())));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(flEncoder)));
 		
 				log.motor("drive-back-left")
 					.voltage(
@@ -92,10 +97,9 @@ public class DriveSubsystem extends SubsystemBase {
 							bl.get() * RobotController.getBatteryVoltage()
 						))
 					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get())))
+						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						// TODO: FIX VELOCITY
-						Units.MetersPerSecond.of(Utilities.linearVelocity(blEncoder.get())));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(blEncoder)));
 				
 				log.motor("drive-back-right")
 					.voltage(
@@ -103,10 +107,9 @@ public class DriveSubsystem extends SubsystemBase {
 							br.get() * RobotController.getBatteryVoltage()
 						))
 					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(brEncoder.get())))
+						Units.Inches.of(Utilities.rotationsToInches(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						// TODO: FIX VELOCITY
-						Units.MetersPerSecond.of(Utilities.linearVelocity(brEncoder.get())));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(brEncoder)));
 			},
 			this
 		));
@@ -130,7 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Uses joysticks to drive the mechanum chassis (robot centric)
 	*/
 	public void mechDrive() {
-		mechDrive(Constants.primaryStick.getX(), Constants.primaryStick.getY(), Constants.secondaryStick.getY());
+		mechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
 	/**
@@ -147,7 +150,11 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Uses joysticks to drive the mechanum chassis (field centric)
 	*/
 	public void fieldMechDrive() {
-		fieldMechDrive(Constants.primaryStick.getX(), Constants.primaryStick.getY(), Constants.secondaryStick.getY());
+		fieldMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
+	}
+
+	public void testMotor(CANVenom motor) {
+		motor.set(.25);
 	}
 
 	/**
