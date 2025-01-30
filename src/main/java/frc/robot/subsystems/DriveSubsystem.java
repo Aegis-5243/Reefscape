@@ -9,6 +9,7 @@ import com.playingwithfusion.CANVenom.BrakeCoastMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -31,6 +32,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public Encoder frEncoder;
 	public Encoder blEncoder;
 	public Encoder brEncoder;
+
+	public SimpleMotorFeedforward flFeedForward;
+	public SimpleMotorFeedforward frFeedForward;
+	public SimpleMotorFeedforward blFeedForward;
+	public SimpleMotorFeedforward brFeedForward;
 
 	public MecanumDrive drive;
 
@@ -56,8 +62,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 		this.flEncoder = new Encoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
 		this.frEncoder = new Encoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
-		this.blEncoder = new Encoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);;
-		this.brEncoder = new Encoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);;
+		this.blEncoder = new Encoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
+		this.brEncoder = new Encoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
+
+		this.blFeedForward = new SimpleMotorFeedforward(0, 0, 0);
 
 		Utilities.time.start();
 		

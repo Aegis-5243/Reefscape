@@ -29,6 +29,23 @@ public final class Constants {
 	public static final int[] BL_ENCODER_PORTS = {4, 5};
 	public static final int[] BR_ENCODER_PORTS = {6, 7};
 
+
+	public static final double FL_kA = 0;
+	public static final double FL_kS = 0;
+	public static final double FL_kV = 0;
+	
+	public static final double BL_kA = 0;
+	public static final double BL_kS = 0;
+	public static final double BL_kV = 0;
+
+	public static final double BR_kA = 0;
+	public static final double BR_kS = 0;
+	public static final double BR_kV = 0;
+
+	public static final double FR_kA = 0;
+	public static final double FR_kS = 0;
+	public static final double FR_kV = 0;
+
 	public static final int THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
 
 	// in inches
@@ -36,9 +53,12 @@ public final class Constants {
 
 	public static final double TRACK_WIDTH = 22.5;
 	public static final double TRACK_HEIGHT = 20.5;
+
+	public static final double RIO_CONTROL_LOOP = 0.1;
 	
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
+
 
 	public static class OperatorConstants {
 		public static final int kDriverControllerPort = 0;
