@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
+import com.playingwithfusion.CANVenom.ControlMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -74,9 +75,9 @@ public class DriveSubsystem extends SubsystemBase {
 		this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
 			voltage -> {
 				fl.setVoltage(voltage.magnitude());
-				fr.setVoltage(-voltage.magnitude());
+				fr.setVoltage(voltage.magnitude());
 				bl.setVoltage(voltage.magnitude());
-				br.setVoltage(-voltage.magnitude());
+				br.setVoltage(voltage.magnitude());
 			},
 			log -> {
 				log.motor("drive-front-right")
