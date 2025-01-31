@@ -15,6 +15,7 @@ public class PathCommand extends Command {
 	private final DriveSubsystem m_subsystem;
 	public double[][] path;
 	public MecanumPathPlanner planner;
+	public double duration;
 
 	/**
 	 * Creates a new ExampleCommand.
@@ -25,7 +26,7 @@ public class PathCommand extends Command {
 		m_subsystem = subsystem;
 		this.path = path;
 		this.planner = new MecanumPathPlanner(path);
-		
+		this.duration = timeToSpend;
 		
 		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH, Constants.TRACK_HEIGHT);
 		
@@ -36,17 +37,23 @@ public class PathCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
+		try {
+			m_subsystem.drive.wait((long) ((duration + 1) * 1000));
+		} catch (InterruptedException e) {
+			System.out.println("INteruppeted");
+		}
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-        m_subsystem.fl.setVoltage(0);
+        m_subsystem.fl.setVoltage(m_subsystem.blFeedForward.calculate(planner.smoothLeftFrontVelocity[0][0]));
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
+		m_subsystem.drive.notify();
 	}
 
 	// Returns true when the command should end.
