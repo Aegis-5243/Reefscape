@@ -10,7 +10,7 @@ import frc.robot.Constants;
 
 public class Utilities {
     public static Timer time = new Timer();
-    public static Hashtable<Encoder, ArrayList<Double>> velocityDict = new Hashtable<Encoder, ArrayList<Double>>();
+    public static Hashtable<Integer, ArrayList<Double>> velocityDict = new Hashtable<Integer, ArrayList<Double>>();
 
     /**
      * Indexes for the ArrayList values in velocityDict.
@@ -48,17 +48,17 @@ public class Utilities {
      * @param encoder Encoder to get linear velocity from.
      * @return The linear velocity of encoder in inches per second.
      */
-    public static double linearVelocity(Encoder encoder) {
+    public static double linearVelocity(Encoder encoder, int[] encoderChannels) {
         double currTime = time.get();
         double currDist = rotationsToInches(encoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION);
-        ArrayList<Double> oldData = velocityDict.getOrDefault(encoder, new ArrayList<Double>(Arrays.asList(0.0, 0.0)));
-
+        ArrayList<Double> oldData = velocityDict.getOrDefault(encoderChannels[0], new ArrayList<Double>(Arrays.asList(0.0, 0.0)));
+        
         double linVelocity = (currDist - oldData.get(Data.DISTANCE.index)) / (currTime - oldData.get(Data.TIME.index));
 
         oldData.set(Data.DISTANCE.index, currDist);
         oldData.set(Data.TIME.index, currTime);
 
-        velocityDict.putIfAbsent(encoder, oldData);
+        velocityDict.putIfAbsent(encoderChannels[0], oldData);
 
         return linVelocity;
     }

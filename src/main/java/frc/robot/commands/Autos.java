@@ -8,6 +8,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Utilities;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public final class Autos {
@@ -16,19 +17,31 @@ public final class Autos {
 		return Commands.sequence(subsystem.exampleMethodCommand(), new DriveCommand(subsystem));
 	}
 
-	public static Command sysIdRoutine(DriveSubsystem subsystem, RoutineType type) {
+	public static Command sysIdRoutine(DriveSubsystem subsystem, RoutineType type, SysIdRoutine.Direction dir) {
 		Utilities.time.restart();
 		Utilities.velocityDict.clear();
+		Command command;
 		switch (type) {
 			case DYNAMIC:
-				return subsystem.sysId.dynamic(SysIdRoutine.Direction.kForward);
+				command = subsystem.sysId.dynamic(dir);
+				break;
 		
 			case QUASISTATIC:
-				return subsystem.sysId.quasistatic(SysIdRoutine.Direction.kForward);
+				command = subsystem.sysId.quasistatic(dir);
+				break;
 
 			default:
 				throw new RuntimeException("Supply a valid routine type");
 		}
+		return command;
+		// return new SequentialCommandGroup(
+		// 	subsystem.runOnce(() -> {
+		// 		subsystem.stopDrive(50000);
+		// 	}),
+		// 	command,
+		// 	subsystem.runOnce(() -> {
+		// 		subsystem.startDrive();
+		// 	}));
 	}
 
 	public static enum RoutineType {

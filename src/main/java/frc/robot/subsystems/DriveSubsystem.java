@@ -88,7 +88,7 @@ public class DriveSubsystem extends SubsystemBase {
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(frEncoder)));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(frEncoder, Constants.FR_ENCODER_PORTS)));
 
 				log.motor("drive-front-left")
 					.voltage(
@@ -98,7 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(flEncoder)));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(flEncoder, Constants.FL_ENCODER_PORTS)));
 		
 				log.motor("drive-back-left")
 					.voltage(
@@ -108,7 +108,7 @@ public class DriveSubsystem extends SubsystemBase {
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(blEncoder)));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(blEncoder, Constants.BL_ENCODER_PORTS)));
 				
 				log.motor("drive-back-right")
 					.voltage(
@@ -118,7 +118,7 @@ public class DriveSubsystem extends SubsystemBase {
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
 					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(brEncoder)));
+						Units.InchesPerSecond.of(Utilities.linearVelocity(brEncoder, Constants.BR_ENCODER_PORTS)));
 			},
 			this
 		));
@@ -166,6 +166,19 @@ public class DriveSubsystem extends SubsystemBase {
 		motor.set(.25);
 	}
 
+	public void stopDrive(long time) {
+		try {
+			drive.wait(time);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void startDrive() {
+		drive.notify();
+	}
+
 	/**
 	 * Example command factory method.
 	 *
@@ -194,6 +207,10 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+		Utilities.linearVelocity(flEncoder, Constants.FL_ENCODER_PORTS);
+		Utilities.linearVelocity(frEncoder, Constants.FR_ENCODER_PORTS);
+		Utilities.linearVelocity(blEncoder, Constants.BL_ENCODER_PORTS);
+		Utilities.linearVelocity(brEncoder, Constants.BR_ENCODER_PORTS);
 	}
 
 	@Override
