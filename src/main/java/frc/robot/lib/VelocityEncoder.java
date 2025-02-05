@@ -1,8 +1,5 @@
 package frc.robot.lib;
 
-import static edu.wpi.first.units.Units.Meters;
-
-import edu.wpi.first.units.LinearVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -10,7 +7,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import frc.robot.util.Utilities;
 
 public class VelocityEncoder extends Encoder {
     private Timer time = new Timer();
@@ -35,7 +31,7 @@ public class VelocityEncoder extends Encoder {
         super(channelA, channelB);
 
         this.time.restart();
-        this.wheelDiameter = wheelDiameter.in(Meters);
+        this.wheelDiameter = wheelDiameter.in(Units.Meters);
         this.lastTime = this.time.get();
         this.lastPos = (this.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION) * (Math.PI * this.wheelDiameter);
         this.lastAngle = (this.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION) * 2 * Math.PI;

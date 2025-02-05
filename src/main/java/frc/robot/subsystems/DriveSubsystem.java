@@ -21,6 +21,7 @@ import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
 	/** Creates a new ExampleSubsystem. */
+	private static DriveSubsystem instance;
 
 	public CANVenom fl;
 	public CANVenom fr;
@@ -64,7 +65,10 @@ public class DriveSubsystem extends SubsystemBase {
 		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
 		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
 
-		this.blFeedForward = new SimpleMotorFeedforward(0, 0, 0);
+		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
+		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
+		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
+		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
 
 		Utilities.time.start();
 		
@@ -117,6 +121,8 @@ public class DriveSubsystem extends SubsystemBase {
 		this.gyro = new AHRS(NavXComType.kMXP_SPI);
 
 		this.gyro.reset();
+
+		instance = this;
 	}
 
 	/**
@@ -157,17 +163,8 @@ public class DriveSubsystem extends SubsystemBase {
 		motor.set(.25);
 	}
 
-	public void stopDrive(long time) {
-		try {
-			drive.wait(time);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void startDrive() {
-		drive.notify();
+	public static DriveSubsystem getInstance() {
+		return instance;
 	}
 
 	/**

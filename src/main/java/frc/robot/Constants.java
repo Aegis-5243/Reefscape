@@ -46,7 +46,7 @@ public final class Constants {
 	public static final double FR_kS = 0;
 	public static final double FR_kV = 0;
 
-	public static final int THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
+	public static final double THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
 
 	// in inches
 	public static final double WHEEL_DIAMETER = 8.0;

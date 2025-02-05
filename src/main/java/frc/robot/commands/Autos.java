@@ -33,15 +33,10 @@ public final class Autos {
 			default:
 				throw new RuntimeException("Supply a valid routine type");
 		}
-		return command;
-		// return new SequentialCommandGroup(
-		// 	subsystem.runOnce(() -> {
-		// 		subsystem.stopDrive(50000);
-		// 	}),
-		// 	command,
-		// 	subsystem.runOnce(() -> {
-		// 		subsystem.startDrive();
-		// 	}));
+		return new SequentialCommandGroup(
+			subsystem.runOnce(() -> {subsystem.drive.setSafetyEnabled(false);}), 
+			command, 
+			subsystem.runOnce(() -> {subsystem.drive.setSafetyEnabled(true);}));
 	}
 
 	public static enum RoutineType {

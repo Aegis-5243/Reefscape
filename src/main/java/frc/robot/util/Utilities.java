@@ -45,9 +45,12 @@ public class Utilities {
 
     /**
      * Returns linear velocity of an encoder.
+     * @deprecated Use VelocityEncoder object instead. Must change encoder type to VelocityEncoder.
      * @param encoder Encoder to get linear velocity from.
+     * @param encoderChannels DIO ports of encoder.
      * @return The linear velocity of encoder in inches per second.
      */
+    @Deprecated
     public static double linearVelocity(Encoder encoder, int[] encoderChannels) {
         double currTime = time.get();
         double currDist = rotationsToInches(encoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION);
