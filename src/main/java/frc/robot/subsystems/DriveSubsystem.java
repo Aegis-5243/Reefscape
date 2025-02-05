@@ -6,19 +6,17 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
-import com.playingwithfusion.CANVenom.ControlMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.lib.VelocityEncoder;
 import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -29,10 +27,10 @@ public class DriveSubsystem extends SubsystemBase {
 	public CANVenom bl;
 	public CANVenom br;
 
-	public Encoder flEncoder;
-	public Encoder frEncoder;
-	public Encoder blEncoder;
-	public Encoder brEncoder;
+	public VelocityEncoder flEncoder;
+	public VelocityEncoder frEncoder;
+	public VelocityEncoder blEncoder;
+	public VelocityEncoder brEncoder;
 
 	public SimpleMotorFeedforward flFeedForward;
 	public SimpleMotorFeedforward frFeedForward;
@@ -61,10 +59,10 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setInverted(false);
 		this.br.setInverted(true);
 
-		this.flEncoder = new Encoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
-		this.frEncoder = new Encoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
-		this.blEncoder = new Encoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
-		this.brEncoder = new Encoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
+		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
+		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
+		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
+		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
 
 		this.blFeedForward = new SimpleMotorFeedforward(0, 0, 0);
 
@@ -83,42 +81,35 @@ public class DriveSubsystem extends SubsystemBase {
 				log.motor("drive-front-right")
 					.voltage(
 						Units.Volts.of(
-							fr.get() * RobotController.getBatteryVoltage()
-						))
+							fr.getBusVoltage()))
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
-					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(frEncoder, Constants.FR_ENCODER_PORTS)));
+					.linearVelocity(frEncoder.getLinearVelocity());
 
 				log.motor("drive-front-left")
 					.voltage(
 						Units.Volts.of(
-							fl.get() * RobotController.getBatteryVoltage()
-						))
+							fl.getBusVoltage()))
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
-					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(flEncoder, Constants.FL_ENCODER_PORTS)));
+					.linearVelocity(flEncoder.getLinearVelocity());
 		
 				log.motor("drive-back-left")
 					.voltage(
 						Units.Volts.of(
-							bl.get() * RobotController.getBatteryVoltage()
-						))
+							bl.getBusVoltage()))
 					.linearPosition(
 						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
-					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(blEncoder, Constants.BL_ENCODER_PORTS)));
+					.linearVelocity(blEncoder.getLinearVelocity());
 				
 				log.motor("drive-back-right")
 					.voltage(
 						Units.Volts.of(
-							br.get() * RobotController.getBatteryVoltage()
-						))
+							br.getBusVoltage()))
 					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
-					.linearVelocity(
-						Units.InchesPerSecond.of(Utilities.linearVelocity(brEncoder, Constants.BR_ENCODER_PORTS)));
+						Units.Inches.of(
+							Utilities.rotationsToInches(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
+					.linearVelocity(brEncoder.getLinearVelocity());
 			},
 			this
 		));
@@ -207,10 +198,10 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		Utilities.linearVelocity(flEncoder, Constants.FL_ENCODER_PORTS);
-		Utilities.linearVelocity(frEncoder, Constants.FR_ENCODER_PORTS);
-		Utilities.linearVelocity(blEncoder, Constants.BL_ENCODER_PORTS);
-		Utilities.linearVelocity(brEncoder, Constants.BR_ENCODER_PORTS);
+		frEncoder.update();
+		flEncoder.update();
+		brEncoder.update();
+		blEncoder.update();
 	}
 
 	@Override
