@@ -60,10 +60,10 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setInverted(false);
 		this.br.setInverted(true);
 
-		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
-		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
-		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
-		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1], Units.Inches.of(Constants.WHEEL_DIAMETER));
+		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
+		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
+		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
+		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
 
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
@@ -83,36 +83,23 @@ public class DriveSubsystem extends SubsystemBase {
 			},
 			log -> {
 				log.motor("drive-front-right")
-					.voltage(
-						Units.Volts.of(
-							fr.getBusVoltage()))
-					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
+					.voltage(Units.Volts.of(fr.getBusVoltage()))
+					.linearPosition(Utilities.rotationsToDistance(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
 					.linearVelocity(frEncoder.getLinearVelocity());
 
 				log.motor("drive-front-left")
-					.voltage(
-						Units.Volts.of(
-							fl.getBusVoltage()))
-					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
+					.voltage(Units.Volts.of(fl.getBusVoltage()))
+					.linearPosition(Utilities.rotationsToDistance(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
 					.linearVelocity(flEncoder.getLinearVelocity());
 		
 				log.motor("drive-back-left")
-					.voltage(
-						Units.Volts.of(
-							bl.getBusVoltage()))
-					.linearPosition(
-						Units.Inches.of(Utilities.rotationsToInches(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
+					.voltage(Units.Volts.of(bl.getBusVoltage()))
+					.linearPosition(Utilities.rotationsToDistance(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
 					.linearVelocity(blEncoder.getLinearVelocity());
 				
 				log.motor("drive-back-right")
-					.voltage(
-						Units.Volts.of(
-							br.getBusVoltage()))
-					.linearPosition(
-						Units.Inches.of(
-							Utilities.rotationsToInches(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION)))
+					.voltage(Units.Volts.of(br.getBusVoltage()))
+					.linearPosition(Utilities.rotationsToDistance(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
 					.linearVelocity(brEncoder.getLinearVelocity());
 			},
 			this

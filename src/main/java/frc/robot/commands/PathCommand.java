@@ -7,6 +7,7 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.MecanumPathPlanner;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -28,7 +29,7 @@ public class PathCommand extends Command {
 		this.planner = new MecanumPathPlanner(path);
 		this.duration = timeToSpend;
 		
-		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH, Constants.TRACK_HEIGHT);
+		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH.in(Units.Meters), Constants.TRACK_HEIGHT.in(Units.Meters));
 		
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(subsystem);
