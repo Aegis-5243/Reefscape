@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
+import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -15,8 +16,8 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.libs.VelocityEncoder;
 import frc.robot.Constants;
-import frc.robot.lib.VelocityEncoder;
 import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -28,6 +29,9 @@ public class DriveSubsystem extends SubsystemBase {
 	public CANVenom bl;
 	public CANVenom br;
 
+	public SparkMax elevator;
+	public SparkMax elevatorMinion;
+	
 	public VelocityEncoder flEncoder;
 	public VelocityEncoder frEncoder;
 	public VelocityEncoder blEncoder;
@@ -69,6 +73,8 @@ public class DriveSubsystem extends SubsystemBase {
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
 		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
+
+		this.elevator = new SparkMax(0, null);
 
 		Utilities.time.start();
 		
@@ -186,6 +192,10 @@ public class DriveSubsystem extends SubsystemBase {
 		flEncoder.update();
 		brEncoder.update();
 		blEncoder.update();
+		System.out.println("fl: " + flEncoder.get());
+		System.out.println("fr: " + frEncoder.get());
+		System.out.println("bl: " + blEncoder.get());
+		System.out.println("br: " + brEncoder.get());
 	}
 
 	@Override

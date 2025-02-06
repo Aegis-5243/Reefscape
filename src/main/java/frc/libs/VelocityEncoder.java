@@ -1,4 +1,4 @@
-package frc.robot.lib;
+package frc.libs;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -60,7 +60,7 @@ public class VelocityEncoder extends Encoder {
      */
     public VelocityEncoder(int channelA, int channelB, Distance wheelDiameter, double encoderTicksPerRevolution) {
         super(channelA, channelB);
-
+        
         this.time.restart();
         this.WHEEL_DIAMETER = wheelDiameter.in(Units.Meters);
         this.TICKS_PER_REVOLUTION = encoderTicksPerRevolution;

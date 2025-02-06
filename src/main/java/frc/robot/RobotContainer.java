@@ -39,7 +39,7 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
-		CommandScheduler.getInstance().registerSubsystem(m_driveSubsystem);
+		// CommandScheduler.getInstance().registerSubsystem(m_driveSubsystem);
 		// Configure the trigger bindings
 		configureBindings();
 	}
