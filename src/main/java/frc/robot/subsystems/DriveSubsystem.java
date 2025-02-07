@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
@@ -40,6 +41,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public VelocityEncoder blEncoder;
 	public VelocityEncoder brEncoder;
 
+	public AbsoluteEncoder elevatorEncoder;
+
 	public SimpleMotorFeedforward flFeedForward;
 	public SimpleMotorFeedforward frFeedForward;
 	public SimpleMotorFeedforward blFeedForward;
@@ -72,6 +75,11 @@ public class DriveSubsystem extends SubsystemBase {
 		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
 		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
 
+		this.flEncoder.setReverseDirection(false); 
+		this.frEncoder.setReverseDirection(true);
+		this.blEncoder.setReverseDirection(false);
+		this.brEncoder.setReverseDirection(true);
+
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
@@ -80,6 +88,9 @@ public class DriveSubsystem extends SubsystemBase {
 		this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
 		this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
 
+		this.elevatorMinion.setInverted(true);
+
+		this.elevatorEncoder = elevator.getAbsoluteEncoder();
 
 		Utilities.time.start();
 		
@@ -159,6 +170,11 @@ public class DriveSubsystem extends SubsystemBase {
 		fieldMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
+	public void elevator() {
+		elevator.set(((Constants.primaryStick.getThrottle() + 1) / 2) + ((Constants.secondaryStick.getThrottle() - 1) / 2));
+		// elevatorMinion.set(((Constants.primaryStick.getThrottle() + 1) / 2) + ((Constants.secondaryStick.getThrottle() - 1) / 2));
+	}
+
 	public void testMotor(CANVenom motor) {
 		motor.set(.25);
 	}
@@ -199,10 +215,11 @@ public class DriveSubsystem extends SubsystemBase {
 		flEncoder.update();
 		brEncoder.update();
 		blEncoder.update();
-		System.out.println("fl: " + flEncoder.get());
-		System.out.println("fr: " + frEncoder.get());
-		System.out.println("bl: " + blEncoder.get());
-		System.out.println("br: " + brEncoder.get());
+		System.out.println(((Constants.primaryStick.getThrottle() + 1) / 2) + ((Constants.secondaryStick.getThrottle() - 1) / 2));
+		// System.out.println("fl: " + flEncoder.getLinearVelocity().toShortString());
+		// System.out.println("fr: " + frEncoder.getLinearVelocity().toShortString());
+		// System.out.println("bl: " + blEncoder.getLinearVelocity().toShortString());
+		// System.out.println("br: " + brEncoder.getLinearVelocity().toShortString());
 	}
 
 	@Override

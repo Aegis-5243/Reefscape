@@ -26,10 +26,10 @@ public final class Constants {
 	public static final int BL = 11;
 	public static final int BR = 14;
 
-	public static final int[] FL_ENCODER_PORTS = {7, 6};
-	public static final int[] FR_ENCODER_PORTS = {3, 2};
-	public static final int[] BL_ENCODER_PORTS = {5, 4};
-	public static final int[] BR_ENCODER_PORTS = {1, 0};
+	public static final int[] FL_ENCODER_PORTS = {6, 7};
+	public static final int[] FR_ENCODER_PORTS = {2, 3};
+	public static final int[] BL_ENCODER_PORTS = {4, 5};
+	public static final int[] BR_ENCODER_PORTS = {0, 1};
 
 	public static final double FR_kA = 0;
 	public static final double FR_kS = 0;
@@ -57,6 +57,9 @@ public final class Constants {
 	public static final double RIO_CONTROL_LOOP = 0.1;
 
 	public static final Distance ELEVATOR_HEIGHT_PER_MOTOR_ROT = Units.Inches.of(22.0/80);
+
+	public static final int ELEVATOR_PRIMARY = 21;
+	public static final int ELEVATOR_SECONDARY = 22;
 	
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
