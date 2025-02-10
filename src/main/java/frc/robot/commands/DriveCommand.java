@@ -4,13 +4,17 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.util.Utilities;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class DriveCommand extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final DriveSubsystem m_subsystem;
+	private ElevatorSubsytem elevatorSubsytem;
 
 	/**
 	 * Creates a new ExampleCommand.
@@ -19,6 +23,12 @@ public class DriveCommand extends Command {
 	 */
 	public DriveCommand(DriveSubsystem subsystem) {
 		m_subsystem = subsystem;
+		// Use addRequirements() here to declare subsystem dependencies.
+		addRequirements(subsystem);
+	}
+	public DriveCommand(DriveSubsystem subsystem, ElevatorSubsytem sub2) {
+		m_subsystem = subsystem;
+		elevatorSubsytem = sub2;
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(subsystem);
 	}
@@ -32,6 +42,11 @@ public class DriveCommand extends Command {
 	@Override
 	public void execute() {
 		m_subsystem.mechDrive();
+		if (elevatorSubsytem != null) {
+			elevatorSubsytem.elevator();
+		}
+		if (Constants.primaryStick.getTrigger())
+			System.out.println(elevatorSubsytem.elevatorEncoder.getPosition());
 	}
 
 	// Called once the command ends or is interrupted.

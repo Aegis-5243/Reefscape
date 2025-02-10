@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 import com.playingwithfusion.CANVenom;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Constants;
 
 public class Utilities {
@@ -92,7 +94,12 @@ public class Utilities {
         return linVelocity;
     }
 
-	public static void testMotor(CANVenom motor) {
+    /**
+     * Test a motor us
+     * @param motor
+     */
+    @Deprecated
+	public static void testMotor(MotorController motor) {
 		motor.set(.25);
 	}
 

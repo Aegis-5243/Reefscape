@@ -9,8 +9,10 @@ import com.playingwithfusion.CANVenom.BrakeCoastMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -39,17 +41,17 @@ public class ElevatorSubsytem extends SubsystemBase {
 
     public SysIdRoutine sysId;
 
-    public SparkAbsoluteEncoder elevatorEncoder;
+    public RelativeEncoder elevatorEncoder;
     
     public ElevatorSubsytem() {
         
         this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
         this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
 
-        elevator.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        elevatorMinion.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        elevator.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake).apply(new SoftLimitConfig().forwardSoftLimit(0)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        elevatorMinion.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true).apply(new SoftLimitConfig().forwardSoftLimit(0)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        this.elevatorEncoder = elevator.getAbsoluteEncoder();
+        this.elevatorEncoder = elevator.getEncoder();
 
 		instance = this;
 
@@ -61,6 +63,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 
 	public void elevator() {
+	
 		elevator.set(((Constants.primaryStick.getThrottle() + 1) / 2) + ((Constants.secondaryStick.getThrottle() - 1) / 2));
 	}
 

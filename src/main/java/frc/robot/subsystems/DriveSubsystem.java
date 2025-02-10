@@ -7,15 +7,12 @@ package frc.robot.subsystems;
 import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.CANVenom.BrakeCoastMode;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -194,10 +191,10 @@ public class DriveSubsystem extends SubsystemBase {
 		flEncoder.update();
 		brEncoder.update();
 		blEncoder.update();
-		System.out.println("fl: " + flEncoder.get());
-		System.out.println("fr: " + frEncoder.get());
-		System.out.println("bl: " + blEncoder.get());
-		System.out.println("br: " + brEncoder.get());
+		// System.out.println("fl: " + flEncoder.getLinearVelocity().toShortString());
+		// System.out.println("fr: " + frEncoder.getLinearVelocity().toShortString());
+		// System.out.println("bl: " + blEncoder.getLinearVelocity().toShortString());
+		// System.out.println("br: " + brEncoder.getLinearVelocity().toShortString());
 	}
 
 	@Override

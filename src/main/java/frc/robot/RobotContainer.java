@@ -9,6 +9,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Wait;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsytem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -28,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem);
+	
+	private final ElevatorSubsytem m_elevatorSubsytem = new ElevatorSubsytem();
 
+	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem, m_elevatorSubsytem);
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new CommandXboxController(
 	// 		OperatorConstants.kDriverControllerPort);
@@ -76,7 +79,8 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new SequentialCommandGroup(Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse)); 
+		// return new SequentialCommandGroup(Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse), new Wait(1), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse)); 
+		return Autos.testMotor(m_elevatorSubsytem, m_elevatorSubsytem.elevator);
 		// return Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC);
 	}
 }
