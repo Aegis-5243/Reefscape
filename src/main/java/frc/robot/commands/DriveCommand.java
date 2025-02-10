@@ -32,7 +32,6 @@ public class DriveCommand extends Command {
 	@Override
 	public void execute() {
 		m_subsystem.mechDrive();
-		m_subsystem.elevator();
 	}
 
 	// Called once the command ends or is interrupted.

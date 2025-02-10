@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import com.playingwithfusion.CANVenom;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Encoder;
@@ -89,6 +91,10 @@ public class Utilities {
 
         return linVelocity;
     }
+
+	public static void testMotor(CANVenom motor) {
+		motor.set(.25);
+	}
 
     private Utilities() {}
 }
