@@ -28,9 +28,10 @@ public class PathCommand extends Command {
 		this.path = path;
 		this.planner = new MecanumPathPlanner(path);
 		this.duration = timeToSpend;
-		
-		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH.in(Units.Meters), Constants.TRACK_HEIGHT.in(Units.Meters));
-		
+
+		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH.in(Units.Meters),
+				Constants.TRACK_HEIGHT.in(Units.Meters));
+
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(subsystem);
 	}
@@ -48,7 +49,7 @@ public class PathCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-        m_subsystem.fl.setVoltage(m_subsystem.blFeedForward.calculate(planner.smoothLeftFrontVelocity[0][0]));
+		m_subsystem.fl.setVoltage(m_subsystem.blFeedForward.calculate(planner.smoothLeftFrontVelocity[0][0]));
 	}
 
 	// Called once the command ends or is interrupted.

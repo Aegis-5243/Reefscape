@@ -4,54 +4,69 @@
 
 package frc.robot.subsystems;
 
-import com.playingwithfusion.CANVenom;
-import com.playingwithfusion.CANVenom.BrakeCoastMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.libs.VelocityEncoder;
 import frc.robot.Constants;
-import frc.robot.util.Utilities;
 
 public class ElevatorSubsytem extends SubsystemBase {
-    /** Creates a new ExampleSubsystem. */
-    private static ElevatorSubsytem instance;
+	/** Creates a new ExampleSubsystem. */
+	private static ElevatorSubsytem instance;
 
-    public SparkMax elevator;
-    public SparkMax elevatorMinion;
+	public SparkMax elevator;
+	public SparkMax elevatorMinion;
 
-    public SysIdRoutine sysId;
+	public SysIdRoutine sysId;
 
-    public RelativeEncoder elevatorEncoder;
-    
-    public ElevatorSubsytem() {
-        
-        this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
-        this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
+	public RelativeEncoder elevatorEncoder;
 
-        elevator.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake).apply(new SoftLimitConfig().forwardSoftLimit(0)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        elevatorMinion.configure(new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true).apply(new SoftLimitConfig().forwardSoftLimit(0)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	public ElevatorFeedforward elevatorFeedforward;
+	public ElevatorFeedforward elevatorMinionFeedforward;
 
-        this.elevatorEncoder = elevator.getEncoder();
+	public PIDController elevatorPIDController;
+	public PIDController elevatorMinionPIDController;
+
+	public DigitalInput limitSwitch;
+
+	public ElevatorSubsytem() {
+
+		this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
+		this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
+
+		elevator.configure(
+				new SparkMaxConfig().idleMode(IdleMode.kBrake).apply(new SoftLimitConfig().reverseSoftLimit(0)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		elevatorMinion.configure(
+				new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true)
+						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+		this.elevatorEncoder = elevator.getEncoder();
+
+		this.limitSwitch = new DigitalInput(Constants.ELEVATOR_HALL_EFFECT_PORT);
+
+		this.elevatorFeedforward = new ElevatorFeedforward(Constants.ELEVATOR_kS, Constants.ELEVATOR_kG,
+				Constants.ELEVATOR_kV, Constants.ELEVATOR_kA);
+		this.elevatorMinionFeedforward = new ElevatorFeedforward(Constants.ELEVATOR_MINION_kS,
+				Constants.ELEVATOR_MINION_kG, Constants.ELEVATOR_MINION_kV, Constants.ELEVATOR_MINION_kA);
+
+		this.elevatorPIDController = new PIDController(Constants.ELEVATOR_kP, Constants.ELEVATOR_kI,
+				Constants.ELEVATOR_kD);
+		this.elevatorMinionPIDController = new PIDController(Constants.ELEVATOR_MINION_kP, Constants.ELEVATOR_MINION_kI,
+				Constants.ELEVATOR_MINION_kD);
 
 		instance = this;
 
@@ -61,10 +76,22 @@ public class ElevatorSubsytem extends SubsystemBase {
 		return instance;
 	}
 
-
 	public void elevator() {
-	
-		elevator.set(((Constants.primaryStick.getThrottle() + 1) / 2) + ((Constants.secondaryStick.getThrottle() - 1) / 2));
+		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
+				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
+
+		System.out.println(speed);
+
+		if (limitSwitch.get()) {
+			elevatorEncoder.setPosition(0);
+		}
+
+		speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
+				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) >= Constants.ELEVATOR_MAX_HEIGHT
+						.minus(Units.Inches.of(6)).in(Units.Inches)
+				&& speed > 0) ? 0 : speed;
+
+		elevator.set(speed);
 	}
 
 	/**
@@ -95,6 +122,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+
 	}
 
 	@Override

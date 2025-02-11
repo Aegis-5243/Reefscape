@@ -50,6 +50,10 @@ public final class Autos {
 		return sub.startRun(() -> {motor.set(.5);}, () -> {motor.set(0);});
 	}
 
+	public static Command testMotor(Subsystem sub, MotorController motor, double speed) {
+		return sub.startRun(() -> {motor.set(speed);}, () -> {motor.set(0);});
+	}
+
 	private Autos() {
 		throw new UnsupportedOperationException("This is a utility class!");
 	}

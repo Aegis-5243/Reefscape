@@ -31,7 +31,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public SparkMax elevator;
 	public SparkMax elevatorMinion;
-	
+
 	public VelocityEncoder flEncoder;
 	public VelocityEncoder frEncoder;
 	public VelocityEncoder blEncoder;
@@ -47,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public SysIdRoutine sysId;
 
 	public AHRS gyro;
-	
+
 	public DriveSubsystem() {
 		this.fl = new CANVenom(Constants.FL);
 		this.fr = new CANVenom(Constants.FR);
@@ -69,7 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
 		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
 		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
 
-		this.flEncoder.setReverseDirection(false); 
+		this.flEncoder.setReverseDirection(false);
 		this.frEncoder.setReverseDirection(true);
 		this.blEncoder.setReverseDirection(false);
 		this.brEncoder.setReverseDirection(true);
@@ -80,40 +80,43 @@ public class DriveSubsystem extends SubsystemBase {
 		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
 
 		Utilities.time.start();
-		
+
 		this.drive = new MecanumDrive(fl, bl, fr, br);
 
 		this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
-			voltage -> {
-				fl.setVoltage(voltage.magnitude());
-				fr.setVoltage(voltage.magnitude());
-				bl.setVoltage(voltage.magnitude());
-				br.setVoltage(voltage.magnitude());
-			},
-			log -> {
-				log.motor("drive-front-right")
-					.voltage(Units.Volts.of(fr.getBusVoltage()))
-					.linearPosition(Utilities.rotationsToDistance(frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
-					.linearVelocity(frEncoder.getLinearVelocity());
+				voltage -> {
+					fl.setVoltage(voltage.magnitude());
+					fr.setVoltage(voltage.magnitude());
+					bl.setVoltage(voltage.magnitude());
+					br.setVoltage(voltage.magnitude());
+				},
+				log -> {
+					log.motor("drive-front-right")
+							.voltage(Units.Volts.of(fr.getBusVoltage()))
+							.linearPosition(Utilities.rotationsToDistance(
+									frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearVelocity(frEncoder.getLinearVelocity());
 
-				log.motor("drive-front-left")
-					.voltage(Units.Volts.of(fl.getBusVoltage()))
-					.linearPosition(Utilities.rotationsToDistance(flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
-					.linearVelocity(flEncoder.getLinearVelocity());
-		
-				log.motor("drive-back-left")
-					.voltage(Units.Volts.of(bl.getBusVoltage()))
-					.linearPosition(Utilities.rotationsToDistance(blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
-					.linearVelocity(blEncoder.getLinearVelocity());
-				
-				log.motor("drive-back-right")
-					.voltage(Units.Volts.of(br.getBusVoltage()))
-					.linearPosition(Utilities.rotationsToDistance(brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
-					.linearVelocity(brEncoder.getLinearVelocity());
-			},
-			this
-		));
-		
+					log.motor("drive-front-left")
+							.voltage(Units.Volts.of(fl.getBusVoltage()))
+							.linearPosition(Utilities.rotationsToDistance(
+									flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearVelocity(flEncoder.getLinearVelocity());
+
+					log.motor("drive-back-left")
+							.voltage(Units.Volts.of(bl.getBusVoltage()))
+							.linearPosition(Utilities.rotationsToDistance(
+									blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearVelocity(blEncoder.getLinearVelocity());
+
+					log.motor("drive-back-right")
+							.voltage(Units.Volts.of(br.getBusVoltage()))
+							.linearPosition(Utilities.rotationsToDistance(
+									brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearVelocity(brEncoder.getLinearVelocity());
+				},
+				this));
+
 		this.gyro = new AHRS(NavXComType.kMXP_SPI);
 
 		this.gyro.reset();
@@ -123,26 +126,35 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Uses input to drive the mechanum chassis (robot centric)
-	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
-	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is positive.
-	 * @param zSpeed The robot's rotation rate around the Z axis [-1.0..1.0]. Counterclockwise is positive.
+	 * 
+	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is
+	 *               positive.
+	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is
+	 *               positive.
+	 * @param zSpeed The robot's rotation rate around the Z axis [-1.0..1.0].
+	 *               Counterclockwise is positive.
 	 */
 	public void mechDrive(double xSpeed, double ySpeed, double zSpeed) {
-		drive.driveCartesian(xSpeed, ySpeed, zSpeed);;
+		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
+		;
 	}
 
 	/**
 	 * Uses joysticks to drive the mechanum chassis (robot centric)
-	*/
+	 */
 	public void mechDrive() {
 		mechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
 	/**
 	 * Uses input to drive the mechanum chassis (field centric)
-	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
-	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is positive.
-	 * @param zSpeed The robot's rotation rate around the Z axis [-1.0..1.0]. Counterclockwise is positive.
+	 * 
+	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is
+	 *               positive.
+	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is
+	 *               positive.
+	 * @param zSpeed The robot's rotation rate around the Z axis [-1.0..1.0].
+	 *               Counterclockwise is positive.
 	 */
 	public void fieldMechDrive(double xSpeed, double ySpeed, double zSpeed) {
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed, gyro.getRotation2d());
@@ -150,7 +162,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Uses joysticks to drive the mechanum chassis (field centric)
-	*/
+	 */
 	public void fieldMechDrive() {
 		fieldMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}

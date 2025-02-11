@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.Wait;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,10 +30,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	
 	private final ElevatorSubsytem m_elevatorSubsytem = new ElevatorSubsytem();
 
-	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem, m_elevatorSubsytem);
+	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem);
+	private final ElevatorCommand m_elevatorCommand = new ElevatorCommand(m_elevatorSubsytem);
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new CommandXboxController(
 	// 		OperatorConstants.kDriverControllerPort);
@@ -42,7 +43,8 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
-		// CommandScheduler.getInstance().registerSubsystem(m_driveSubsystem);
+		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
+
 		// Configure the trigger bindings
 		configureBindings();
 	}
@@ -70,6 +72,7 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+		
 	}
 
 	/**

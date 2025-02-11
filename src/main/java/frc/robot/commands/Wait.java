@@ -11,16 +11,17 @@ import frc.robot.subsystems.DriveSubsystem;
 /** An example command that uses an example subsystem. */
 public class Wait extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final DriveSubsystem m_subsystem;
+	private final DriveSubsystem m_subsystem;
 	private final double time;
-    private final Timer timer = new Timer();
+	private final Timer timer = new Timer();
+
 	/**
 	 * Creates a new ExampleCommand.
 	 *
 	 * @param time How long to wait (in seconds)
 	 */
 	public Wait(double time) {
-        this.m_subsystem = DriveSubsystem.getInstance();
+		this.m_subsystem = DriveSubsystem.getInstance();
 		this.time = time;
 
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -30,19 +31,20 @@ public class Wait extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-        m_subsystem.drive.setSafetyEnabled(false);
+		m_subsystem.drive.setSafetyEnabled(false);
 		this.timer.restart();
-    }
+	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
-	public void execute() {}
+	public void execute() {
+	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-        m_subsystem.drive.setSafetyEnabled(true);
-    }
+		m_subsystem.drive.setSafetyEnabled(true);
+	}
 
 	// Returns true when the command should end.
 	@Override
