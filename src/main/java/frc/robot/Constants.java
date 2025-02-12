@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -82,6 +84,13 @@ public final class Constants {
 	public static final double ELEVATOR_MINION_kP = 0;
 	public static final double ELEVATOR_MINION_kI = 0;
 	public static final double ELEVATOR_MINION_kD = 0;
+
+	public static final double NEO_1_1_kFF = 1.0/473;
+
+	// TODO: Replace with proper value
+	// NOTE: Consider changing to Units.RotationsPerSecond
+	public static final AngularVelocity ELEVATOR_MAX_VELOCITY = Units.RPM.of(1);
+	public static final AngularAcceleration ELEVATOR_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
 
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);

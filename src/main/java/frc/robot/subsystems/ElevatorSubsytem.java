@@ -5,16 +5,19 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,12 +35,13 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public SysIdRoutine sysId;
 
 	public RelativeEncoder elevatorEncoder;
+	public RelativeEncoder elevatorMinionEncoder;
 
 	public ElevatorFeedforward elevatorFeedforward;
 	public ElevatorFeedforward elevatorMinionFeedforward;
 
-	public PIDController elevatorPIDController;
-	public PIDController elevatorMinionPIDController;
+	public SparkClosedLoopController elevatorPIDController;
+	public SparkClosedLoopController elevatorMinionPIDController;
 
 	public DigitalInput limitSwitch;
 
@@ -47,14 +51,27 @@ public class ElevatorSubsytem extends SubsystemBase {
 		this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
 
 		elevator.configure(
-				new SparkMaxConfig().idleMode(IdleMode.kBrake).apply(new SoftLimitConfig().reverseSoftLimit(0)),
+				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
+						.apply(new SoftLimitConfig().reverseSoftLimit(0))
+						.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_kP).i(Constants.ELEVATOR_kI)
+								.d(Constants.ELEVATOR_kD).velocityFF(Constants.NEO_1_1_kFF)
+								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
+										.maxAcceleration(
+												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 		elevatorMinion.configure(
-				new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true)
-						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
+				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(true)
+						.apply(new SoftLimitConfig().reverseSoftLimit(0))
+						.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_MINION_kP).i(Constants.ELEVATOR_MINION_kI)
+								.d(Constants.ELEVATOR_MINION_kD).velocityFF(Constants.NEO_1_1_kFF)
+								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
+										.maxAcceleration(
+												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		this.elevatorEncoder = elevator.getEncoder();
+		this.elevatorMinionEncoder = elevatorMinion.getEncoder();
 
 		this.limitSwitch = new DigitalInput(Constants.ELEVATOR_HALL_EFFECT_PORT);
 
@@ -63,13 +80,10 @@ public class ElevatorSubsytem extends SubsystemBase {
 		this.elevatorMinionFeedforward = new ElevatorFeedforward(Constants.ELEVATOR_MINION_kS,
 				Constants.ELEVATOR_MINION_kG, Constants.ELEVATOR_MINION_kV, Constants.ELEVATOR_MINION_kA);
 
-		this.elevatorPIDController = new PIDController(Constants.ELEVATOR_kP, Constants.ELEVATOR_kI,
-				Constants.ELEVATOR_kD);
-		this.elevatorMinionPIDController = new PIDController(Constants.ELEVATOR_MINION_kP, Constants.ELEVATOR_MINION_kI,
-				Constants.ELEVATOR_MINION_kD);
+		this.elevatorPIDController = elevator.getClosedLoopController();
+		this.elevatorMinionPIDController = elevatorMinion.getClosedLoopController();
 
 		instance = this;
-
 	}
 
 	public static ElevatorSubsytem getInstance() {
@@ -82,16 +96,30 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 		System.out.println(speed);
 
+		// replace with applySpeed after proper testing and wiring.
+		elevator.set(speed);
+	}
+
+	public void applySpeed(double speed) {
 		if (limitSwitch.get()) {
 			elevatorEncoder.setPosition(0);
 		}
 
 		speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
-				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) >= Constants.ELEVATOR_MAX_HEIGHT
-						.minus(Units.Inches.of(6)).in(Units.Inches)
+				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT
+						.minus(Units.Inches.of(6)).in(Units.Meters)
 				&& speed > 0) ? 0 : speed;
 
 		elevator.set(speed);
+	}
+
+	public void setTargetPosition(double rotations) {
+		elevatorPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
+		elevatorMinionPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
+	}
+
+	public boolean isStill() {
+		return elevatorEncoder.getVelocity() == 0 && elevatorMinionEncoder.getVelocity() == 0;
 	}
 
 	/**
