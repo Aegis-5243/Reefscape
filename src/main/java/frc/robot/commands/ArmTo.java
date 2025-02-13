@@ -5,15 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.subsystems.ArmSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class ElevatorTo extends Command {
+public class ArmTo extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-	private final ElevatorSubsytem m_subsystem;
+	private final ArmSubsystem m_subsystem;
 	private double target;
 
 	/**
@@ -21,24 +21,25 @@ public class ElevatorTo extends Command {
 	 *
 	 * @param time How long to wait (in seconds)
 	 */
-	public ElevatorTo(ElevatorLocation loc, ElevatorSubsytem subsystem) {
+	public ArmTo(ArmLocation loc, ArmSubsystem subsystem) {
 		this.m_subsystem = subsystem;
-		this.target = loc.loc.in(Units.Inches) / Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches);
+		this.target = loc.loc.in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
 	}
 
-    public static enum ElevatorLocation {
-        INTAKE(Units.Inches.of(0)),
-		THROUGH(Units.Inches.of(3.5)),
-        LOW_CORAL(Units.Inches.of(13)),
-        MID_CORAL(Units.Inches.of(28.5)),
-        HIGH_CORAL(Units.Inches.of(50));
+    public static enum ArmLocation {
+        INTAKE(Units.Degrees.of(17)),
+		THROUGH(Units.Degrees.of(45)),
+        LOW_CORAL(Units.Degrees.of(55)),
+        MID_CORAL(Units.Degrees.of(55)),
+        HIGH_CORAL(Units.Degrees.of(69)),
+        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(55));
 
-        private final Distance loc;
+        private final Angle loc;
 
-        private ElevatorLocation(Distance loc) {
+        private ArmLocation(Angle loc) {
             this.loc = loc;
         }
     }

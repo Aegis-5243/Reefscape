@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -59,9 +60,8 @@ public final class Constants {
 	public static final double RIO_CONTROL_LOOP = 0.1;
 
 	public static final Distance ELEVATOR_HEIGHT_PER_MOTOR_ROT = Units.Inches.of(22.0 / 80);
-	// TODO: Put proper height limitation.
-	public static final Distance ELEVATOR_MAX_HEIGHT = Units.Feet.of(10);
-
+	public static final Distance ELEVATOR_MAX_HEIGHT = Units.Inches.of(50);
+	
 	public static final int ELEVATOR_PRIMARY = 21;
 	public static final int ELEVATOR_SECONDARY = 22;
 
@@ -85,12 +85,33 @@ public final class Constants {
 	public static final double ELEVATOR_MINION_kI = 0;
 	public static final double ELEVATOR_MINION_kD = 0;
 
-	public static final double NEO_1_1_kFF = 1.0/473;
-
 	// TODO: Replace with proper value
-	// NOTE: Consider changing to Units.RotationsPerSecond
 	public static final AngularVelocity ELEVATOR_MAX_VELOCITY = Units.RPM.of(1);
 	public static final AngularAcceleration ELEVATOR_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
+
+	// public static final Angle 
+
+	public static final int ARM = 31;
+
+	public static final double ARM_GEAR_RATIO = 1;
+
+	public static final Angle ARM_MAX_POS = Units.Degrees.of(360);
+	public static final Angle ARM_MIN_POS = Units.Degrees.of(17); 
+
+	public static final double ARM_kS = 0;
+	public static final double ARM_kG = 0;
+	public static final double ARM_kV = 0;
+	public static final double ARM_kA = 0;
+
+	public static final double ARM_kP = 0;
+	public static final double ARM_kI = 0;
+	public static final double ARM_kD = 0;
+
+	// TODO: Replace with proper value
+	public static final AngularVelocity ARM_MAX_VELOCITY = Units.RPM.of(1);
+	public static final AngularAcceleration ARM_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
+
+	public static final double NEO_1_1_kFF = 1.0/473;
 
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
