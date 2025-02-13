@@ -47,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
                 new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
                         .apply(new SoftLimitConfig().reverseSoftLimit(0))
                         .apply(new ClosedLoopConfig().p(Constants.ARM_kP).i(Constants.ARM_kI)
-                                .d(Constants.ARM_kD).velocityFF(Constants.NEO_1_1_kFF)
+                                .d(Constants.ARM_kD)
                                 .apply(new MAXMotionConfig().maxVelocity(Constants.ARM_MAX_VELOCITY.in(Units.RPM))
                                         .maxAcceleration(
                                                 Constants.ARM_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
@@ -68,7 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void arm() {
-        double speed = Constants.primaryStick.getRawAxis(5);
+        double speed = Constants.primaryStick.getRawButton(3) ? 1 : (Constants.primaryStick.getRawButton(4) ? -1 : 0);
 
         System.out.println(speed);
 

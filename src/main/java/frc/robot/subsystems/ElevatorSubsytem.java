@@ -12,9 +12,11 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -54,21 +56,27 @@ public class ElevatorSubsytem extends SubsystemBase {
 				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
 						.apply(new SoftLimitConfig().reverseSoftLimit(0))
 						.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_kP).i(Constants.ELEVATOR_kI)
-								.d(Constants.ELEVATOR_kD).velocityFF(Constants.NEO_1_1_kFF)
+								.d(Constants.ELEVATOR_kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder)
 								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
 										.maxAcceleration(
 												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+		// With own pid
 		elevatorMinion.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(true)
 						.apply(new SoftLimitConfig().reverseSoftLimit(0))
 						.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_MINION_kP).i(Constants.ELEVATOR_MINION_kI)
-								.d(Constants.ELEVATOR_MINION_kD).velocityFF(Constants.NEO_1_1_kFF)
+								.d(Constants.ELEVATOR_MINION_kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder)
 								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
 										.maxAcceleration(
 												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+		// Without own pid
+		// elevatorMinion.configure(
+		// new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true),
+		// ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		this.elevatorEncoder = elevator.getEncoder();
 		this.elevatorMinionEncoder = elevatorMinion.getEncoder();
@@ -94,7 +102,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
 				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
 
-		System.out.println(speed);
+		// System.out.println(speed);
 
 		// replace with applySpeed after proper testing and wiring.
 		elevator.set(speed);
