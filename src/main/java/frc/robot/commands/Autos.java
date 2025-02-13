@@ -47,7 +47,7 @@ public final class Autos {
 	}
 
 	public static Command testMotor(Subsystem sub, MotorController motor) {
-		return sub.startRun(() -> {motor.set(.5);}, () -> {motor.set(0);});
+		return sub.startRun(() -> {motor.set(.5);System.out.println("running");}, () -> {motor.set(0);});
 	}
 
 	public static Command testMotor(Subsystem sub, MotorController motor, double speed) {

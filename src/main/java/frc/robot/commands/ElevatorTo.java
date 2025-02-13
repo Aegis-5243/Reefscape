@@ -46,13 +46,14 @@ public class ElevatorTo extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_subsystem.setTargetPosition(target);
+		// m_subsystem.setTargetPositionPID(target);
+		m_subsystem.setTargetPos(target);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		
+		m_subsystem.runToSetpoint();
 	}
 
 	// Called once the command ends or is interrupted.

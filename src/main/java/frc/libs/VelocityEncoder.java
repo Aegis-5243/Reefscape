@@ -73,6 +73,7 @@ public class VelocityEncoder extends Encoder {
      * Update linear and angular velocity variables
      */
     public void update() {
+        
         double currPos = (this.get() / this.TICKS_PER_REVOLUTION) * (Math.PI * this.WHEEL_DIAMETER);
         double currAng = (this.get() / this.TICKS_PER_REVOLUTION) * 2 * Math.PI;
         double currTime = time.get();

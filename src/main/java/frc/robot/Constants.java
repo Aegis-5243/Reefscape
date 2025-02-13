@@ -59,7 +59,8 @@ public final class Constants {
 
 	public static final double RIO_CONTROL_LOOP = 0.1;
 
-	public static final Distance ELEVATOR_HEIGHT_PER_MOTOR_ROT = Units.Inches.of(22.0 / 80);
+	// public static final Distance ELEVATOR_HEIGHT_PER_MOTOR_ROT = Units.Inches.of(22.0 / 40);
+	public static final Distance ELEVATOR_HEIGHT_PER_MOTOR_ROT = Units.Inches.of(0.5758);
 	public static final Distance ELEVATOR_MAX_HEIGHT = Units.Inches.of(50);
 	
 	public static final int ELEVATOR_PRIMARY = 21;

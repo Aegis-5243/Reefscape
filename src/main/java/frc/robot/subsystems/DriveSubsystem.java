@@ -203,10 +203,10 @@ public class DriveSubsystem extends SubsystemBase {
 		flEncoder.update();
 		brEncoder.update();
 		blEncoder.update();
-		// System.out.println("fl: " + flEncoder.getLinearVelocity().toShortString());
-		// System.out.println("fr: " + frEncoder.getLinearVelocity().toShortString());
-		// System.out.println("bl: " + blEncoder.getLinearVelocity().toShortString());
-		// System.out.println("br: " + brEncoder.getLinearVelocity().toShortString());
+		// System.out.println("fl: " + flEncoder.getLinearVelocity().toLongString());
+		// System.out.println("fr: " + frEncoder.getRate());
+		// System.out.println("bl: " + blEncoder.getRate());
+		// System.out.println("br: " + brEncoder.getRate());
 	}
 
 	@Override
