@@ -47,7 +47,7 @@ public class ElevatorTo extends Command {
 	@Override
 	public void initialize() {
 		// m_subsystem.setTargetPositionPID(target);
-		m_subsystem.setTargetPos(target);
+		m_subsystem.setTargetPositionMan(target);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.

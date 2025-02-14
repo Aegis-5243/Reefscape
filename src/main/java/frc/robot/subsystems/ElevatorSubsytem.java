@@ -135,20 +135,20 @@ public class ElevatorSubsytem extends SubsystemBase {
 		elevatorMinionPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
 	}
 
-	public void setTargetPos(double rotations) {
+	public void setTargetPositionMan(double rotations) {
 		manualSetpoint = rotations;
 	}
 
 	public void runToSetpoint() {
-		if (elevatorEncoder.getPosition() < manualSetpoint - 1 || elevatorEncoder.getPosition() > manualSetpoint + 1) {
+		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 2);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
 			applySpeed(diff, elevator);
 		}
-		if (elevatorMinionEncoder.getPosition() < manualSetpoint - 1 || elevatorMinionEncoder.getPosition() > manualSetpoint + 1) {
-			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 4);
+		if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
+			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (manualSetpoint * 2);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;

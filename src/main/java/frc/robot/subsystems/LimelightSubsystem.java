@@ -12,7 +12,6 @@ public class LimelightSubsystem extends SubsystemBase {
     private static LimelightSubsystem instance;
 
     public LimelightSubsystem() {
-
         instance = this;
     }
 

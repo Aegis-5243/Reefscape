@@ -86,6 +86,8 @@ public final class Constants {
 	public static final double ELEVATOR_MINION_kI = 0;
 	public static final double ELEVATOR_MINION_kD = 0;
 
+	public static final double ELEVATOR_MAN_TOLERANCE = 1;
+
 	// TODO: Replace with proper value
 	public static final AngularVelocity ELEVATOR_MAX_VELOCITY = Units.RPM.of(1);
 	public static final AngularAcceleration ELEVATOR_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
