@@ -48,6 +48,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public DigitalInput limitSwitch;
 
 	public double manualSetpoint;
+	public boolean done;
 
 	public ElevatorSubsytem() {
 
@@ -109,8 +110,8 @@ public class ElevatorSubsytem extends SubsystemBase {
 		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
 				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
 
-		System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
-		System.out.println(elevatorMinionEncoder.getPosition());
+		// System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
+		// System.out.println(elevatorMinionEncoder.getPosition());
 
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
@@ -137,18 +138,23 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 	public void setTargetPositionMan(double rotations) {
 		manualSetpoint = rotations;
+		done = false;
 	}
 
 	public void runToSetpoint() {
 		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
-			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 2);
+			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 6);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
 			applySpeed(diff, elevator);
+			System.out.println("in");
+		} else {
+			done = true;
+			System.out.println("out");
 		}
 		if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
-			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (manualSetpoint * 2);
+			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (manualSetpoint * 6);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
@@ -158,6 +164,10 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 	public boolean isStill() {
 		return elevatorEncoder.getVelocity() == 0 && elevatorMinionEncoder.getVelocity() == 0;
+	}
+
+	public boolean isDone() {
+		return done;
 	}
 
 	/**

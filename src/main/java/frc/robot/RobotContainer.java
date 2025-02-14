@@ -76,7 +76,10 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-		new JoystickButton(Constants.primaryStick, 3).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
+		new JoystickButton(Constants.primaryStick, 3).onTrue(new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem));
+		new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
+		new JoystickButton(Constants.primaryStick, 4).onTrue(new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem));
+		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 
 	/**
