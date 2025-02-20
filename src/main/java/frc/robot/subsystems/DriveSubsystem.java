@@ -13,6 +13,9 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -86,7 +89,10 @@ public class DriveSubsystem extends SubsystemBase {
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
 		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
 
-		this.flPID = new PIDController(0, 0, 0, Robot.kDefaultPeriod);
+		this.flPID = new PIDController(Constants.FL_kP, 0, Constants.FL_kD, Robot.kDefaultPeriod);
+		this.frPID = new PIDController(Constants.FR_kP, 0, Constants.FR_kD, Robot.kDefaultPeriod);
+		this.blPID = new PIDController(Constants.BL_kP, 0, Constants.BL_kD, Robot.kDefaultPeriod);
+		this.brPID = new PIDController(Constants.BR_kP, 0, Constants.BR_kD, Robot.kDefaultPeriod);
 
 		Utilities.time.start();
 
@@ -98,30 +104,27 @@ public class DriveSubsystem extends SubsystemBase {
 					fr.setVoltage(voltage.magnitude());
 					bl.setVoltage(voltage.magnitude());
 					br.setVoltage(voltage.magnitude());
+					System.out.println("setting: " + voltage.magnitude() + "; getteing " + fl.getOutputVoltage());
 				},
 				log -> {
 					log.motor("drive-front-right")
 							.voltage(Units.Volts.of(fr.getBusVoltage()))
-							.linearPosition(Utilities.rotationsToDistance(
-									frEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearPosition(frEncoder.getDist())
 							.linearVelocity(frEncoder.getLinearVelocity());
 
 					log.motor("drive-front-left")
 							.voltage(Units.Volts.of(fl.getBusVoltage()))
-							.linearPosition(Utilities.rotationsToDistance(
-									flEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearPosition(flEncoder.getDist())
 							.linearVelocity(flEncoder.getLinearVelocity());
 
 					log.motor("drive-back-left")
 							.voltage(Units.Volts.of(bl.getBusVoltage()))
-							.linearPosition(Utilities.rotationsToDistance(
-									blEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearPosition(blEncoder.getDist())
 							.linearVelocity(blEncoder.getLinearVelocity());
 
 					log.motor("drive-back-right")
 							.voltage(Units.Volts.of(br.getBusVoltage()))
-							.linearPosition(Utilities.rotationsToDistance(
-									brEncoder.get() / Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION))
+							.linearPosition(brEncoder.getDist())
 							.linearVelocity(brEncoder.getLinearVelocity());
 				},
 				this));
@@ -129,6 +132,8 @@ public class DriveSubsystem extends SubsystemBase {
 		this.gyro = new AHRS(NavXComType.kMXP_SPI);
 
 		this.gyro.reset();
+
+		flEncoder.getRate();
 
 		instance = this;
 	}
@@ -208,11 +213,10 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		frEncoder.update();
-		flEncoder.update();
-		brEncoder.update();
-		blEncoder.update();
-		// System.out.println("fl: " + flEncoder.getLinearVelocity().toLongString());
+		// System.out.println("fl: " + flEncoder.getLinearVelocity().toLongString()); 
+		if (RobotState.isEnabled())
+			System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
+		// System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
 		// System.out.println("fr: " + frEncoder.getRate());
 		// System.out.println("bl: " + blEncoder.getRate());
 		// System.out.println("br: " + brEncoder.getRate());

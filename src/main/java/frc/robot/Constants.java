@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -50,19 +51,20 @@ public final class Constants {
 	public static final double BL_kS = 0;
 	public static final double BL_kV = 0;
 
-	public static final double FL_kP = 0.054145;
+	public static final double FL_kP = 0.017002;
 	public static final double FL_kD = 0;
 
-	public static final double FR_kP = 0;
+	public static final double FR_kP = 0.010445;
 	public static final double FR_kD = 0;
 	
-	public static final double BL_kP = 3.596;
+	public static final double BL_kP = 1.6878;
 	public static final double BL_kD = 0;
 	
-	public static final double BR_kP = 3.596;
+	public static final double BR_kP = 0.017002;
 	public static final double BR_kD = 0;
 
 	public static final double THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
+	public static final double THROUGH_BORE_RESOLUTION = 2048;
 
 	public static final Distance WHEEL_DIAMETER = Units.Inches.of(8);
 
