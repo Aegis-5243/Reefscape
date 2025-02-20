@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.MecanumPathPlanner;
 import edu.wpi.first.units.Units;
@@ -17,6 +18,7 @@ public class PathCommand extends Command {
 	public double[][] path;
 	public MecanumPathPlanner planner;
 	public double duration;
+	private int index;
 
 	/**
 	 * Creates a new ExampleCommand.
@@ -29,8 +31,10 @@ public class PathCommand extends Command {
 		this.planner = new MecanumPathPlanner(path);
 		this.duration = timeToSpend;
 
-		planner.calculate(timeToSpend, Constants.RIO_CONTROL_LOOP, Constants.TRACK_WIDTH.in(Units.Meters),
+		planner.calculate(timeToSpend, Robot.kDefaultPeriod, Constants.TRACK_WIDTH.in(Units.Meters),
 				Constants.TRACK_HEIGHT.in(Units.Meters));
+
+		index = 0;
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(subsystem);
@@ -39,23 +43,27 @@ public class PathCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		try {
-			m_subsystem.drive.wait((long) ((duration + 1) * 1000));
-		} catch (InterruptedException e) {
-			System.out.println("INteruppeted");
-		}
+		m_subsystem.drive.setSafetyEnabled(false);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_subsystem.fl.setVoltage(m_subsystem.blFeedForward.calculate(planner.smoothLeftFrontVelocity[0][0]));
+		m_subsystem.fl.setVoltage(m_subsystem.flFeedForward.calculate(planner.smoothLeftFrontVelocity[index][1]));
+		m_subsystem.fr.setVoltage(m_subsystem.frFeedForward.calculate(planner.smoothRightFrontVelocity[index][1]));
+		m_subsystem.bl.setVoltage(m_subsystem.blFeedForward.calculate(planner.smoothLeftRearVelocity[index][1]));
+		m_subsystem.br.setVoltage(m_subsystem.brFeedForward.calculate(planner.smoothRightRearVelocity[index][1]));
+		index++;
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_subsystem.drive.notify();
+		m_subsystem.fl.setVoltage(0);
+		m_subsystem.fr.setVoltage(0);
+		m_subsystem.bl.setVoltage(0);
+		m_subsystem.br.setVoltage(0);
+		m_subsystem.drive.setSafetyEnabled(true);
 	}
 
 	// Returns true when the command should end.

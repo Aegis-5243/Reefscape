@@ -50,6 +50,18 @@ public final class Constants {
 	public static final double BL_kS = 0;
 	public static final double BL_kV = 0;
 
+	public static final double FL_kP = 0.054145;
+	public static final double FL_kD = 0;
+
+	public static final double FR_kP = 0;
+	public static final double FR_kD = 0;
+	
+	public static final double BL_kP = 3.596;
+	public static final double BL_kD = 0;
+	
+	public static final double BR_kP = 3.596;
+	public static final double BR_kD = 0;
+
 	public static final double THROUGH_BORE_COUNTS_PER_REVOLUTION = 8192;
 
 	public static final Distance WHEEL_DIAMETER = Units.Inches.of(8);
@@ -115,6 +127,9 @@ public final class Constants {
 	public static final AngularAcceleration ARM_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
 
 	public static final double NEO_1_1_kFF = 1.0/473;
+
+	public static final String FRONT_LIMELIGHT = "limelight";
+	public static final String BACK_LIMELIGHT = "limelight-two";
 
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);

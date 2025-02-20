@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.libs.VelocityEncoder;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -41,6 +43,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public SimpleMotorFeedforward frFeedForward;
 	public SimpleMotorFeedforward blFeedForward;
 	public SimpleMotorFeedforward brFeedForward;
+
+	public PIDController flPID;
+	public PIDController frPID;
+	public PIDController blPID;
+	public PIDController brPID;
 
 	public MecanumDrive drive;
 
@@ -78,6 +85,8 @@ public class DriveSubsystem extends SubsystemBase {
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
 		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
+
+		this.flPID = new PIDController(0, 0, 0, Robot.kDefaultPeriod);
 
 		Utilities.time.start();
 
