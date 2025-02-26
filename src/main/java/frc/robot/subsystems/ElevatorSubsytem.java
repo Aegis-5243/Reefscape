@@ -110,6 +110,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
 				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
 
+		// System.out.println(speed);
 		// System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
 		// System.out.println(elevatorMinionEncoder.getPosition());
 

@@ -35,11 +35,11 @@ public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ElevatorSubsytem m_elevatorSubsytem = new ElevatorSubsytem();
-	// private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 
 	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem);
 	private final ElevatorCommand m_elevatorCommand = new ElevatorCommand(m_elevatorSubsytem);
-	// private final ArmCommand m_armCommand = new ArmCommand(m_armSubsystem);
+	private final ArmCommand m_armCommand = new ArmCommand(m_armSubsystem);
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new CommandXboxController(
 	// 		OperatorConstants.kDriverControllerPort);
@@ -50,7 +50,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
-		// m_armSubsystem.setDefaultCommand(m_armCommand);
+		m_armSubsystem.setDefaultCommand(m_armCommand);
 
 		// Configure the trigger bindings
 		configureBindings();

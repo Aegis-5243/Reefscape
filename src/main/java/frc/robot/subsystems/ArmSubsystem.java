@@ -20,6 +20,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -38,6 +39,8 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmFeedforward armFeedforward;
 
     public SparkClosedLoopController armPIDController;
+
+	// public static ComplexWidget PIDWidget;
 
     public ArmSubsystem() {
 
@@ -68,7 +71,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void arm() {
-        double speed = Constants.primaryStick.getRawButton(3) ? 1 : (Constants.primaryStick.getRawButton(4) ? -1 : 0);
+        double speed = Constants.tertiaryStick.getY();
 
         System.out.println(speed);
 

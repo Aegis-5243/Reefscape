@@ -7,6 +7,16 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Utilities;
+
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Encoder;
@@ -84,6 +94,20 @@ public final class Autos {
 		}, () -> {
 			// motorPID.setP(tmp.getDouble(Constants.BL_kP));
 			motor.setVoltage(motorPID.calculate(encoder.getRate()));
+			// System.out.println(tmp.getDouble(0));
+		});
+
+	}
+
+	public static Command testSparkPID(SubsystemBase sub, SparkMax motor) {
+		PIDController motorPID = new PIDController(0, 0, 0);
+		tmp = Shuffleboard.getTab("pid test").add("PID", motorPID);
+		return sub.startRun(() -> {
+			//.withWidget(BuiltInWidgets.kPIDController);
+		}, () -> {
+			// motorPID.setP(tmp.getDouble(Constants.BL_kP));
+			motor.configure(new SparkMaxConfig().apply(new ClosedLoopConfig().p(motorPID.getP(), ClosedLoopSlot.kSlot3).d(motorPID.getD(), ClosedLoopSlot.kSlot3).i(motorPID.getI(), ClosedLoopSlot.kSlot3)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+			motor.getClosedLoopController().setReference(motorPID.getSetpoint(), ControlType.kPosition);
 			// System.out.println(tmp.getDouble(0));
 		});
 

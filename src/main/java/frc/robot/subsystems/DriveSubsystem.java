@@ -214,8 +214,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		// System.out.println("fl: " + flEncoder.getLinearVelocity().toLongString()); 
-		if (RobotState.isEnabled())
-			System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
+		// if (RobotState.isEnabled())
+		// 	System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
 		// System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
 		// System.out.println("fr: " + frEncoder.getRate());
 		// System.out.println("bl: " + blEncoder.getRate());
