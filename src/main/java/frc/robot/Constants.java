@@ -136,7 +136,7 @@ public final class Constants {
 	public static final double ROLLER_kV = 0;
 	public static final double ROLLER_kA = 0;
 
-	public static final double ROLLER_kP = 0;
+	public static final double ROLLER_kP = 3.596;
 	public static final double ROLLER_kI = 0;
 	public static final double ROLLER_kD = 0;
 

@@ -25,7 +25,6 @@ public class Turn extends Command {
     public Turn(DriveSubsystem subsystem, double degrees) {
         m_subsystem = subsystem;
         heading = degrees;
-        m_subsystem.gyro.reset();
         
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);

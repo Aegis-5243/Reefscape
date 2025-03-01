@@ -58,6 +58,8 @@ public class ArmSubsystem extends SubsystemBase {
 
         this.armEncoder = arm.getEncoder();
 
+        this.armEncoder.setPosition(0);
+
         this.armFeedforward = new ArmFeedforward(Constants.ARM_kS, Constants.ARM_kG,
                 Constants.ARM_kV, Constants.ARM_kA);
 

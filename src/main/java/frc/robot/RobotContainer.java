@@ -17,7 +17,9 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -55,7 +57,8 @@ public class RobotContainer {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
-		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
+		// m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
+		CommandScheduler.getInstance().registerSubsystem(m_rollerSubsystem);
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -87,6 +90,7 @@ public class RobotContainer {
 		new JoystickButton(Constants.primaryStick, 3).onTrue(new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem));
 		new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 		new JoystickButton(Constants.primaryStick, 4).onTrue(new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem));
+		new JoystickButton(Constants.tertiaryStick, 3).onTrue(m_rollerSubsystem.startRun(() -> {m_rollerSubsystem.rollerEncoder.setPosition(0);m_rollerSubsystem.setTargetPosition(Units.Rotations.of(0));}, () -> {}));
 		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 

@@ -23,7 +23,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,6 +59,10 @@ public class RollerSubsystem extends SubsystemBase {
                 ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.rollerEncoder = roller.getEncoder();
+
+        this.rollerEncoder.setPosition(0);
+
+        this.setTargetPosition(Units.Rotations.of(0));
 
         this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
                 voltage -> {
@@ -94,6 +100,10 @@ public class RollerSubsystem extends SubsystemBase {
 
     public void setTargetVelocity(AngularVelocity velocity) {
         rollerPIDController.setReference(velocity.in(Units.RPM), ControlType.kVelocity);
+    }
+
+    public void setTargetPosition(Angle dist) {
+        rollerPIDController.setReference(dist.in(Units.Rotations), ControlType.kPosition);
     }
 
     public boolean isStill() {
