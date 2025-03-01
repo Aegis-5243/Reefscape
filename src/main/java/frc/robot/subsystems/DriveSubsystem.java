@@ -12,6 +12,7 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
@@ -53,6 +54,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public PIDController brPID;
 
 	public MecanumDrive drive;
+
+	public SlewRateLimiter limiter;
 
 	public SysIdRoutine sysId;
 
@@ -133,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		this.gyro.reset();
 
-		flEncoder.getRate();
+		limiter = new SlewRateLimiter(.5);
 
 		instance = this;
 	}
@@ -157,7 +160,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Uses joysticks to drive the mechanum chassis (robot centric)
 	 */
 	public void mechDrive() {
-		mechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
+		mechDrive(limiter.calculate(-Constants.primaryStick.getY()), limiter.calculate(Constants.primaryStick.getX()), limiter.calculate(Constants.secondaryStick.getX()));
 	}
 
 	/**

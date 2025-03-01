@@ -40,7 +40,7 @@ public final class Autos {
 		return Commands.sequence(subsystem.exampleMethodCommand(), new DriveCommand(subsystem));
 	}
 
-	public static Command sysIdRoutine(DriveSubsystem subsystem, RoutineType type, SysIdRoutine.Direction dir) {
+	public static Command driveSysIdRoutine(DriveSubsystem subsystem, RoutineType type, SysIdRoutine.Direction dir) {
 		Utilities.time.restart();
 		Utilities.velocityDict.clear();
 		Command command;
@@ -64,6 +64,21 @@ public final class Autos {
 				subsystem.runOnce(() -> {
 					subsystem.drive.setSafetyEnabled(true);
 				}));
+	}
+
+	
+	public static Command sysIdRoutine(SysIdRoutine routine, RoutineType type, SysIdRoutine.Direction dir) {
+		
+		switch (type) {
+			case DYNAMIC:
+				return routine.dynamic(dir);
+
+			case QUASISTATIC:
+				return routine.quasistatic(dir);
+
+			default:
+				throw new RuntimeException("Supply a valid routine type");
+		}
 	}
 
 	public static enum RoutineType {
@@ -106,7 +121,7 @@ public final class Autos {
 			//.withWidget(BuiltInWidgets.kPIDController);
 		}, () -> {
 			// motorPID.setP(tmp.getDouble(Constants.BL_kP));
-			motor.configure(new SparkMaxConfig().apply(new ClosedLoopConfig().p(motorPID.getP(), ClosedLoopSlot.kSlot3).d(motorPID.getD(), ClosedLoopSlot.kSlot3).i(motorPID.getI(), ClosedLoopSlot.kSlot3)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	  		motor.configure(new SparkMaxConfig().apply(new ClosedLoopConfig().p(motorPID.getP(), ClosedLoopSlot.kSlot3).d(motorPID.getD(), ClosedLoopSlot.kSlot3).i(motorPID.getI(), ClosedLoopSlot.kSlot3)), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 			motor.getClosedLoopController().setReference(motorPID.getSetpoint(), ControlType.kPosition);
 			// System.out.println(tmp.getDouble(0));
 		});

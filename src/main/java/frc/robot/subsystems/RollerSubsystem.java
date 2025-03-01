@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
@@ -19,80 +21,83 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
-public class ArmSubsystem extends SubsystemBase {
+public class RollerSubsystem extends SubsystemBase {
     /** Creates a new ExampleSubsystem. */
-    private static ArmSubsystem instance;
+    private static RollerSubsystem instance;
 
-    public SparkMax arm;
+    public SparkMax roller;
 
     public SysIdRoutine sysId;
 
-    public RelativeEncoder armEncoder;
+    public RelativeEncoder rollerEncoder;
 
-    public ArmFeedforward armFeedforward;
+    public SimpleMotorFeedforward rollerFeedForward;
 
-    public SparkClosedLoopController armPIDController;
+    public SparkClosedLoopController rollerPIDController;
 
-	// public static ComplexWidget PIDWidget;
+    // public static ComplexWidget PIDWidget;
 
-    public ArmSubsystem() {
+    public RollerSubsystem() {
 
-        this.arm = new SparkMax(Constants.ARM, MotorType.kBrushless);
+        this.roller = new SparkMax(Constants.ROLLER, MotorType.kBrushless);
 
-        arm.configure(
+        roller.configure(
                 new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
-                        .apply(new SoftLimitConfig().reverseSoftLimit(0))
-                        .apply(new ClosedLoopConfig().p(Constants.ARM_kP).i(Constants.ARM_kI)
-                                .d(Constants.ARM_kD)
-                                .apply(new MAXMotionConfig().maxVelocity(Constants.ARM_MAX_VELOCITY.in(Units.RPM))
-                                        .maxAcceleration(
-                                                Constants.ARM_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
+                        .apply(new ClosedLoopConfig().p(Constants.ROLLER_kP).i(Constants.ROLLER_kI)
+                                .d(Constants.ROLLER_kD)),
                 ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        this.armEncoder = arm.getEncoder();
+        this.rollerEncoder = roller.getEncoder();
 
-        this.armFeedforward = new ArmFeedforward(Constants.ARM_kS, Constants.ARM_kG,
+        this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
+                voltage -> {
+                    roller.setVoltage(voltage);
+                },
+                log -> {
+                    log.motor("roller")
+                            .voltage(Units.Volts.of(roller.getBusVoltage()))
+                            .linearPosition(Units.Inches
+                                    .of(rollerEncoder.getPosition() * Constants.ROLLER_DIAMETER.in(Inches) * Math.PI))
+                            .linearVelocity(Units.Inches.per(Units.Minute)
+                                    .of(rollerEncoder.getVelocity() * Constants.ROLLER_DIAMETER.in(Inches)));
+                },
+                this));
+
+        this.rollerFeedForward = new SimpleMotorFeedforward(Constants.ARM_kS,
                 Constants.ARM_kV, Constants.ARM_kA);
 
-        this.armPIDController = arm.getClosedLoopController();
+        this.rollerPIDController = roller.getClosedLoopController();
 
         instance = this;
     }
 
-    public static ArmSubsystem getInstance() {
+    public static RollerSubsystem getInstance() {
         return instance;
     }
 
-    public void arm() {
-        double speed = Constants.tertiaryStick.getY();
+    public void roll() {
+        double speed = Constants.tertiaryStick.getThrottle();
 
-        // replace with applySpeed after proper testing and wiring.
-        arm.set(speed);
+        System.out.println(speed);
+
+        roller.set(speed);
     }
 
-    public void applySpeed(double speed) {
-
-        speed = (armEncoder.getPosition() <= Constants.ARM_MIN_POS.in(Units.Rotations) && speed < 0)
-                || (armEncoder.getPosition()
-                        * Constants.ARM_GEAR_RATIO >= Constants.ARM_MAX_POS.in(Units.Rotations)
-                        && speed > 0) ? 0 : speed;
-
-        arm.set(speed);
-    }
-
-    public void setTargetPosition(double rotations) {
-        armPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
+    public void setTargetVelocity(AngularVelocity velocity) {
+        rollerPIDController.setReference(velocity.in(Units.RPM), ControlType.kVelocity);
     }
 
     public boolean isStill() {
-        return armEncoder.getVelocity() == 0;
+        return rollerEncoder.getVelocity() == 0;
     }
 
     /**

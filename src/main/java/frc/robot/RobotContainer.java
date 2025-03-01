@@ -9,12 +9,14 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorTo;
+import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Wait;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -36,10 +38,12 @@ public class RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ElevatorSubsytem m_elevatorSubsytem = new ElevatorSubsytem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+	private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
 
 	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem);
 	private final ElevatorCommand m_elevatorCommand = new ElevatorCommand(m_elevatorSubsytem);
 	private final ArmCommand m_armCommand = new ArmCommand(m_armSubsystem);
+	private final RollerCommand m_rollerCommand = new RollerCommand(m_rollerSubsystem);
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new CommandXboxController(
 	// 		OperatorConstants.kDriverControllerPort);
@@ -51,6 +55,7 @@ public class RobotContainer {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
+		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -94,7 +99,13 @@ public class RobotContainer {
 		// An example command will be run in autonomous
 		// return new SequentialCommandGroup(Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse)); 
 		// return Autos.testMotor(m_driveSubsystem, m_driveSubsystem.bl);
-		return Autos.testPID(m_driveSubsystem, m_driveSubsystem.bl, m_driveSubsystem.blPID, m_driveSubsystem.blEncoder);
+		// return Autos.testSparkPID(m_armSubsystem, m_armSubsystem.arm);
+		return new SequentialCommandGroup(
+			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kForward),
+			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kForward),
+			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kReverse),
+			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kReverse)	
+		);
 		// return Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC);
 	}
 }
