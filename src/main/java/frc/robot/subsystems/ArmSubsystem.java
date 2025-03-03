@@ -40,6 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     public SparkClosedLoopController armPIDController;
 
+    public double setpoint;
+
 	// public static ComplexWidget PIDWidget;
 
     public ArmSubsystem() {
@@ -64,6 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
                 Constants.ARM_kV, Constants.ARM_kA);
 
         this.armPIDController = arm.getClosedLoopController();
+
+        this.setpoint = 0;
 
         instance = this;
     }
@@ -90,11 +94,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setTargetPosition(double rotations) {
-        armPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
+        armPIDController.setReference(rotations, ControlType.kPosition);
+        setpoint = rotations;
     }
 
     public boolean isStill() {
-        return armEncoder.getVelocity() == 0;
+        return Math.round(armEncoder.getVelocity() * 100) / 100.0 == 0;
     }
 
     /**

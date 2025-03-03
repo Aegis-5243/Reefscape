@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.RollerSubsystem;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -31,7 +32,9 @@ public class RollerCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_subsystem.roll();
+        // m_subsystem.roll();
+
+        m_subsystem.setTargetPosition(Units.Rotations.of(0));
     }
 
     // Called once the command ends or is interrupted.

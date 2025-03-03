@@ -35,7 +35,7 @@ public class ArmTo extends Command {
         LOW_CORAL(Units.Degrees.of(55)),
         MID_CORAL(Units.Degrees.of(55)),
         HIGH_CORAL(Units.Degrees.of(69)),
-        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(55));
+        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(60));
 
         private final Angle loc;
 
@@ -59,12 +59,13 @@ public class ArmTo extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		
+		System.out.println("ArmTo Done");
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_subsystem.isStill();
+		
+		return m_subsystem.armEncoder.getPosition() - target < .2 && m_subsystem.armEncoder.getPosition() - target > -.2;
 	}
 }

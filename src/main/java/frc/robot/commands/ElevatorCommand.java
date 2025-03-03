@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsytem;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -31,7 +32,7 @@ public class ElevatorCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_subsystem.elevator();
+        m_subsystem.elevator(Constants.ELEVATOR_STILL_PERCENT);
     }
 
     // Called once the command ends or is interrupted.

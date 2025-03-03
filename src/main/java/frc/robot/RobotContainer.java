@@ -5,12 +5,14 @@
 package frc.robot;
 
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorTo;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Wait;
+import frc.robot.commands.ArmTo.ArmLocation;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
@@ -57,8 +59,8 @@ public class RobotContainer {
 		m_driveSubsystem.setDefaultCommand(m_driveCommand);
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
-		// m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
-		CommandScheduler.getInstance().registerSubsystem(m_rollerSubsystem);
+		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
+		// CommandScheduler.getInstance().registerSubsystem(m_rollerSubsystem);
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -87,10 +89,30 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-		new JoystickButton(Constants.primaryStick, 3).onTrue(new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem));
+		new JoystickButton(Constants.primaryStick, 3).onTrue(new ArmTo(ArmLocation.INTAKE, m_armSubsystem));
 		new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
-		new JoystickButton(Constants.primaryStick, 4).onTrue(new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem));
-		new JoystickButton(Constants.tertiaryStick, 3).onTrue(m_rollerSubsystem.startRun(() -> {m_rollerSubsystem.rollerEncoder.setPosition(0);m_rollerSubsystem.setTargetPosition(Units.Rotations.of(0));}, () -> {}));
+		new JoystickButton(Constants.primaryStick, 4).onTrue(new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem));
+
+		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.THROUGH, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
+		));
 		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 

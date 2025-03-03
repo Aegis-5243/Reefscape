@@ -60,6 +60,8 @@ public class ElevatorTo extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		
+		m_subsystem.elevator(0);
+		System.out.println("ElevatorTo done");
 	}
 
 	// Returns true when the command should end.

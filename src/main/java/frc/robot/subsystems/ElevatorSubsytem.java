@@ -117,6 +117,21 @@ public class ElevatorSubsytem extends SubsystemBase {
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
 		applySpeed(speed, elevatorMinion);
+
+		// System.out.println(elevator.get());
+	}
+
+	public void elevator(double speed) {
+
+		// System.out.println(speed);
+		// System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
+		// System.out.println(elevatorMinionEncoder.getPosition());
+
+		// replace with applySpeed after proper testing and wiring.
+		applySpeed(speed, elevator);
+		applySpeed(speed, elevatorMinion);
+
+		// System.out.println(elevator.get());
 	}
 
 	public void applySpeed(double speed, SparkMax motor) {
@@ -143,6 +158,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	}
 
 	public void runToSetpoint() {
+		// System.out.println(elevatorEncoder.getPosition());
 		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 6);
 			diff = diff > 1 ? 1 : diff;

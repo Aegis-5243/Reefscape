@@ -62,8 +62,6 @@ public class RollerSubsystem extends SubsystemBase {
 
         this.rollerEncoder.setPosition(0);
 
-        this.setTargetPosition(Units.Rotations.of(0));
-
         this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
                 voltage -> {
                     roller.setVoltage(voltage);
