@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
@@ -38,6 +39,8 @@ public class RollerSubsystem extends SubsystemBase {
 
     public SparkMax roller;
 
+    public TimeOfFlight laser;
+
     public SysIdRoutine sysId;
 
     public RelativeEncoder rollerEncoder;
@@ -63,6 +66,8 @@ public class RollerSubsystem extends SubsystemBase {
         this.rollerEncoder.setPosition(0);
 
         this.setTargetPosition(Units.Rotations.of(0));
+
+        this.laser = new TimeOfFlight(Constants.TIME_OF_FLIGHT);
 
         this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
                 voltage -> {

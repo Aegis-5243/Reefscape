@@ -145,6 +145,8 @@ public final class Constants {
 	public static final AngularVelocity ROLLER_OUT_TARGET_VELOCITY = Units.RPM.of(0);
 	public static final AngularVelocity ROLLER_IN_TARGET_VELOCITY = Units.RPM.of(0);
 
+	public static final int TIME_OF_FLIGHT = 33;
+
 	public static final double NEO_1_1_kFF = 1.0 / 473;
 
 	public static final double NEO_ENCODER_COUNTS_PER_REV = 42;
