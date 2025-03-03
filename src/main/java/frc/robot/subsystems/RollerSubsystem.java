@@ -65,8 +65,6 @@ public class RollerSubsystem extends SubsystemBase {
 
         this.rollerEncoder.setPosition(0);
 
-        this.setTargetPosition(Units.Rotations.of(0));
-
         this.laser = new TimeOfFlight(Constants.TIME_OF_FLIGHT);
 
         this.sysId = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
@@ -88,6 +86,9 @@ public class RollerSubsystem extends SubsystemBase {
 
         this.rollerPIDController = roller.getClosedLoopController();
 
+
+        this.setTargetPosition(Units.Rotations.of(0));
+        
         instance = this;
     }
 
