@@ -85,9 +85,6 @@ public class RollerSubsystem extends SubsystemBase {
                 Constants.ARM_kV, Constants.ARM_kA);
 
         this.rollerPIDController = roller.getClosedLoopController();
-
-
-        this.setTargetPosition(Units.Rotations.of(0));
         
         instance = this;
     }

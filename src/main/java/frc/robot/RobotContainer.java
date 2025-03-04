@@ -10,7 +10,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorTo;
-import frc.robot.commands.Intake;
+import frc.robot.commands.IntakeOuttake;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Wait;
 import frc.robot.commands.ArmTo.ArmLocation;
@@ -114,7 +114,7 @@ public class RobotContainer {
 		// 	new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
 		// 	new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
 		// ));
-		new JoystickButton(Constants.primaryStick, 1).onTrue(new Intake(m_rollerSubsystem));
+		new JoystickButton(Constants.primaryStick, 1).onTrue(new IntakeOuttake(m_rollerSubsystem));
 		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 

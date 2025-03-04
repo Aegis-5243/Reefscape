@@ -9,7 +9,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class Intake extends Command {
+public class IntakeOuttake extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final RollerSubsystem m_subsystem;
     private int stage;
@@ -19,7 +19,7 @@ public class Intake extends Command {
      *
      * @param subsystem The subsystem used by this command.
      */
-    public Intake(RollerSubsystem subsystem) {
+    public IntakeOuttake(RollerSubsystem subsystem) {
         m_subsystem = subsystem;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -40,11 +40,9 @@ public class Intake extends Command {
             if (m_subsystem.laser.getRange() < 3) {
                 stage = 1;
                 m_subsystem.rollerEncoder.setPosition(0);
+                m_subsystem.setTargetPosition(Units.Rotations.of(-2));
             }
         }
-        
-        if (stage == 1)
-            m_subsystem.setTargetPosition(Units.Rotations.of(-2));
     }
 
     // Called once the command ends or is interrupted.
