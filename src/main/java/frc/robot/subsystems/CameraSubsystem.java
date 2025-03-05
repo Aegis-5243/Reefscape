@@ -4,18 +4,24 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class LimelightSubsystem extends SubsystemBase {
+public class CameraSubsystem extends SubsystemBase {
     /** Creates a new ExampleSubsystem. */
-    private static LimelightSubsystem instance;
+    private static CameraSubsystem instance;
 
-    public LimelightSubsystem() {
+    public CameraSubsystem() {
         instance = this;
+        CameraServer.startAutomaticCapture(0);
+        CameraServer.startAutomaticCapture(new HttpCamera(Constants.FRONT_LIMELIGHT, "http://" + Constants.FRONT_LIMELIGHT + ".local:5800"));
+        CameraServer.startAutomaticCapture(new HttpCamera(Constants.BACK_LIMELIGHT, "http://" + Constants.BACK_LIMELIGHT + ".local:5800"));
     }
 
-    public static LimelightSubsystem getInstance() {
+    public static CameraSubsystem getInstance() {
         return instance;
     }
 
