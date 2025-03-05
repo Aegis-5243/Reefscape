@@ -18,6 +18,7 @@ import frc.robot.commands.ArmTo.ArmLocation;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
@@ -45,6 +46,7 @@ public class RobotContainer {
 	private final ElevatorSubsytem m_elevatorSubsytem = new ElevatorSubsytem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 	private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
+	private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
 	private final DriveCommand m_driveCommand = new DriveCommand(m_driveSubsystem);
 	private final ElevatorCommand m_elevatorCommand = new ElevatorCommand(m_elevatorSubsytem);
@@ -62,7 +64,7 @@ public class RobotContainer {
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
 		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
-		// CommandScheduler.getInstance().registerSubsystem(m_rollerSubsystem);
+		CommandScheduler.getInstance().registerSubsystem(m_cameraSubsystem );
 
 		// Configure the trigger bindings
 		configureBindings();
