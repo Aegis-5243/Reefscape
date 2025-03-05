@@ -152,6 +152,17 @@ public class DriveSubsystem extends SubsystemBase {
 	 *               Counterclockwise is positive.
 	 */
 	public void mechDrive(double xSpeed, double ySpeed, double zSpeed) {
+		// Apply deadzone
+		double stickDeadzone = 0.1;
+		if (Math.abs(xSpeed) < stickDeadzone) xSpeed = 0;
+		if (Math.abs(ySpeed) < stickDeadzone) ySpeed = 0;
+		if (Math.abs(zSpeed) < stickDeadzone) zSpeed = 0;
+		
+		// Apply exponential rates
+		if (xSpeed != 0) xSpeed = Math.abs(xSpeed * xSpeed) * (xSpeed < 0 ? -1 : 1);
+		if (ySpeed != 0) ySpeed = Math.abs(ySpeed * ySpeed) * (ySpeed < 0 ? -1 : 1);
+		if (zSpeed != 0) zSpeed = Math.abs(zSpeed * zSpeed) * (zSpeed < 0 ? -1 : 1);
+
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 		;
 	}
