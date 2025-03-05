@@ -58,7 +58,7 @@ public class RollerSubsystem extends SubsystemBase {
         roller.configure(
                 new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
                         .apply(new ClosedLoopConfig().p(Constants.ROLLER_kP).i(Constants.ROLLER_kI)
-                                .d(Constants.ROLLER_kD)),
+                                .d(Constants.ROLLER_kD).apply(new MAXMotionConfig().maxVelocity(90))),
                 ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.rollerEncoder = roller.getEncoder();
@@ -106,11 +106,11 @@ public class RollerSubsystem extends SubsystemBase {
     }
 
     public void setTargetPosition(Angle dist) {
-        rollerPIDController.setReference(dist.in(Units.Rotations), ControlType.kPosition);
+        rollerPIDController.setReference(dist.in(Units.Rotations), ControlType.kMAXMotionPositionControl);
     }
 
     public boolean isStill() {
-        return rollerEncoder.getVelocity() == 0;
+        return Math.round(rollerEncoder.getVelocity() * 100) / 100.0 == 0;
     }
 
     /**
@@ -141,7 +141,8 @@ public class RollerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
+        
+        System.out.println(laser.getRange());
     }
 
     @Override

@@ -10,7 +10,8 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorTo;
-import frc.robot.commands.IntakeOuttake;
+import frc.robot.commands.Intake;
+import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Wait;
 import frc.robot.commands.ArmTo.ArmLocation;
@@ -90,31 +91,33 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-		// new JoystickButton(Constants.primaryStick, 3).onTrue(new ArmTo(ArmLocation.INTAKE, m_armSubsystem));
-		// new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
-		// new JoystickButton(Constants.primaryStick, 4).onTrue(new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem));
+		new JoystickButton(Constants.primaryStick, 3).onTrue(new ArmTo(ArmLocation.INTAKE, m_armSubsystem));
+		new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem));
+		new JoystickButton(Constants.primaryStick, 4).onTrue(new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem));
 
-		// new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
-		// 	new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-		// 	new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
-		// 	new ArmTo(ArmLocation.THROUGH, m_armSubsystem)
-		// ));
-		// new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
-		// 	new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-		// 	new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
-		// 	new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)
-		// ));
-		// new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
-		// 	new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-		// 	new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
-		// 	new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)
-		// ));
-		// new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
-		// 	new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-		// 	new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
-		// 	new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
-		// ));
-		new JoystickButton(Constants.primaryStick, 1).onTrue(new IntakeOuttake(m_rollerSubsystem));
+		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.THROUGH, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)
+		));
+		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
+		));
+		new JoystickButton(Constants.primaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
+		new JoystickButton(Constants.primaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+
 		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 

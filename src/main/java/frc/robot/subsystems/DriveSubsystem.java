@@ -159,8 +159,13 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Uses joysticks to drive the mechanum chassis (robot centric)
 	 */
-	public void mechDrive() {
+	public void mechDriveLimiter() {
 		mechDrive(limiter.calculate(-Constants.primaryStick.getY()), limiter.calculate(Constants.primaryStick.getX()), limiter.calculate(Constants.secondaryStick.getX()));
+	}
+
+	
+	public void mechDrive() {
+		mechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
 	/**

@@ -112,7 +112,7 @@ public final class Constants {
 
 	public static final int ARM = 31;
 
-	public static final double ARM_GEAR_RATIO = 75;
+	public static final double ARM_GEAR_RATIO = 25;
 
 	public static final Angle ARM_MAX_POS = Units.Degrees.of(360);
 	public static final Angle ARM_MIN_POS = Units.Degrees.of(17);
@@ -122,11 +122,13 @@ public final class Constants {
 	public static final double ARM_kV = 0;
 	public static final double ARM_kA = 0;
 
-	public static final double ARM_kP = 0.051;
+	public static final double ARM_kP = 0.1;
 	public static final double ARM_kI = 0;
 	public static final double ARM_kD = 0;
 
 	public static final int[] ARM_ENCODER = { 10, 12 };
+
+	public static final int ARM_LIMIT_SWITCH = 9;
 
 	// TODO: Replace with proper value
 	public static final AngularVelocity ARM_MAX_VELOCITY = Units.RPM.of(1);

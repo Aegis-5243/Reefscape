@@ -9,18 +9,24 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class IntakeOuttake extends Command {
+public class Intake extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final RollerSubsystem m_subsystem;
     private int stage;
+    private double rotations;
+    private double tolerance = .005;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public IntakeOuttake(RollerSubsystem subsystem) {
+    public Intake(RollerSubsystem subsystem) {
         m_subsystem = subsystem;
+        stage = 0;
+        rotations = -.5;
+
+        System.out.println("CONSTRUCT");
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
@@ -29,18 +35,23 @@ public class IntakeOuttake extends Command {
     @Override
     public void initialize() {
         stage = 0;
+        
+        System.out.println("INIT");
+        m_subsystem.rollerEncoder.setPosition(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         // m_subsystem.roll();
+        System.out.println(stage);
         if (stage == 0) {
-            m_subsystem.roller.set(.55);
-            if (m_subsystem.laser.getRange() < 3) {
+            m_subsystem.roller.set(-.19);
+            if (m_subsystem.laser.getRange() < 55) {
                 stage = 1;
+                m_subsystem.roller.set(0);
                 m_subsystem.rollerEncoder.setPosition(0);
-                m_subsystem.setTargetPosition(Units.Rotations.of(-2));
+                m_subsystem.setTargetPosition(Units.Rotations.of(rotations));
             }
         }
     }
@@ -48,12 +59,15 @@ public class IntakeOuttake extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        m_subsystem.rollerEncoder.setPosition(0);
+        m_subsystem.setTargetPosition(Units.Rotations.of(0));
+        stage = 0;
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
 
-        return false;
+        return m_subsystem.rollerEncoder.getPosition() > rotations - tolerance && m_subsystem.rollerEncoder.getPosition() < rotations + tolerance && stage == 1;
     }
 }

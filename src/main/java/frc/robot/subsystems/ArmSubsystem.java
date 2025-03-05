@@ -20,6 +20,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,6 +42,8 @@ public class ArmSubsystem extends SubsystemBase {
     public SparkClosedLoopController armPIDController;
 
     public double setpoint;
+
+    public DigitalInput limitSwitch;
 
 	// public static ComplexWidget PIDWidget;
 
@@ -67,6 +70,8 @@ public class ArmSubsystem extends SubsystemBase {
 
         this.armPIDController = arm.getClosedLoopController();
 
+        this.limitSwitch = new DigitalInput(Constants.ARM_LIMIT_SWITCH);
+
         this.setpoint = 0;
 
         instance = this;
@@ -91,6 +96,12 @@ public class ArmSubsystem extends SubsystemBase {
                         && speed > 0) ? 0 : speed;
 
         arm.set(speed);
+    }
+
+    public void checklimitSwitch() {
+        if (!limitSwitch.get()) {
+            armEncoder.setPosition(0);
+        }
     }
 
     public void setTargetPosition(double rotations) {
@@ -130,7 +141,7 @@ public class ArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
+        System.out.println(limitSwitch.get());
     }
 
     @Override
