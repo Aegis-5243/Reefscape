@@ -11,17 +11,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -39,9 +34,6 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public RelativeEncoder elevatorEncoder;
 	public RelativeEncoder elevatorMinionEncoder;
 
-	public ElevatorFeedforward elevatorFeedforward;
-	public ElevatorFeedforward elevatorMinionFeedforward;
-
 	public SparkClosedLoopController elevatorPIDController;
 	public SparkClosedLoopController elevatorMinionPIDController;
 
@@ -57,42 +49,19 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 		elevator.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(true)
-						.apply(new SoftLimitConfig().reverseSoftLimit(0))
-						/*.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_kP).i(Constants.ELEVATOR_kI)
-								.d(Constants.ELEVATOR_kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
-										.maxAcceleration(
-												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second)))))*/,
+						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		// With own pid
 		elevatorMinion.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
-						.apply(new SoftLimitConfig().reverseSoftLimit(0))
-						/*.apply(new ClosedLoopConfig().p(Constants.ELEVATOR_MINION_kP).i(Constants.ELEVATOR_MINION_kI)
-								.d(Constants.ELEVATOR_MINION_kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-								.apply(new MAXMotionConfig().maxVelocity(Constants.ELEVATOR_MAX_VELOCITY.in(Units.RPM))
-										.maxAcceleration(
-												Constants.ELEVATOR_MAX_ACCELERATION.in(Units.RPM.per(Units.Second)))))*/,
+						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
 				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-		// Without own pid
-		// elevatorMinion.configure(
-		// new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(elevator, true),
-		// ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		this.elevatorEncoder = elevator.getEncoder();
 		this.elevatorMinionEncoder = elevatorMinion.getEncoder();
 
-		// this.elevatorEncoder.setPosition(0);
-		// this.elevatorMinionEncoder.setPosition(0);
-
 		this.limitSwitch = new DigitalInput(Constants.ELEVATOR_HALL_EFFECT_PORT);
-
-		this.elevatorFeedforward = new ElevatorFeedforward(Constants.ELEVATOR_kS, Constants.ELEVATOR_kG,
-				Constants.ELEVATOR_kV, Constants.ELEVATOR_kA);
-		this.elevatorMinionFeedforward = new ElevatorFeedforward(Constants.ELEVATOR_MINION_kS,
-				Constants.ELEVATOR_MINION_kG, Constants.ELEVATOR_MINION_kV, Constants.ELEVATOR_MINION_kA);
 
 		this.elevatorPIDController = elevator.getClosedLoopController();
 		this.elevatorMinionPIDController = elevatorMinion.getClosedLoopController();
@@ -110,28 +79,15 @@ public class ElevatorSubsytem extends SubsystemBase {
 		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
 				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
 
-		// System.out.println(speed);
-		// System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
-		// System.out.println(elevatorMinionEncoder.getPosition());
-
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
 		applySpeed(speed, elevatorMinion);
-
-		// System.out.println(elevator.get());
 	}
 
 	public void elevator(double speed) {
-
-		// System.out.println(speed);
-		// System.out.print(elevatorMinionEncoder.getPosition() * Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches) + ", ");
-		// System.out.println(elevatorMinionEncoder.getPosition());
-
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
 		applySpeed(speed, elevatorMinion);
-
-		// System.out.println(elevator.get());
 	}
 
 	public void applySpeed(double speed, SparkMax motor) {
@@ -158,7 +114,6 @@ public class ElevatorSubsytem extends SubsystemBase {
 	}
 
 	public void runToSetpoint() {
-		// System.out.println(elevatorEncoder.getPosition());
 		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 6);
 			diff = diff > 1 ? 1 : diff;

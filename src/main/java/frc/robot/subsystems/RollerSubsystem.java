@@ -17,17 +17,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
-import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -44,8 +39,6 @@ public class RollerSubsystem extends SubsystemBase {
     public SysIdRoutine sysId;
 
     public RelativeEncoder rollerEncoder;
-
-    public SimpleMotorFeedforward rollerFeedForward;
 
     public SparkClosedLoopController rollerPIDController;
 
@@ -80,9 +73,6 @@ public class RollerSubsystem extends SubsystemBase {
                                     .of(rollerEncoder.getVelocity() * Constants.ROLLER_DIAMETER.in(Inches)));
                 },
                 this));
-
-        this.rollerFeedForward = new SimpleMotorFeedforward(Constants.ARM_kS,
-                Constants.ARM_kV, Constants.ARM_kA);
 
         this.rollerPIDController = roller.getClosedLoopController();
         

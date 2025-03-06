@@ -8,8 +8,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Utilities;
 
-import static edu.wpi.first.units.Units.Inches;
-
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -17,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class EncoderDrive extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final DriveSubsystem m_subsystem;
+    public double startYaw;
     public double yaw;
     public double turn = 0;
     public double zeroFR;
@@ -34,7 +33,6 @@ public class EncoderDrive extends Command {
      */
     public EncoderDrive(DriveSubsystem subsystem, Distance distance) {
         m_subsystem = subsystem;
-        m_subsystem.gyro.reset();
         this.counts = Utilities.distanceToRotations(distance) * Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION;
         
         // Use addRequirements() here to declare subsystem dependencies.
@@ -48,18 +46,20 @@ public class EncoderDrive extends Command {
         zeroFL = m_subsystem.flEncoder.get();
         zeroBR = m_subsystem.brEncoder.get();
         zeroBL = m_subsystem.blEncoder.get();
+
+        startYaw = m_subsystem.gyro.getYaw();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         yaw = m_subsystem.gyro.getYaw();
-        if (yaw + tolerance < 0)
+        if (yaw + tolerance < startYaw)
             turn += 0.0005;
-        if (yaw - tolerance > 0)
+        if (yaw - tolerance > startYaw)
             turn -= 0.0005;
         
-        m_subsystem.mechDrive(Math.signum(counts * Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION) * -0.5, 0, turn);
+        m_subsystem.mechDrive(Math.signum(counts) * -0.5, 0, turn);
     }
 
     // Called once the command ends or is interrupted.

@@ -93,9 +93,6 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-		new JoystickButton(Constants.primaryStick, 3).onTrue(new ArmTo(ArmLocation.INTAKE, m_armSubsystem));
-		new JoystickButton(Constants.primaryStick, 5).onTrue(new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem));
-		new JoystickButton(Constants.primaryStick, 4).onTrue(new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem));
 
 		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
 			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
@@ -117,10 +114,9 @@ public class RobotContainer {
 			new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
 			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
 		));
+
 		new JoystickButton(Constants.primaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
 		new JoystickButton(Constants.primaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
-
-		// new JoystickButton(Constants.primaryStick,6).onTrue(new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem));
 	}
 
 	/**

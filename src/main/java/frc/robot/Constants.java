@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -64,7 +62,6 @@ public final class Constants {
 	public static final double BR_kP = 0.017002;
 	public static final double BR_kD = 0;
 
-
 	public static final Distance WHEEL_DIAMETER = Units.Inches.of(8);
 
 	public static final Distance TRACK_WIDTH = Units.Inches.of(22.5);
@@ -81,24 +78,6 @@ public final class Constants {
 	public static final int ELEVATOR_SECONDARY = 22;
 
 	public static final int ELEVATOR_HALL_EFFECT_PORT = 8;
-
-	public static final double ELEVATOR_kS = 0;
-	public static final double ELEVATOR_kG = 0;
-	public static final double ELEVATOR_kV = 0;
-	public static final double ELEVATOR_kA = 0;
-
-	public static final double ELEVATOR_MINION_kS = 0;
-	public static final double ELEVATOR_MINION_kG = 0;
-	public static final double ELEVATOR_MINION_kV = 0;
-	public static final double ELEVATOR_MINION_kA = 0;
-
-	public static final double ELEVATOR_kP = 0;
-	public static final double ELEVATOR_kI = 0;
-	public static final double ELEVATOR_kD = 0;
-
-	public static final double ELEVATOR_MINION_kP = 0;
-	public static final double ELEVATOR_MINION_kI = 0;
-	public static final double ELEVATOR_MINION_kD = 0;
 
 	public static final double ELEVATOR_MAN_TOLERANCE = .5;
 
@@ -117,11 +96,6 @@ public final class Constants {
 	public static final Angle ARM_MAX_POS = Units.Degrees.of(360);
 	public static final Angle ARM_MIN_POS = Units.Degrees.of(17);
 
-	public static final double ARM_kS = 0;
-	public static final double ARM_kG = 0;
-	public static final double ARM_kV = 0;
-	public static final double ARM_kA = 0;
-
 	public static final double ARM_kP = 0.1;
 	public static final double ARM_kI = 0;
 	public static final double ARM_kD = 0;
@@ -135,10 +109,6 @@ public final class Constants {
 	public static final AngularAcceleration ARM_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
 
 	public static final int ROLLER = 32;
-
-	public static final double ROLLER_kS = 0;
-	public static final double ROLLER_kV = 0;
-	public static final double ROLLER_kA = 0;
 
 	public static final double ROLLER_kP = 3.596;
 	public static final double ROLLER_kI = 0;

@@ -18,10 +18,8 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -36,8 +34,6 @@ public class ArmSubsystem extends SubsystemBase {
     public SysIdRoutine sysId;
 
     public RelativeEncoder armEncoder;
-
-    public ArmFeedforward armFeedforward;
 
     public SparkClosedLoopController armPIDController;
 
@@ -64,9 +60,6 @@ public class ArmSubsystem extends SubsystemBase {
         this.armEncoder = arm.getEncoder();
 
         this.armEncoder.setPosition(0);
-
-        this.armFeedforward = new ArmFeedforward(Constants.ARM_kS, Constants.ARM_kG,
-                Constants.ARM_kV, Constants.ARM_kA);
 
         this.armPIDController = arm.getClosedLoopController();
 
