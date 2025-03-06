@@ -156,7 +156,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Applies deadzones to input and uses them to drive the robot (robot centric)
+	 * Applies deadzones and exponential scaling to input and uses them to drive the robot (robot centric)
 	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is
 	 *               positive.
 	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is
@@ -181,7 +181,7 @@ public class DriveSubsystem extends SubsystemBase {
 			xSpeed *= squaredMag;
 			ySpeed *= squaredMag;
 		}
-		if (zSpeed != 0) zSpeed = Math.abs(zSpeed * zSpeed) * (zSpeed < 0 ? -1 : 1);
+		if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}

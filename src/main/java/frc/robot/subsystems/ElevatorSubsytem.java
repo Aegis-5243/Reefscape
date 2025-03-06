@@ -142,7 +142,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	 */
 	public void runToSetpoint() {
 		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
-			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 6);
+			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (100);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
@@ -153,7 +153,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 			System.out.println("out");
 		}
 		if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
-			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (manualSetpoint * 6);
+			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (100);
 			diff = diff > 1 ? 1 : diff;
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;

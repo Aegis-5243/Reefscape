@@ -115,8 +115,8 @@ public class RobotContainer {
 			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)
 		));
 
-		new JoystickButton(Constants.primaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
-		new JoystickButton(Constants.primaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
+		new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
 	}
 
 	/**
