@@ -160,13 +160,19 @@ public class DriveSubsystem extends SubsystemBase {
 	public void DSMechDrive(double xSpeed, double ySpeed, double zSpeed) {
 		// Apply deadzone
 		double stickDeadzone = 0.1;
-		if (Math.abs(xSpeed) < stickDeadzone) xSpeed = 0;
-		if (Math.abs(ySpeed) < stickDeadzone) ySpeed = 0;
+		double squaredMag = xSpeed * xSpeed + ySpeed * ySpeed;
+		if (squaredMag < stickDeadzone * stickDeadzone) xSpeed = ySpeed = 0;
+
+
 		if (Math.abs(zSpeed) < stickDeadzone) zSpeed = 0;
+
+		if (squaredMag > 1) squaredMag = 1;
 		
 		// Apply exponential rates
-		if (xSpeed != 0) xSpeed = Math.abs(xSpeed * xSpeed) * (xSpeed < 0 ? -1 : 1);
-		if (ySpeed != 0) ySpeed = Math.abs(ySpeed * ySpeed) * (ySpeed < 0 ? -1 : 1);
+		if (xSpeed != 0 || ySpeed != 0) {
+			xSpeed *= squaredMag;
+			ySpeed *= squaredMag;
+		}
 		if (zSpeed != 0) zSpeed = Math.abs(zSpeed * zSpeed) * (zSpeed < 0 ? -1 : 1);
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
