@@ -136,6 +136,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 		this.gyro.reset();
 
+		this.gyro.resetDisplacement();
+
 		limiter = new SlewRateLimiter(.5);
 
 		instance = this;
@@ -152,6 +154,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 *               Counterclockwise is positive.
 	 */
 	public void mechDrive(double xSpeed, double ySpeed, double zSpeed) {
+		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
+	}
+
+	public void DSMechDrive(double xSpeed, double ySpeed, double zSpeed) {
 		// Apply deadzone
 		double stickDeadzone = 0.1;
 		if (Math.abs(xSpeed) < stickDeadzone) xSpeed = 0;
@@ -164,7 +170,6 @@ public class DriveSubsystem extends SubsystemBase {
 		if (zSpeed != 0) zSpeed = Math.abs(zSpeed * zSpeed) * (zSpeed < 0 ? -1 : 1);
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
-		;
 	}
 
 	/**
@@ -176,7 +181,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	
 	public void mechDrive() {
-		mechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
+		DSMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
 	/**
@@ -239,6 +244,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// System.out.println("fr: " + frEncoder.getRate());
 		// System.out.println("bl: " + blEncoder.getRate());
 		// System.out.println("br: " + brEncoder.getRate());
+		System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY());
 	}
 
 	@Override

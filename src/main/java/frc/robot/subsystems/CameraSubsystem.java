@@ -16,9 +16,10 @@ public class CameraSubsystem extends SubsystemBase {
 
     public CameraSubsystem() {
         instance = this;
+        System.out.println("erik is bad");
         CameraServer.startAutomaticCapture(0);
-        CameraServer.startAutomaticCapture(new HttpCamera(Constants.FRONT_LIMELIGHT, "http://" + Constants.FRONT_LIMELIGHT + ".local:5800"));
-        CameraServer.startAutomaticCapture(new HttpCamera(Constants.BACK_LIMELIGHT, "http://" + Constants.BACK_LIMELIGHT + ".local:5800"));
+        CameraServer.startAutomaticCapture(new HttpCamera(Constants.FRONT_LIMELIGHT, "http://10.52.43.201:5800"));
+        CameraServer.startAutomaticCapture(new HttpCamera(Constants.BACK_LIMELIGHT, "http://10.52.43.200:5800/"));
     }
 
     public static CameraSubsystem getInstance() {
@@ -52,6 +53,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // CameraServer.startAutomaticCapture(new HttpCamera(Constants.FRONT_LIMELIGHT, "http://10.52.43.201:5800"));
+        // CameraServer.startAutomaticCapture(new HttpCamera(Constants.BACK_LIMELIGHT, "http://10.52.43.200:5800/"));
         // This method will be called once per scheduler run
 
     }

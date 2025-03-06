@@ -8,6 +8,7 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.DriveTo;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorTo;
 import frc.robot.commands.Intake;
@@ -64,7 +65,6 @@ public class RobotContainer {
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
 		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
-		CommandScheduler.getInstance().registerSubsystem(m_cameraSubsystem );
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -133,12 +133,13 @@ public class RobotContainer {
 		// return new SequentialCommandGroup(Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse), new Wait(5), Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse)); 
 		// return Autos.testMotor(m_driveSubsystem, m_driveSubsystem.bl);
 		// return Autos.testSparkPID(m_armSubsystem, m_armSubsystem.arm);
-		return new SequentialCommandGroup(
-			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kForward),
-			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kForward),
-			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kReverse),
-			Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kReverse)	
-		);
+		// return new SequentialCommandGroup(
+		// 	Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kForward),
+		// 	Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kForward),
+		// 	Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.QUASISTATIC, Direction.kReverse),
+		// 	Autos.sysIdRoutine(m_rollerSubsystem.sysId, RoutineType.DYNAMIC, Direction.kReverse)	
+		// );
+		return new DriveTo(Units.Feet.of(2), Units.Feet.of(0), m_driveSubsystem);
 		// return Autos.sysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC);
 	}
 }
