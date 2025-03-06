@@ -33,6 +33,7 @@ public class ArmCommand extends Command {
     @Override
     public void execute() {
         m_subsystem.setTargetPosition(m_subsystem.setpoint);
+        m_subsystem.checklimitSwitch();
     }
 
     // Called once the command ends or is interrupted.

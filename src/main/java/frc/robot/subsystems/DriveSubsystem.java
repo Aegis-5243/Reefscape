@@ -23,7 +23,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class DriveSubsystem extends SubsystemBase {
-	/** Creates a new ExampleSubsystem. */
+	
 	private static DriveSubsystem instance;
 
 	public CANVenom fl;
@@ -57,6 +57,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public AHRS gyro;
 
+    /**
+     * Creates a new DriveSubsystem
+     */
 	public DriveSubsystem() {
 		this.fl = new CANVenom(Constants.FL);
 		this.fr = new CANVenom(Constants.FR);
@@ -151,6 +154,15 @@ public class DriveSubsystem extends SubsystemBase {
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}
 
+	/**
+	 * Applies deadzones to input and uses them to drive the robot (robot centric)
+	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is
+	 *               positive.
+	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is
+	 *               positive.
+	 * @param zSpeed The robot's rotation rate around the Z axis [-1.0..1.0].
+	 *               Counterclockwise is positive.
+	 */
 	public void DSMechDrive(double xSpeed, double ySpeed, double zSpeed) {
 		// Apply deadzone
 		double stickDeadzone = 0.1;
@@ -174,13 +186,16 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Uses joysticks to drive the mechanum chassis (robot centric)
+	 * Uses joysticks to drive the mechanum chassis while using a slew rate limiter (robot centric)
 	 */
 	public void mechDriveLimiter() {
 		mechDrive(limiter.calculate(-Constants.primaryStick.getY()), limiter.calculate(Constants.primaryStick.getX()), limiter.calculate(Constants.secondaryStick.getX()));
 	}
 
-	
+
+	/**
+	 * Uses joysticks to drive the mechanum chassis while using deadzones (robot centric)
+	 */
 	public void mechDrive() {
 		DSMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}

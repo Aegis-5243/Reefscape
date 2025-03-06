@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
-    /** Creates a new ExampleSubsystem. */
+    
     private static ArmSubsystem instance;
 
     public SparkMax arm;
@@ -41,10 +41,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public DigitalInput limitSwitch;
 
-	// public static ComplexWidget PIDWidget;
-
+    /**
+     * Creates a new ArmSubsystem
+     */
     public ArmSubsystem() {
-
         this.arm = new SparkMax(Constants.ARM, MotorType.kBrushless);
 
         arm.configure(
@@ -74,6 +74,11 @@ public class ArmSubsystem extends SubsystemBase {
         return instance;
     }
 
+    /**
+     * TeleOperated control for arm.
+     * @deprecated Use applySpeed() instead.
+     */
+    @Deprecated
     public void arm() {
         double speed = Constants.tertiaryStick.getY();
 
@@ -81,6 +86,10 @@ public class ArmSubsystem extends SubsystemBase {
         arm.set(speed);
     }
 
+    /**
+     * Applies speed to the arm.
+     * @param speed percentage of how fast the arm should travel. -1 <= speed <= 1
+     */
     public void applySpeed(double speed) {
 
         speed = (armEncoder.getPosition() <= Constants.ARM_MIN_POS.in(Units.Rotations) && speed < 0)
@@ -91,17 +100,29 @@ public class ArmSubsystem extends SubsystemBase {
         arm.set(speed);
     }
 
+    /**
+     * Check if limit switch is triggered.
+     * <p>If so, zero encoder.
+     */
     public void checklimitSwitch() {
         if (!limitSwitch.get()) {
             armEncoder.setPosition(0);
         }
     }
 
+    /**
+     * Set target position for PID.
+     * @param rotations Target position in rotations
+     */
     public void setTargetPosition(double rotations) {
         armPIDController.setReference(rotations, ControlType.kPosition);
         setpoint = rotations;
     }
 
+    /**
+     * Detects if arm is practically still.
+     * @return boolean, true if still.
+     */
     public boolean isStill() {
         return Math.round(armEncoder.getVelocity() * 100) / 100.0 == 0;
     }

@@ -10,8 +10,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 
-import static edu.wpi.first.units.Units.Inches;
-
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -29,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
 public class RollerSubsystem extends SubsystemBase {
-    /** Creates a new ExampleSubsystem. */
+
     private static RollerSubsystem instance;
 
     public SparkMax roller;
@@ -42,8 +40,9 @@ public class RollerSubsystem extends SubsystemBase {
 
     public SparkClosedLoopController rollerPIDController;
 
-    // public static ComplexWidget PIDWidget;
-
+    /**
+     * Creates a new RollerSubsystem
+     */
     public RollerSubsystem() {
 
         this.roller = new SparkMax(Constants.ROLLER, MotorType.kBrushless);
@@ -68,9 +67,9 @@ public class RollerSubsystem extends SubsystemBase {
                     log.motor("roller")
                             .voltage(Units.Volts.of(roller.getBusVoltage()))
                             .linearPosition(Units.Inches
-                                    .of(rollerEncoder.getPosition() * Constants.ROLLER_DIAMETER.in(Inches) * Math.PI))
+                                    .of(rollerEncoder.getPosition() * Constants.ROLLER_DIAMETER.in(Units.Inches) * Math.PI))
                             .linearVelocity(Units.Inches.per(Units.Minute)
-                                    .of(rollerEncoder.getVelocity() * Constants.ROLLER_DIAMETER.in(Inches)));
+                                    .of(rollerEncoder.getVelocity() * Constants.ROLLER_DIAMETER.in(Units.Inches)));
                 },
                 this));
 
@@ -83,6 +82,11 @@ public class RollerSubsystem extends SubsystemBase {
         return instance;
     }
 
+    /**
+     * TeleOperated control for arm.
+     * @deprecated Use roller.set() instead.
+     */
+    @Deprecated
     public void roll() {
         double speed = Constants.tertiaryStick.getThrottle();
 
@@ -91,14 +95,26 @@ public class RollerSubsystem extends SubsystemBase {
         roller.set(speed);
     }
 
+    /**
+     * Set target velocity using PID.
+     * @param velocity
+     */
     public void setTargetVelocity(AngularVelocity velocity) {
         rollerPIDController.setReference(velocity.in(Units.RPM), ControlType.kVelocity);
     }
 
+    /**
+     * Set target position using PID.
+     * @param dist
+     */
     public void setTargetPosition(Angle dist) {
         rollerPIDController.setReference(dist.in(Units.Rotations), ControlType.kMAXMotionPositionControl);
     }
 
+    /**
+     * Detects if the rollers are practically still.
+     * @return boolean, true if still.
+     */
     public boolean isStill() {
         return Math.round(rollerEncoder.getVelocity() * 100) / 100.0 == 0;
     }

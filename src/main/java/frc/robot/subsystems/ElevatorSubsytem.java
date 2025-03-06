@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
 public class ElevatorSubsytem extends SubsystemBase {
-	/** Creates a new ExampleSubsystem. */
+	
 	private static ElevatorSubsytem instance;
 
 	public SparkMax elevator;
@@ -42,6 +42,9 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public double manualSetpoint;
 	public boolean done;
 
+    /**
+     * Creates a new ElevatorSubsystem
+     */
 	public ElevatorSubsytem() {
 
 		this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
@@ -75,6 +78,11 @@ public class ElevatorSubsytem extends SubsystemBase {
 		return instance;
 	}
 
+	/**
+     * TeleOperated control for arm.
+     * @deprecated Use elevator(double speed) instead.
+     */
+    @Deprecated
 	public void elevator() {
 		double speed = ((Constants.primaryStick.getThrottle() + 1) / 2)
 				+ ((Constants.secondaryStick.getThrottle() - 1) / 2);
@@ -84,12 +92,22 @@ public class ElevatorSubsytem extends SubsystemBase {
 		applySpeed(speed, elevatorMinion);
 	}
 
+	/**
+	 * Set both motors to move at specified speed.
+	 * @param speed speed for motors to run at. -1 <= speed <= 1.
+	 */
 	public void elevator(double speed) {
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
 		applySpeed(speed, elevatorMinion);
 	}
 
+	/**
+	 * Applies speed to specified SparkMax
+	 * <p>Also checks limit switch and resets incoder if triggered
+	 * @param speed speed for motor to run at. -1 <= speed <= 1.
+	 * @param motor motor to run.
+	 */
 	public void applySpeed(double speed, SparkMax motor) {
 		if (!limitSwitch.get()) {
 			motor.getEncoder().setPosition(0);
@@ -103,16 +121,25 @@ public class ElevatorSubsytem extends SubsystemBase {
 		motor.set(speed);
 	}
 
+	@Deprecated
 	public void setTargetPositionPID(double rotations) {
 		elevatorPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
 		elevatorMinionPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
 	}
 
+	/**
+	 * Set target position using manual run to setpoint functions.
+	 * @param rotations
+	 */
 	public void setTargetPositionMan(double rotations) {
 		manualSetpoint = rotations;
 		done = false;
 	}
 
+	/**
+	 * Runs to setpoint specified by setTargetPositionMan()
+	 * <p>Must be called every tick.
+	 */
 	public void runToSetpoint() {
 		if (elevatorEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 			double diff = (manualSetpoint - elevatorEncoder.getPosition()) / (manualSetpoint * 6);
@@ -134,10 +161,18 @@ public class ElevatorSubsytem extends SubsystemBase {
 		}
 	}
 
+	
+    /**
+     * Detects if elevator is still.
+     * @return boolean, true if still.
+     */
 	public boolean isStill() {
 		return elevatorEncoder.getVelocity() == 0 && elevatorMinionEncoder.getVelocity() == 0;
 	}
 
+	/**
+	 * @return true if manual setpoint is reached.
+	 */
 	public boolean isDone() {
 		return done;
 	}

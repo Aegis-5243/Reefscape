@@ -11,9 +11,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class CameraSubsystem extends SubsystemBase {
-    /** Creates a new ExampleSubsystem. */
+    
     private static CameraSubsystem instance;
 
+    /**
+     * Creates a new CameraSubsystem
+     */
     public CameraSubsystem() {
         instance = this;
         CameraServer.startAutomaticCapture(0);
@@ -52,8 +55,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // CameraServer.startAutomaticCapture(new HttpCamera(Constants.FRONT_LIMELIGHT, "http://10.52.43.201:5800"));
-        // CameraServer.startAutomaticCapture(new HttpCamera(Constants.BACK_LIMELIGHT, "http://10.52.43.200:5800/"));
         // This method will be called once per scheduler run
 
     }
