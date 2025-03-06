@@ -14,7 +14,8 @@ public class ElevatorCommand extends Command {
     private final ElevatorSubsytem m_subsystem;
 
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new ElevatorCommand.
+     * <p>To be used as a default command.
      *
      * @param subsystem The subsystem used by this command.
      */

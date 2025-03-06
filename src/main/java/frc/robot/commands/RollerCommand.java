@@ -14,7 +14,8 @@ public class RollerCommand extends Command {
     private final RollerSubsystem m_subsystem;
 
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new RollerCommand.
+     * <p>To be used as a default command.
      *
      * @param subsystem The subsystem used by this command.
      */

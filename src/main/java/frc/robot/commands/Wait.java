@@ -16,7 +16,9 @@ public class Wait extends Command {
 	private final Timer timer = new Timer();
 
 	/**
-	 * Creates a new ExampleCommand.
+	 * Creates a new Wait command.
+	 * <p>Waits for the specified number of seconds.
+	 * <p>Disables WPILib motor safty during waiting period.
 	 *
 	 * @param time How long to wait (in seconds)
 	 */

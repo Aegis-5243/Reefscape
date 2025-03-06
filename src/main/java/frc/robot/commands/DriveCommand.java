@@ -13,8 +13,9 @@ public class DriveCommand extends Command {
 	private final DriveSubsystem m_subsystem;
 
 	/**
-	 * Creates a new ExampleCommand.
-	 *
+	 * Creates a new DriveCommand.
+	 * <p>To be used as a default command.
+	 * 
 	 * @param subsystem The subsystem used by this command.
 	 */
 	public DriveCommand(DriveSubsystem subsystem) {

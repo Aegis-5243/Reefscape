@@ -17,8 +17,9 @@ public class Outtake extends Command {
     private double tolerance = .005;
 
     /**
-     * Creates a new ExampleCommand.
-     *
+     * Creates a new Intake command.
+     * <p>Outtake the coral with the arm
+     * 
      * @param subsystem The subsystem used by this command.
      */
     public Outtake(RollerSubsystem subsystem) {

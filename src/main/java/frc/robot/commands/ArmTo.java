@@ -17,9 +17,11 @@ public class ArmTo extends Command {
 	private double target;
 
 	/**
-	 * Creates a new ExampleCommand.
-	 *
-	 * @param time How long to wait (in seconds)
+	 * Creates a new ArmTo command.
+	 * <p>Turns arm to specified location.
+	 * 
+	 * @param loc Position to turn arm to.
+	 * @param subsystem The subsystem used by this command.
 	 */
 	public ArmTo(ArmLocation loc, ArmSubsystem subsystem) {
 		this.m_subsystem = subsystem;

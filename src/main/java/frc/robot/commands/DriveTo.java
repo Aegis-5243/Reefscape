@@ -5,11 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /** An example command that uses an example subsystem. */
@@ -22,6 +19,7 @@ public class DriveTo extends Command {
 
 	/**
 	 * Creates a new DriveTo command.
+	 * <p>Drives to specified location using navX displacement.
 	 *
 	 * @param x How far to travel vetrically. This is relative to robots current position
 	 * @param y How far to travel horizontally. This is relative to robots current position

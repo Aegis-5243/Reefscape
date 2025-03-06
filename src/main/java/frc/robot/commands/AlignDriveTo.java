@@ -16,9 +16,11 @@ public class AlignDriveTo extends Command {
 	private DriveInfo info;
 
 	/**
-	 * Creates a new ExampleCommand.
+	 * Creates a new AlignDriveTo command.
+	 * <p>Unimplemented
 	 *
-	 * @param time How long to wait (in seconds)
+	 * @param loc what to align to.
+	 * @param subsystem Drive subsystem.
 	 */
 	public AlignDriveTo(DriveLocation loc, DriveSubsystem subsystem) {
 		this.m_subsystem = subsystem;

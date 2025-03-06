@@ -26,6 +26,15 @@ public final class Autos {
 		return Commands.sequence(subsystem.exampleMethodCommand(), new DriveCommand(subsystem));
 	}
 
+	/**
+	 * Command to run SysID routine for drive.
+	 * 
+	 * <p>Will disable WPILib motor safety for duration of test.
+	 * @param subsystem The drive subsystem.
+	 * @param type The type of routine (i.e. qusistatic).
+	 * @param dir The direction to turn the motors.
+	 * @return The command to run the routine.
+	 */
 	public static Command driveSysIdRoutine(DriveSubsystem subsystem, RoutineType type, SysIdRoutine.Direction dir) {
 		Command command;
 		switch (type) {
@@ -50,9 +59,16 @@ public final class Autos {
 				}));
 	}
 
-	
+	/**
+	 * @deprecated Use in built functions
+	 * Command to run a SysID routine.
+	 * @param routine
+	 * @param type
+	 * @param dir
+	 * @return The command to run the routine.
+	 */
+	@Deprecated
 	public static Command sysIdRoutine(SysIdRoutine routine, RoutineType type, SysIdRoutine.Direction dir) {
-		
 		switch (type) {
 			case DYNAMIC:
 				return routine.dynamic(dir);
@@ -65,20 +81,33 @@ public final class Autos {
 		}
 	}
 
+	/**
+	 * Routine type for SysID routines
+	 * <p>Dynamic - Runs the motors at a constant rate
+	 * <p>Quasistaic - Runs motors at an increasing rate
+	 */
 	public static enum RoutineType {
 		DYNAMIC,
 		QUASISTATIC
 	}
 
+	/**
+	 * Test motor by running it at 50% power.
+	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
+	 * @param motor Motor to run.
+	 * @return The command to run the motor
+	 */
 	public static Command testMotor(Subsystem sub, MotorController motor) {
-		return sub.startEnd(() -> {
-			motor.set(.5);
-			System.out.println("running");
-		}, () -> {
-			motor.set(0);
-		});
+		return testMotor(sub, motor, 0.5);
 	}
 
+	/**
+	 * Test motor by running it.
+	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
+	 * @param motor Motor to run.
+	 * @param speed Speed that the motor should run.
+	 * @return The command to run the motor
+	 */
 	public static Command testMotor(Subsystem sub, MotorController motor, double speed) {
 		return sub.startEnd(() -> {
 			motor.set(speed);
@@ -87,7 +116,15 @@ public final class Autos {
 		});
 	}
 
-	public static Command testPID(SubsystemBase sub, MotorController motor, PIDController motorPID, Encoder encoder) {
+	/**
+	 * Used to PID tune a motor
+	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
+	 * @param motor Motor to tune.
+	 * @param motorPID PID controller of the motor.
+	 * @param encoder Encoder attached to the motor.
+	 * @return The command to tune the motor.
+	 */
+	public static Command tunePID(SubsystemBase sub, MotorController motor, PIDController motorPID, Encoder encoder) {
 		return sub.startRun(() -> {
 			tmp = Shuffleboard.getTab("pid test").add("PID", motorPID);//.withWidget(BuiltInWidgets.kPIDController);
 		}, () -> {

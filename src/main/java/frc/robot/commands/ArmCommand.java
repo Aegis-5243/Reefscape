@@ -13,7 +13,8 @@ public class ArmCommand extends Command {
     private final ArmSubsystem m_subsystem;
 
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new ArmCommand.
+     * <p>To be used as a default command.
      *
      * @param subsystem The subsystem used by this command.
      */

@@ -17,9 +17,11 @@ public class ElevatorTo extends Command {
 	private double target;
 
 	/**
-	 * Creates a new ExampleCommand.
-	 *
-	 * @param time How long to wait (in seconds)
+	 * Creates a new ElevatorTo command.
+	 * <p>Moves elevator to specified location.
+	 * 
+	 * @param loc Position to move the elevator to.
+	 * @param subsystem The subsystem used by this command.
 	 */
 	public ElevatorTo(ElevatorLocation loc, ElevatorSubsytem subsystem) {
 		this.m_subsystem = subsystem;

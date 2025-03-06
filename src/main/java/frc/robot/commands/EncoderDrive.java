@@ -27,6 +27,7 @@ public class EncoderDrive extends Command {
 
     /**
      * Creates a new EncoderDrive command.
+     * <p>Drives the robot the specified distance.
      *
      * @param subsystem The subsystem used by this command.
 	 * @param distance Distance to drive

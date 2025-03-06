@@ -17,8 +17,10 @@ public class Intake extends Command {
     private double tolerance = .005;
 
     /**
-     * Creates a new ExampleCommand.
-     *
+     * Creates a new Intake command.
+     * <p>Intake the coral with the arm
+     * <p>Precondition: Arm must be in the proper position for intaking
+     * 
      * @param subsystem The subsystem used by this command.
      */
     public Intake(RollerSubsystem subsystem) {

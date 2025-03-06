@@ -17,7 +17,8 @@ public class Turn extends Command {
     public final double tolerance = 1;
 
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new Turn command.
+     * <p>Turns the robot to the specified heading.
      *
      * @param subsystem The subsystem used by this command.
      * @param degrees The heading you want to turn to in degrees. -180 <= heading <= 180
