@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -253,14 +254,8 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		// System.out.println("fl: " + flEncoder.getLinearVelocity().toLongString()); 
-		// if (RobotState.isEnabled())
-		// 	System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
-		// System.out.println("br: " + brEncoder.getLinearVelocity().toLongString());
-		// System.out.println("fr: " + frEncoder.getRate());
-		// System.out.println("bl: " + blEncoder.getRate());
-		// System.out.println("br: " + brEncoder.getRate());
-		System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY());
+		if (RobotState.isEnabled())
+			System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY() + ", yaw: " + gyro.getYaw());
 	}
 
 	@Override
