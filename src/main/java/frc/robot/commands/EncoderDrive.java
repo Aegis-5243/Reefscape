@@ -27,7 +27,7 @@ public class EncoderDrive extends Command {
     public final double tolerance = .75;
 
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new EncoderDrive command.
      *
      * @param subsystem The subsystem used by this command.
 	 * @param distance Distance to drive
