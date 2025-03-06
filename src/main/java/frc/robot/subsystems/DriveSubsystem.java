@@ -170,6 +170,7 @@ public class DriveSubsystem extends SubsystemBase {
 		
 		// Apply exponential rates
 		if (xSpeed != 0 || ySpeed != 0) {
+			squaredMag = Math.sqrt(squaredMag);
 			xSpeed *= squaredMag;
 			ySpeed *= squaredMag;
 		}
