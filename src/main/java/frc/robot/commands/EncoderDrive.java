@@ -34,7 +34,7 @@ public class EncoderDrive extends Command {
      */
     public EncoderDrive(DriveSubsystem subsystem, Distance distance) {
         m_subsystem = subsystem;
-        this.counts = Utilities.distanceToRotations(distance) * Constants.THROUGH_BORE_COUNTS_PER_REVOLUTION;
+        this.counts = Utilities.distanceToRotations(distance) * 12.75;
         
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -43,10 +43,10 @@ public class EncoderDrive extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        zeroFR = m_subsystem.frEncoder.get();
-        zeroFL = m_subsystem.flEncoder.get();
-        zeroBR = m_subsystem.brEncoder.get();
-        zeroBL = m_subsystem.blEncoder.get();
+        zeroFR = m_subsystem.fr.getPosition();
+        zeroBR = m_subsystem.br.getPosition();
+        zeroFL = m_subsystem.fl.getPosition();
+        zeroBL = m_subsystem.bl.getPosition();
 
         startYaw = m_subsystem.gyro.getYaw();
     }
@@ -59,8 +59,8 @@ public class EncoderDrive extends Command {
             turn += 0.0005;
         if (yaw - tolerance > startYaw)
             turn -= 0.0005;
-        
-        m_subsystem.mechDrive(Math.signum(counts) * -0.5, 0, turn);
+        // System.out.println("counts target: " + counts + ", current: " + m_subsystem.fl.getPosition());
+        m_subsystem.mechDrive(Math.signum(counts) * 0.5, 0, turn);
     }
 
     // Called once the command ends or is interrupted.
@@ -72,6 +72,6 @@ public class EncoderDrive extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(m_subsystem.flEncoder.get() - zeroFL) > Math.abs(counts) && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
+        return Math.abs(m_subsystem.fl.getPosition() - zeroFL) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
     }
 }

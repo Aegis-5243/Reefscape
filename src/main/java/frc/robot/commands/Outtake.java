@@ -45,7 +45,6 @@ public class Outtake extends Command {
     @Override
     public void execute() {
         // m_subsystem.roll();
-        System.out.println(stage);
         if (stage == 0) {
             m_subsystem.roller.set(-.19);
             if (m_subsystem.laser.getRange() > 65) {

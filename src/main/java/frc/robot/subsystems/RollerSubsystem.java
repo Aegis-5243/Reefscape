@@ -90,7 +90,7 @@ public class RollerSubsystem extends SubsystemBase {
     public void roll() {
         double speed = Constants.tertiaryStick.getThrottle();
 
-        System.out.println(speed);
+        // System.out.println(speed);
 
         roller.set(speed);
     }
