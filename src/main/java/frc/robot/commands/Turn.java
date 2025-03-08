@@ -14,7 +14,7 @@ public class Turn extends Command {
     private final DriveSubsystem m_subsystem;
     public double yaw;
     public double heading;
-    public final double tolerance = 1;
+    public final double tolerance = .5;
 
     /**
      * Creates a new Turn command.
@@ -34,20 +34,22 @@ public class Turn extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_subsystem.gyro.reset();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         yaw = m_subsystem.gyro.getYaw();
+        System.out.println(yaw + ", " + heading);
         if (yaw < heading - tolerance || yaw > heading + tolerance) {
             // formatting diff
 
-            double diff = (heading - yaw) / (heading * 2);
+            double diff = (heading - yaw) / (200);
             diff = diff > 1 ? 1 : diff;
             diff = diff < -1 ? -1 : diff;
             diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
-            m_subsystem.mechDrive(0, 0, -diff);;
+            m_subsystem.mechDrive(0, 0, diff);;
         }
     }
 

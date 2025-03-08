@@ -105,9 +105,9 @@ public class ArmSubsystem extends SubsystemBase {
      * <p>If so, zero encoder.
      */
     public void checklimitSwitch() {
-        if (!limitSwitch.get()) {
-            armEncoder.setPosition(0);
-        }
+        // if (!limitSwitch.get()) {
+        //     armEncoder.setPosition(0);
+        // }
     }
 
     /**

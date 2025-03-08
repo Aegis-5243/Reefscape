@@ -113,6 +113,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 			motor.getEncoder().setPosition(0);
 		}
 
+
 		speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
 				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT
 						.minus(Units.Inches.of(6)).in(Units.Meters)

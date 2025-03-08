@@ -130,11 +130,9 @@ public class DriveSubsystem extends SubsystemBase {
 				},
 				this));
 
-		this.gyro = new AHRS(NavXComType.kMXP_SPI);
+		this.gyro = new AHRS(NavXComType.kUSB1);
 
 		this.gyro.reset();
-
-		this.gyro.resetDisplacement();
 
 		limiter = new SlewRateLimiter(.5);
 
@@ -254,8 +252,8 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (RobotState.isEnabled())
-			System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY() + ", yaw: " + gyro.getYaw());
+		// if (RobotState.isEnabled())
+		// 	System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY() + ", yaw: " + gyro.getYaw());
 	}
 
 	@Override

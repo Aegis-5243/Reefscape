@@ -29,10 +29,10 @@ public final class Constants {
 	public static final int BL = 11;
 	public static final int BR = 14;
 
-	public static final int[] FL_ENCODER_PORTS = { 6, 7 };
-	public static final int[] FR_ENCODER_PORTS = { 0, 1 };
-	public static final int[] BL_ENCODER_PORTS = { 4, 5 };
-	public static final int[] BR_ENCODER_PORTS = { 2, 3 };
+	public static final int[] FL_ENCODER_PORTS = { 7, 6 };
+	public static final int[] FR_ENCODER_PORTS = { 1, 0 };
+	public static final int[] BL_ENCODER_PORTS = { 5, 4 };
+	public static final int[] BR_ENCODER_PORTS = { 3, 2 };
 
 	public static final double FR_kA = 0;
 	public static final double FR_kS = 0;
@@ -81,7 +81,7 @@ public final class Constants {
 
 	public static final double ELEVATOR_MAN_TOLERANCE = .5;
 
-	public static final double ELEVATOR_STILL_PERCENT = 0.01953125;
+	public static final double ELEVATOR_STILL_PERCENT = 0.02734375;
 
 	// TODO: Replace with proper value
 	public static final AngularVelocity ELEVATOR_MAX_VELOCITY = Units.RPM.of(1);
