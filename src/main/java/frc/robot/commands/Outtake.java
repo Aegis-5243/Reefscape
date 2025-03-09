@@ -25,9 +25,9 @@ public class Outtake extends Command {
     public Outtake(RollerSubsystem subsystem) {
         m_subsystem = subsystem;
         stage = 0;
-        rotations = -.5;
+        rotations = -1;
         
-        System.out.println("CONSTRUCT");
+        // System.out.println("CONSTRUCT");
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
@@ -37,7 +37,7 @@ public class Outtake extends Command {
     public void initialize() {
         stage = 0;
         
-        System.out.println("INIT");
+        System.out.println("OUTTAKE START");
         m_subsystem.rollerEncoder.setPosition(0);
     }
 
@@ -62,6 +62,7 @@ public class Outtake extends Command {
         m_subsystem.rollerEncoder.setPosition(0);
         m_subsystem.setTargetPosition(Units.Rotations.of(0));
         stage = 0;
+        System.out.println("OUTTAKE END");
     }
 
     // Returns true when the command should end.

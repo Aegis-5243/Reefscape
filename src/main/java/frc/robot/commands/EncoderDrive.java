@@ -35,7 +35,7 @@ public class EncoderDrive extends Command {
     public EncoderDrive(DriveSubsystem subsystem, Distance distance) {
         m_subsystem = subsystem;
         this.counts = Utilities.distanceToRotations(distance) * 12.75;
-        
+
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
@@ -49,6 +49,8 @@ public class EncoderDrive extends Command {
         zeroBL = m_subsystem.bl.getPosition();
 
         startYaw = m_subsystem.gyro.getYaw();
+
+        System.out.println("Drive Start");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -66,7 +68,7 @@ public class EncoderDrive extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-
+        System.out.println("Drive END");
     }
 
     // Returns true when the command should end.

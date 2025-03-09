@@ -115,8 +115,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 
 		speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
-				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT
-						.minus(Units.Inches.of(6)).in(Units.Meters)
+				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT.in(Units.Meters)
 				&& speed > 0) ? 0 : speed;
 
 		motor.set(speed);
@@ -148,10 +147,8 @@ public class ElevatorSubsytem extends SubsystemBase {
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
 			applySpeed(diff, elevator);
-			System.out.println("in");
 		} else {
 			done = true;
-			System.out.println("out");
 		}
 		if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (100);
