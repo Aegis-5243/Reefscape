@@ -102,7 +102,7 @@ public class VelocityEncoder extends Encoder {
         return Units.RadiansPerSecond.of(this.getRate());
     }
 
-    public Distance getDist() {
+    public Distance getLinearDistance() {
         this.setDistancePerPulse(METERS_PER_PULSE);
         return Units.Meters.of(this.getDistance());
     }

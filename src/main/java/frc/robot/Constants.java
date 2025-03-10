@@ -64,8 +64,8 @@ public final class Constants {
 
 	public static final Distance WHEEL_DIAMETER = Units.Inches.of(8);
 
-	public static final Distance TRACK_WIDTH = Units.Inches.of(22.5);
-	public static final Distance TRACK_HEIGHT = Units.Inches.of(20.5);
+	public static final Distance TRACK_WIDTH = Units.Inches.of(22.25);
+	public static final Distance TRACK_HEIGHT = Units.Inches.of(20.3599);
 
 	public static final double RIO_CONTROL_LOOP = 0.1;
 
