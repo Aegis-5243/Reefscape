@@ -36,7 +36,7 @@ public class ArmTo extends Command {
 		THROUGH(Units.Degrees.of(45)),
         LOW_CORAL(Units.Degrees.of(55)),
         MID_CORAL(Units.Degrees.of(55)),
-        HIGH_CORAL(Units.Degrees.of(69)),
+        HIGH_CORAL(Units.Degrees.of(55)),
         DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(55));
 
         private final Angle loc;
@@ -50,6 +50,7 @@ public class ArmTo extends Command {
 	@Override
 	public void initialize() {
 		m_subsystem.setTargetPosition(target);
+		System.out.println("aRMtO START");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -68,6 +69,6 @@ public class ArmTo extends Command {
 	@Override
 	public boolean isFinished() {
 		
-		return m_subsystem.armEncoder.getPosition() - target < .2 && m_subsystem.armEncoder.getPosition() - target > -.2;
+		return m_subsystem.armEncoder.getPosition() - target < .4 && m_subsystem.armEncoder.getPosition() - target > -.4;
 	}
 }

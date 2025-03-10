@@ -93,15 +93,15 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setInverted(false);
 		this.br.setInverted(true);
 
-		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
-		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
-		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
-		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
+		this.flEncoder = null;//new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
+		this.frEncoder = null;//new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
+		this.blEncoder = null;//new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
+		this.brEncoder = null;//new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
 
-		this.flEncoder.setReverseDirection(false);
-		this.frEncoder.setReverseDirection(true);
-		this.blEncoder.setReverseDirection(false);
-		this.brEncoder.setReverseDirection(true);
+		// this.flEncoder.setReverseDirection(false);
+		// this.frEncoder.setReverseDirection(true);
+		// this.blEncoder.setReverseDirection(false);
+		// this.brEncoder.setReverseDirection(true);
 
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
@@ -208,13 +208,12 @@ public class DriveSubsystem extends SubsystemBase {
 			squaredMag = 1;
 
 		// Apply exponential rates
-		if (xSpeed != 0 || ySpeed != 0) {
-			squaredMag = Math.sqrt(squaredMag);
-			xSpeed *= squaredMag;
-			ySpeed *= squaredMag;
-		}
-		if (zSpeed != 0)
-			zSpeed = zSpeed * Math.abs(zSpeed);
+		// if (xSpeed != 0 || ySpeed != 0) {
+		// 	squaredMag = Math.sqrt(squaredMag);
+		// 	xSpeed *= squaredMag;
+		// 	ySpeed *= squaredMag;
+		// }
+		// if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}
@@ -233,6 +232,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * centric)
 	 */
 	public void mechDrive() {
+		System.out.println(Constants.primaryStick.getPOV());
 		DSMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 

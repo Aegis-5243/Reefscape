@@ -4,15 +4,22 @@
 
 package frc.robot.commands;
 
+import frc.robot.commands.ArmTo.ArmLocation;
+import frc.robot.commands.ElevatorTo.ElevatorLocation;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-
+import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -133,6 +140,61 @@ public final class Autos {
 			// System.out.println(tmp.getDouble(0));
 		});
 
+	}
+
+	public static Command middleStartL4Score(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem) {
+		return new SequentialCommandGroup(
+			new Wait(5),
+			new ParallelCommandGroup(
+				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
+				new SequentialCommandGroup(
+					new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+					new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+					new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)
+				)
+			),
+							
+			new AutonBringCoralUp(m_rollerSubsystem),
+			new Wait(1),
+			new EncoderDrive(m_driveSubsystem, Units.Feet.of(2)),
+			new Wait(1),
+			new Outtake(m_rollerSubsystem),
+			new Wait(1)
+		);
+	}
+
+	public static Command moveForward(double delay, DriveSubsystem m_driveSubsystem) {
+		return new SequentialCommandGroup(
+			new Wait(delay),
+			new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5))
+		);
+	}
+	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem) {
+		return new SequentialCommandGroup(
+			new Wait(4),
+
+			new ParallelCommandGroup(
+				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
+				new SequentialCommandGroup(
+					new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+					new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+					new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)
+				)
+			),
+
+			new ParallelRaceGroup(
+				new AlignCoralTMP(m_driveSubsystem),
+				new ElevatorCommand(m_elevatorSubsytem)
+			),
+			new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
+			
+			new AutonBringCoralUp(m_rollerSubsystem),
+			new Wait(1),
+			new TimeDrive(m_driveSubsystem, 3, 0.1),
+			new Wait(2),
+			new Outtake(m_rollerSubsystem),
+			new Wait(1)
+		);
 	}
 
 	private Autos() {

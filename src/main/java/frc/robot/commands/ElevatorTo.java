@@ -50,6 +50,7 @@ public class ElevatorTo extends Command {
 	public void initialize() {
 		// m_subsystem.setTargetPositionPID(target);
 		m_subsystem.setTargetPositionMan(target);
+		System.out.println("ElevatorTo Start");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.

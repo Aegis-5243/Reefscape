@@ -38,6 +38,7 @@ public class DriveTo extends Command {
 	@Override
 	public void initialize() {
         this.m_subsystem.gyro.resetDisplacement();
+		System.out.println("DriveTo Start");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -73,7 +74,7 @@ public class DriveTo extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		
+		System.out.println("DriveTo End");
 	}
 
 	// Returns true when the command should end.

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,7 +36,11 @@ public class RollerCommand extends Command {
     public void execute() {
         // m_subsystem.roll();
 
-        m_subsystem.setTargetPosition(Units.Rotations.of(0));
+        // if (!Constants.primaryStick.getRawButton(2))
+            m_subsystem.setTargetPosition(Units.Rotations.of(0));
+        // else
+            // m_subsystem.roller.set(.05);
+            // m_subsystem.rollerEncoder.setPosition(0);
     }
 
     // Called once the command ends or is interrupted.
