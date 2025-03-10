@@ -10,21 +10,32 @@ import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.libs.VelocityEncoder;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.util.LimelightHelpers;
 
 public class DriveSubsystem extends SubsystemBase {
-	
+
 	private static DriveSubsystem instance;
 
 	public CANVenom fl;
@@ -58,9 +69,15 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public AHRS gyro;
 
-    /**
-     * Creates a new DriveSubsystem
-     */
+	public MecanumDriveKinematics kinematics;
+
+	public ChassisSpeeds chassisSpeeds;
+
+	public MecanumDrivePoseEstimator poseEstimator;
+
+	/**
+	 * Creates a new DriveSubsystem
+	 */
 	public DriveSubsystem() {
 		this.fl = new CANVenom(Constants.FL);
 		this.fr = new CANVenom(Constants.FR);
@@ -110,22 +127,22 @@ public class DriveSubsystem extends SubsystemBase {
 				log -> {
 					log.motor("drive-front-right")
 							.voltage(Units.Volts.of(fr.getBusVoltage()))
-							.linearPosition(frEncoder.getDist())
+							.linearPosition(frEncoder.getLinearDistance())
 							.linearVelocity(frEncoder.getLinearVelocity());
 
 					log.motor("drive-front-left")
 							.voltage(Units.Volts.of(fl.getBusVoltage()))
-							.linearPosition(flEncoder.getDist())
+							.linearPosition(flEncoder.getLinearDistance())
 							.linearVelocity(flEncoder.getLinearVelocity());
 
 					log.motor("drive-back-left")
 							.voltage(Units.Volts.of(bl.getBusVoltage()))
-							.linearPosition(blEncoder.getDist())
+							.linearPosition(blEncoder.getLinearDistance())
 							.linearVelocity(blEncoder.getLinearVelocity());
 
 					log.motor("drive-back-right")
 							.voltage(Units.Volts.of(br.getBusVoltage()))
-							.linearPosition(brEncoder.getDist())
+							.linearPosition(brEncoder.getLinearDistance())
 							.linearVelocity(brEncoder.getLinearVelocity());
 				},
 				this));
@@ -134,8 +151,22 @@ public class DriveSubsystem extends SubsystemBase {
 
 		this.gyro.reset();
 
+		// Make it so getAngle is zero when facing red aliiance station
+		// Needed for field coordinates, which are based on blue alliance.
+		if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) gyro.setAngleAdjustment(180);
+
 		limiter = new SlewRateLimiter(.5);
 
+		/*
+		 * TODO: - Get wheel positions on robot.
+		 * - Get initial pose
+		 * - Get max drive speed
+		 */
+		this.kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283), new Translation2d(0.259, -0.283), new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
+
+		this.poseEstimator = new MecanumDrivePoseEstimator(kinematics, this.gyro.getRotation2d(),
+				new MecanumDriveWheelPositions(), null);
+				
 		instance = this;
 	}
 
@@ -154,7 +185,9 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Applies deadzones and exponential scaling to input and uses them to drive the robot (robot centric)
+	 * Applies deadzones and exponential scaling to input and uses them to drive the
+	 * robot (robot centric)
+	 * 
 	 * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is
 	 *               positive.
 	 * @param ySpeed The robot's speed along the Y axis [-1.0..1.0]. Left is
@@ -166,13 +199,15 @@ public class DriveSubsystem extends SubsystemBase {
 		// Apply deadzone
 		double stickDeadzone = 0.1;
 		double squaredMag = xSpeed * xSpeed + ySpeed * ySpeed;
-		if (squaredMag < stickDeadzone * stickDeadzone) xSpeed = ySpeed = 0;
+		if (squaredMag < stickDeadzone * stickDeadzone)
+			xSpeed = ySpeed = 0;
 
+		if (Math.abs(zSpeed) < stickDeadzone)
+			zSpeed = 0;
 
-		if (Math.abs(zSpeed) < stickDeadzone) zSpeed = 0;
+		if (squaredMag > 1)
+			squaredMag = 1;
 
-		if (squaredMag > 1) squaredMag = 1;
-		
 		// Apply exponential rates
 		// if (xSpeed != 0 || ySpeed != 0) {
 		// 	squaredMag = Math.sqrt(squaredMag);
@@ -185,15 +220,17 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Uses joysticks to drive the mechanum chassis while using a slew rate limiter (robot centric)
+	 * Uses joysticks to drive the mechanum chassis while using a slew rate limiter
+	 * (robot centric)
 	 */
 	public void mechDriveLimiter() {
-		mechDrive(limiter.calculate(-Constants.primaryStick.getY()), limiter.calculate(Constants.primaryStick.getX()), limiter.calculate(Constants.secondaryStick.getX()));
+		mechDrive(limiter.calculate(-Constants.primaryStick.getY()), limiter.calculate(Constants.primaryStick.getX()),
+				limiter.calculate(Constants.secondaryStick.getX()));
 	}
 
-
 	/**
-	 * Uses joysticks to drive the mechanum chassis while using deadzones (robot centric)
+	 * Uses joysticks to drive the mechanum chassis while using deadzones (robot
+	 * centric)
 	 */
 	public void mechDrive() {
 		System.out.println(Constants.primaryStick.getPOV());
@@ -219,6 +256,103 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void fieldMechDrive() {
 		fieldMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
+	}
+
+	public void updatePoseEstimate() {
+		poseEstimator.update(gyro.getRotation2d(), new MecanumDriveWheelPositions(flEncoder.getLinearDistance(),
+				frEncoder.getLinearDistance(), blEncoder.getLinearDistance(), brEncoder.getLinearDistance()));
+
+		// Modified from
+		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
+
+		boolean useMegaTag2 = true; // set to false to use MegaTag1
+		boolean doRejectUpdate = false;
+
+		// For Front limelight
+		if (useMegaTag2 == false) {
+			LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
+
+			if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+				if (mt1.rawFiducials[0].ambiguity > .7) {
+					doRejectUpdate = true;
+				}
+				if (mt1.rawFiducials[0].distToCamera > 3) {
+					doRejectUpdate = true;
+				}
+			}
+			if (mt1.tagCount == 0) {
+				doRejectUpdate = true;
+			}
+
+			if (!doRejectUpdate) {
+				poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+				poseEstimator.addVisionMeasurement(
+						mt1.pose,
+						mt1.timestampSeconds);
+			}
+
+		} else if (useMegaTag2 == true) {
+			LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
+					poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+			if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
+												// ignore vision updates
+			{
+				doRejectUpdate = true;
+			}
+			if (mt2.tagCount == 0) {
+				doRejectUpdate = true;
+			}
+			if (!doRejectUpdate) {
+				poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+				poseEstimator.addVisionMeasurement(
+						mt2.pose,
+						mt2.timestampSeconds);
+			}
+		}
+
+		// For back limelight
+		if (useMegaTag2 == false) {
+			LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.BACK_LIMELIGHT);
+
+			if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+				if (mt1.rawFiducials[0].ambiguity > .7) {
+					doRejectUpdate = true;
+				}
+				if (mt1.rawFiducials[0].distToCamera > 3) {
+					doRejectUpdate = true;
+				}
+			}
+			if (mt1.tagCount == 0) {
+				doRejectUpdate = true;
+			}
+
+			if (!doRejectUpdate) {
+				poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+				poseEstimator.addVisionMeasurement(
+						mt1.pose,
+						mt1.timestampSeconds);
+			}
+
+		} else if (useMegaTag2 == true) {
+			LimelightHelpers.SetRobotOrientation(Constants.BACK_LIMELIGHT,
+					poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.BACK_LIMELIGHT);
+			if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
+												// ignore vision updates
+			{
+				doRejectUpdate = true;
+			}
+			if (mt2.tagCount == 0) {
+				doRejectUpdate = true;
+			}
+			if (!doRejectUpdate) {
+				poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+				poseEstimator.addVisionMeasurement(
+						mt2.pose,
+						mt2.timestampSeconds);
+			}
+		}
 	}
 
 	public static DriveSubsystem getInstance() {

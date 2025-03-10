@@ -14,6 +14,7 @@ public class Turn extends Command {
     private final DriveSubsystem m_subsystem;
     public double yaw;
     public double heading;
+    public double startYaw;
     public final double tolerance = .5;
 
     /**
@@ -34,13 +35,13 @@ public class Turn extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_subsystem.gyro.reset();
+        startYaw = m_subsystem.gyro.getYaw();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        yaw = m_subsystem.gyro.getYaw();
+        yaw = m_subsystem.gyro.getYaw() - startYaw;
         System.out.println(yaw + ", " + heading);
         if (yaw < heading - tolerance || yaw > heading + tolerance) {
             // formatting diff
