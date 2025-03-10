@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
@@ -161,7 +162,7 @@ public class DriveSubsystem extends SubsystemBase {
 		 * - Get initial pose
 		 * - Get max drive speed
 		 */
-		this.kinematics = new MecanumDriveKinematics(null, null, null, null);
+		this.kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283), new Translation2d(0.259, -0.283), new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
 
 		this.poseEstimator = new MecanumDrivePoseEstimator(kinematics, this.gyro.getRotation2d(),
 				new MecanumDriveWheelPositions(), null);
