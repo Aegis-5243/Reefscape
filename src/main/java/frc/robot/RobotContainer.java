@@ -4,29 +4,27 @@
 
 package frc.robot;
 
+import frc.robot.commands.AlignCoralTMP;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorTo;
-import frc.robot.commands.EncoderDrive;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
-import frc.robot.commands.Wait;
 import frc.robot.commands.ArmTo.ArmLocation;
-import frc.robot.commands.AutonBringCoralUp;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
-import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -53,6 +51,8 @@ public class RobotContainer {
 	private final ElevatorCommand m_elevatorCommand = new ElevatorCommand(m_elevatorSubsytem);
 	private final ArmCommand m_armCommand = new ArmCommand(m_armSubsystem);
 	private final RollerCommand m_rollerCommand = new RollerCommand(m_rollerSubsystem);
+
+	private final SendableChooser<Command> m_chooser = new SendableChooser<>();
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new
 	// CommandXboxController(
@@ -66,6 +66,12 @@ public class RobotContainer {
 		m_elevatorSubsytem.setDefaultCommand(m_elevatorCommand);
 		m_armSubsystem.setDefaultCommand(m_armCommand);
 		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
+
+		m_chooser.setDefaultOption("Middle position L4 coral no limelight", Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
+		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
+		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
+		m_chooser.addOption("DO NOT USE IN COMP", new AlignCoralTMP(m_driveSubsystem).repeatedly());
+		SmartDashboard.putData("auton chooser", m_chooser);
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -125,6 +131,12 @@ public class RobotContainer {
 			m_rollerSubsystem.roller.set(.05);
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
+
+		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoralTMP(m_driveSubsystem));
+		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoralTMP(m_driveSubsystem, 1));
+
+		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
+		
 	}
 
 	/**
@@ -134,23 +146,6 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new SequentialCommandGroup(
-			new Wait(5),
-			new ParallelCommandGroup(
-				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
-				new SequentialCommandGroup(
-					new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-					new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-					new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)
-				)
-			),
-							
-			new AutonBringCoralUp(m_rollerSubsystem),
-			new Wait(1),
-			new EncoderDrive(m_driveSubsystem, Units.Feet.of(2)),
-			new Wait(1),
-			new Outtake(m_rollerSubsystem),
-			new Wait(1)
-		);
+		return m_chooser.getSelected();
 	}
 }

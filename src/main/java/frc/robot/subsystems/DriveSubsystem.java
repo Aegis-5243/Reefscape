@@ -174,12 +174,12 @@ public class DriveSubsystem extends SubsystemBase {
 		if (squaredMag > 1) squaredMag = 1;
 		
 		// Apply exponential rates
-		if (xSpeed != 0 || ySpeed != 0) {
-			squaredMag = Math.sqrt(squaredMag);
-			xSpeed *= squaredMag;
-			ySpeed *= squaredMag;
-		}
-		if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
+		// if (xSpeed != 0 || ySpeed != 0) {
+		// 	squaredMag = Math.sqrt(squaredMag);
+		// 	xSpeed *= squaredMag;
+		// 	ySpeed *= squaredMag;
+		// }
+		// if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}
@@ -196,6 +196,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Uses joysticks to drive the mechanum chassis while using deadzones (robot centric)
 	 */
 	public void mechDrive() {
+		System.out.println(Constants.primaryStick.getPOV());
 		DSMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
