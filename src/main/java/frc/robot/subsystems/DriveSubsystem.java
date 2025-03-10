@@ -77,15 +77,15 @@ public class DriveSubsystem extends SubsystemBase {
 		this.bl.setInverted(false);
 		this.br.setInverted(true);
 
-		this.flEncoder = null;//new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
-		this.frEncoder = null;//new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
-		this.blEncoder = null;//new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
-		this.brEncoder = null;//new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
+		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
+		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
+		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
+		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
 
-		// this.flEncoder.setReverseDirection(false);
-		// this.frEncoder.setReverseDirection(true);
-		// this.blEncoder.setReverseDirection(false);
-		// this.brEncoder.setReverseDirection(true);
+		this.flEncoder.setReverseDirection(false);
+		this.frEncoder.setReverseDirection(true);
+		this.blEncoder.setReverseDirection(false);
+		this.brEncoder.setReverseDirection(true);
 
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
@@ -254,7 +254,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		// if (RobotState.isEnabled())
-		// 	System.out.println("x: " + gyro.getDisplacementX() + ", y: " + gyro.getDisplacementY() + ", yaw: " + gyro.getYaw());
+			System.out.println("x: " + flEncoder.getLinearVelocity());
 	}
 
 	@Override

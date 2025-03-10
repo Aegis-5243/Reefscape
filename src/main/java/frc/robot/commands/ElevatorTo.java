@@ -24,8 +24,12 @@ public class ElevatorTo extends Command {
 	 * @param subsystem The subsystem used by this command.
 	 */
 	public ElevatorTo(ElevatorLocation loc, ElevatorSubsytem subsystem) {
+		this(loc.loc, subsystem);
+	}
+
+	public ElevatorTo(Distance dist, ElevatorSubsytem subsystem) {
 		this.m_subsystem = subsystem;
-		this.target = loc.loc.in(Units.Inches) / Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches);
+		this.target = dist.in(Units.Inches) / Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Inches);
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);

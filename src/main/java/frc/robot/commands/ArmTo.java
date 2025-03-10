@@ -24,9 +24,18 @@ public class ArmTo extends Command {
 	 * @param subsystem The subsystem used by this command.
 	 */
 	public ArmTo(ArmLocation loc, ArmSubsystem subsystem) {
-		this.m_subsystem = subsystem;
-		this.target = loc.loc.minus(Units.Degrees.of(17)).in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
+		// this.m_subsystem = subsystem;
+		// this.target = loc.loc.minus(Units.Degrees.of(17)).in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
 
+		// // Use addRequirements() here to declare subsystem dependencies.
+		// addRequirements(m_subsystem);
+		this(loc.loc, subsystem);
+	}
+	
+	public ArmTo(Angle loc, ArmSubsystem subsystem) {
+		this.m_subsystem = subsystem;
+		this.target = loc.minus(Units.Degrees.of(17)).in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
+	
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
 	}
