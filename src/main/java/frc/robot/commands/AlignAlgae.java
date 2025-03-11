@@ -13,7 +13,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.LimelightHelpers;
 
 /** An example command that uses an example subsystem. */
-public class AlignCoralTMP extends Command {
+public class AlignAlgae extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
     private PIDController xController, yController, rotController;
@@ -50,12 +50,16 @@ public class AlignCoralTMP extends Command {
         yController.setSetpoint(Constants.Y_SETPOINT_ALGAE_ALIGNMENT);
         yController.setTolerance(Constants.Y_TOLERANCE_ALGAE_ALIGNMENT);
     }
+    
+    public boolean isTagOnReef(double tagId) {
+        return (17 <= tagId && tagId <= 22) || (6 <= tagId && tagId <= 11);
+    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if (LimelightHelpers.getTV(Constants.FRONT_LIMELIGHT) &&
-            LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT))
+            isTagOnReef(LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT)))
         {
             this.dontSeeTagTimer.reset();
             double[] postions = LimelightHelpers.getBotPose_TargetSpace(Constants.FRONT_LIMELIGHT);

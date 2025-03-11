@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.AlignAlgae;
 import frc.robot.commands.AlignCoralTMP;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -145,8 +147,8 @@ public class RobotContainer {
 			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
 			new ElevatorTo(Units.Inches.of(10), m_elevatorSubsytem),
 			new ParallelRaceGroup(
-				m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)), null),
-				new AlignAlgae(m_driveSubsystem);
+				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(-.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
+				new AlignAlgae(m_driveSubsystem)
 			)
 		));
 		
