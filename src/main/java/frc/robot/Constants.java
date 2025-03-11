@@ -24,10 +24,10 @@ import edu.wpi.first.wpilibj.Joystick;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-	public static final int FL = 13;
-	public static final int FR = 12;
-	public static final int BL = 11;
-	public static final int BR = 14;
+	public static final int FL = 12;
+	public static final int FR = 11;
+	public static final int BL = 14;
+	public static final int BR = 13;
 
 	public static final int[] FL_ENCODER_PORTS = { 7, 6 };
 	public static final int[] FR_ENCODER_PORTS = { 1, 0 };
@@ -51,15 +51,19 @@ public final class Constants {
 	public static final double BL_kV = 0;
 
 	public static final double FL_kP = 0.017002;
+	public static final double FL_kI = 0.0;
 	public static final double FL_kD = 0;
 
 	public static final double FR_kP = 0.010445;
+	public static final double FR_kI = 0;
 	public static final double FR_kD = 0;
 
 	public static final double BL_kP = 1.6878;
+	public static final double BR_kI = 0;
 	public static final double BL_kD = 0;
 
 	public static final double BR_kP = 0.017002;
+	public static final double BL_KI = 0;
 	public static final double BR_kD = 0;
 
 	public static final Distance WHEEL_DIAMETER = Units.Inches.of(6);

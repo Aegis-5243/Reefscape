@@ -39,7 +39,7 @@ public class EncoderDrive extends Command {
     
     public EncoderDrive(DriveSubsystem subsystem, Distance distance, double speed) {
         m_subsystem = subsystem;
-        this.counts = Utilities.distanceToRotations(distance) * 12.75;
+        this.counts = Utilities.distanceToRotations(distance);
         this.speed = speed;
         
         // Use addRequirements() here to declare subsystem dependencies.
@@ -48,10 +48,10 @@ public class EncoderDrive extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        zeroFR = m_subsystem.fr.getPosition();
-        zeroBR = m_subsystem.br.getPosition();
-        zeroFL = m_subsystem.fl.getPosition();
-        zeroBL = m_subsystem.bl.getPosition();
+        zeroFR = m_subsystem.frEncoder.getPosition();
+        zeroBR = m_subsystem.brEncoder.getPosition();
+        zeroFL = m_subsystem.flEncoder.getPosition();
+        zeroBL = m_subsystem.blEncoder.getPosition();
 
         startYaw = m_subsystem.gyro.getYaw();
 
@@ -80,6 +80,6 @@ public class EncoderDrive extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(m_subsystem.fl.getPosition() - zeroFL) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
+        return Math.abs(m_subsystem.flEncoder.getPosition() - zeroFL) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
     }
 }

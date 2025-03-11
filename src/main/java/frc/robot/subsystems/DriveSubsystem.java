@@ -4,14 +4,26 @@
 
 package frc.robot.subsystems;
 
-import com.playingwithfusion.CANVenom;
-import com.playingwithfusion.CANVenom.BrakeCoastMode;
+import java.util.Optional;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -20,46 +32,43 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.libs.VelocityEncoder;
+
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Utilities;
 
 public class DriveSubsystem extends SubsystemBase {
 
 	private static DriveSubsystem instance;
 
-	public CANVenom fl;
-	public CANVenom fr;
-	public CANVenom bl;
-	public CANVenom br;
+	public SparkMax fl;
+	public SparkMax fr;
+	public SparkMax bl;
+	public SparkMax br;
 
-	public SparkMax elevator;
-	public SparkMax elevatorMinion;
-
-	public VelocityEncoder flEncoder;
-	public VelocityEncoder frEncoder;
-	public VelocityEncoder blEncoder;
-	public VelocityEncoder brEncoder;
+	public RelativeEncoder flEncoder;
+	public RelativeEncoder frEncoder;
+	public RelativeEncoder blEncoder;
+	public RelativeEncoder brEncoder;
 
 	public SimpleMotorFeedforward flFeedForward;
 	public SimpleMotorFeedforward frFeedForward;
 	public SimpleMotorFeedforward blFeedForward;
 	public SimpleMotorFeedforward brFeedForward;
 
-	public PIDController flPID;
-	public PIDController frPID;
-	public PIDController blPID;
-	public PIDController brPID;
+	public SparkClosedLoopController flPID;
+	public SparkClosedLoopController frPID;
+	public SparkClosedLoopController blPID;
+	public SparkClosedLoopController brPID;
 
 	public MecanumDrive drive;
 
@@ -79,40 +88,46 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Creates a new DriveSubsystem
 	 */
 	public DriveSubsystem() {
-		this.fl = new CANVenom(Constants.FL);
-		this.fr = new CANVenom(Constants.FR);
-		this.bl = new CANVenom(Constants.BL);
-		this.br = new CANVenom(Constants.BR);
+		this.fl = new SparkMax(Constants.FL, MotorType.kBrushless);
+		this.fr = new SparkMax(Constants.FR, MotorType.kBrushless);
+		this.bl = new SparkMax(Constants.BL, MotorType.kBrushless);
+		this.br = new SparkMax(Constants.BR, MotorType.kBrushless);
 
-		this.fl.setBrakeCoastMode(BrakeCoastMode.Brake);
-		this.fr.setBrakeCoastMode(BrakeCoastMode.Brake);
-		this.bl.setBrakeCoastMode(BrakeCoastMode.Brake);
-		this.br.setBrakeCoastMode(BrakeCoastMode.Brake);
+		this.flEncoder = fl.getAlternateEncoder();
+		this.frEncoder = fr.getAlternateEncoder();
+		this.blEncoder = bl.getAlternateEncoder();
+		this.brEncoder = br.getAlternateEncoder();
 
-		this.fl.setInverted(false);
-		this.fr.setInverted(true);
-		this.bl.setInverted(false);
-		this.br.setInverted(true);
-
-		this.flEncoder = new VelocityEncoder(Constants.FL_ENCODER_PORTS[0], Constants.FL_ENCODER_PORTS[1]);
-		this.frEncoder = new VelocityEncoder(Constants.FR_ENCODER_PORTS[0], Constants.FR_ENCODER_PORTS[1]);
-		this.blEncoder = new VelocityEncoder(Constants.BL_ENCODER_PORTS[0], Constants.BL_ENCODER_PORTS[1]);
-		this.brEncoder = new VelocityEncoder(Constants.BR_ENCODER_PORTS[0], Constants.BR_ENCODER_PORTS[1]);
-
-		this.flEncoder.setReverseDirection(false);
-		this.frEncoder.setReverseDirection(true);
-		this.blEncoder.setReverseDirection(false);
-		this.brEncoder.setReverseDirection(true);
+		this.fl.configure(
+				new SparkMaxConfig().disableFollowerMode().inverted(false)
+						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
+								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		this.fr.configure(
+				new SparkMaxConfig().disableFollowerMode().inverted(true)
+						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
+								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		this.bl.configure(
+				new SparkMaxConfig().disableFollowerMode().inverted(false)
+						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
+								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		this.br.configure(
+				new SparkMaxConfig().disableFollowerMode().inverted(true)
+						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
+								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
+				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
 		this.brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
 
-		this.flPID = new PIDController(Constants.FL_kP, 0, Constants.FL_kD, Robot.kDefaultPeriod);
-		this.frPID = new PIDController(Constants.FR_kP, 0, Constants.FR_kD, Robot.kDefaultPeriod);
-		this.blPID = new PIDController(Constants.BL_kP, 0, Constants.BL_kD, Robot.kDefaultPeriod);
-		this.brPID = new PIDController(Constants.BR_kP, 0, Constants.BR_kD, Robot.kDefaultPeriod);
+		this.flPID = fl.getClosedLoopController();
+		this.frPID = fr.getClosedLoopController();
+		this.blPID = bl.getClosedLoopController();
+		this.brPID = br.getClosedLoopController();
 
 		this.drive = new MecanumDrive(fl, bl, fr, br);
 
@@ -122,28 +137,32 @@ public class DriveSubsystem extends SubsystemBase {
 					fr.setVoltage(voltage.magnitude());
 					bl.setVoltage(voltage.magnitude());
 					br.setVoltage(voltage.magnitude());
-					System.out.println("setting: " + voltage.magnitude() + "; getteing " + fl.getOutputVoltage());
+					System.out.println("setting: " + voltage.magnitude() + "; getteing " + fl.getBusVoltage());
 				},
 				log -> {
 					log.motor("drive-front-right")
 							.voltage(Units.Volts.of(fr.getBusVoltage()))
-							.linearPosition(frEncoder.getLinearDistance())
-							.linearVelocity(frEncoder.getLinearVelocity());
+							.linearPosition(Utilities.rotationsToDistance(flEncoder.getPosition()))
+							.linearVelocity(Units.MetersPerSecond.of(frEncoder.getVelocity() * 60 * Math.PI
+									* Constants.WHEEL_DIAMETER.in(Units.Meters)));
 
 					log.motor("drive-front-left")
 							.voltage(Units.Volts.of(fl.getBusVoltage()))
-							.linearPosition(flEncoder.getLinearDistance())
-							.linearVelocity(flEncoder.getLinearVelocity());
+							.linearPosition(Utilities.rotationsToDistance(flEncoder.getPosition()))
+							.linearVelocity(Units.MetersPerSecond.of(flEncoder.getVelocity() * 60 * Math.PI
+									* Constants.WHEEL_DIAMETER.in(Units.Meters)));
 
 					log.motor("drive-back-left")
 							.voltage(Units.Volts.of(bl.getBusVoltage()))
-							.linearPosition(blEncoder.getLinearDistance())
-							.linearVelocity(blEncoder.getLinearVelocity());
+							.linearPosition(Utilities.rotationsToDistance(blEncoder.getPosition()))
+							.linearVelocity(Units.MetersPerSecond.of(blEncoder.getVelocity() * 60 * Math.PI
+									* Constants.WHEEL_DIAMETER.in(Units.Meters)));
 
 					log.motor("drive-back-right")
 							.voltage(Units.Volts.of(br.getBusVoltage()))
-							.linearPosition(brEncoder.getLinearDistance())
-							.linearVelocity(brEncoder.getLinearVelocity());
+							.linearPosition(Utilities.rotationsToDistance(brEncoder.getPosition()))
+							.linearVelocity(Units.MetersPerSecond.of(brEncoder.getVelocity() * 60 * Math.PI
+									* Constants.WHEEL_DIAMETER.in(Units.Meters)));
 				},
 				this));
 
@@ -153,7 +172,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Make it so getAngle is zero when facing red aliiance station
 		// Needed for field coordinates, which are based on blue alliance.
-		if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) gyro.setAngleAdjustment(180);
+		if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue)
+			gyro.setAngleAdjustment(180);
 
 		limiter = new SlewRateLimiter(.5);
 
@@ -162,11 +182,40 @@ public class DriveSubsystem extends SubsystemBase {
 		 * - Get initial pose
 		 * - Get max drive speed
 		 */
-		this.kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283), new Translation2d(0.259, -0.283), new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
+		this.kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283), new Translation2d(0.259, -0.283),
+				new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
 
 		this.poseEstimator = new MecanumDrivePoseEstimator(kinematics, this.gyro.getRotation2d(),
 				new MecanumDriveWheelPositions(), null);
-				
+
+		RobotConfig config;
+
+		try {
+			config = RobotConfig.fromGUISettings();
+		} catch (Exception e) {
+			// TODO: handle exception
+			config = null;
+			e.printStackTrace();
+		}
+
+		AutoBuilder.configure(
+				this::getPose,
+				this::setPose,
+				this::getChassisSpeeds,
+				this::driveRobotSpeed,
+				new PPHolonomicDriveController(
+						new PIDConstants(1, 0, 0),
+						new PIDConstants(1.2, 0, 0)),
+				config,
+				() -> {
+					Optional<Alliance> alliance = DriverStation.getAlliance();
+					if (alliance.isPresent()) {
+						return alliance.get() == DriverStation.Alliance.Red;
+					}
+					return false;
+				},
+				this);
+
 		instance = this;
 	}
 
@@ -210,9 +259,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Apply exponential rates
 		// if (xSpeed != 0 || ySpeed != 0) {
-		// 	squaredMag = Math.sqrt(squaredMag);
-		// 	xSpeed *= squaredMag;
-		// 	ySpeed *= squaredMag;
+		// squaredMag = Math.sqrt(squaredMag);
+		// xSpeed *= squaredMag;
+		// ySpeed *= squaredMag;
 		// }
 		// if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
 
@@ -259,8 +308,11 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void updatePoseEstimate() {
-		poseEstimator.update(gyro.getRotation2d(), new MecanumDriveWheelPositions(flEncoder.getLinearDistance(),
-				frEncoder.getLinearDistance(), blEncoder.getLinearDistance(), brEncoder.getLinearDistance()));
+		poseEstimator.update(gyro.getRotation2d(),
+				new MecanumDriveWheelPositions(Utilities.rotationsToDistance(flEncoder.getPosition()),
+						Utilities.rotationsToDistance(frEncoder.getPosition()),
+						Utilities.rotationsToDistance(blEncoder.getPosition()),
+						Utilities.rotationsToDistance(brEncoder.getPosition())));
 
 		// Modified from
 		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
@@ -294,7 +346,8 @@ public class DriveSubsystem extends SubsystemBase {
 		} else if (useMegaTag2 == true) {
 			LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
 					poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
+					.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
 			if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
 												// ignore vision updates
 			{
@@ -337,7 +390,8 @@ public class DriveSubsystem extends SubsystemBase {
 		} else if (useMegaTag2 == true) {
 			LimelightHelpers.SetRobotOrientation(Constants.BACK_LIMELIGHT,
 					poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.BACK_LIMELIGHT);
+			LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
+					.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.BACK_LIMELIGHT);
 			if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
 												// ignore vision updates
 			{
@@ -353,6 +407,51 @@ public class DriveSubsystem extends SubsystemBase {
 						mt2.timestampSeconds);
 			}
 		}
+	}
+
+	public Pose2d getPose() {
+		return poseEstimator.getEstimatedPosition();
+	}
+
+	public void setPose(Pose2d pose) {
+		poseEstimator.resetPose(pose);
+	}
+
+	public ChassisSpeeds getChassisSpeeds() {
+		return kinematics.toChassisSpeeds(
+				new MecanumDriveWheelSpeeds(
+						Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
+						Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
+						Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
+						Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2));
+	}
+
+	public void driveRobotSpeed(ChassisSpeeds speeds) {
+		MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+
+		flPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.frontLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+				.in(Units.RPM),
+				ControlType.kVelocity);
+
+		frPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.frontRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+				.in(Units.RPM),
+				ControlType.kVelocity);
+
+		frPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.rearRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+				.in(Units.RPM),
+				ControlType.kVelocity);
+
+		frPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.rearLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+				.in(Units.RPM),
+				ControlType.kVelocity);
 	}
 
 	public static DriveSubsystem getInstance() {
@@ -387,8 +486,9 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		// if (RobotState.isEnabled())
-			System.out.println("x: " + flEncoder.getLinearVelocity());
+		if (RobotState.isEnabled())
+			updatePoseEstimate();
+		System.out.println("x: " + flEncoder.getVelocity());
 	}
 
 	@Override
