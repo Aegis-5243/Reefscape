@@ -317,6 +317,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// Modified from
 		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
 
+		LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
 		boolean useMegaTag2 = true; // set to false to use MegaTag1
 		boolean doRejectUpdate = false;
 
@@ -365,6 +366,9 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		// For back limelight
+		LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, 0);
+
+		doRejectUpdate = false;
 		if (useMegaTag2 == false) {
 			LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.BACK_LIMELIGHT);
 
