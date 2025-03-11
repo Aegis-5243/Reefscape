@@ -129,7 +129,24 @@ public final class Constants {
 
 	public static final String FRONT_LIMELIGHT = "limelight";
 	public static final String BACK_LIMELIGHT = "limelight-two";
+	
+	// Auton
+	public static final double X_ALGAE_ALIGNMENT_P = 3.3;
+	public static final double Y_ALGAE_ALIGNMENT_P = 3.3;
+	public static final double ROT_ALGAE_ALIGNMENT_P = 0.058;
 
+	public static final double ROT_SETPOINT_ALGAE_ALIGNMENT = 0;  // Rotation
+	public static final double ROT_TOLERANCE_ALGAE_ALIGNMENT = 1;
+	public static final double X_SETPOINT_ALGAE_ALIGNMENT = -0.45;  // Vertical pose
+	public static final double X_TOLERANCE_ALGAE_ALIGNMENT = 0.02;
+	public static final double Y_SETPOINT_ALGAE_ALIGNMENT = 0.0;  // Horizontal pose
+	public static final double Y_TOLERANCE_ALGAE_ALIGNMENT = 0.02;
+	public static final double MAX_SPEED_ALGAE_ALIGNMENT = 0.3;
+
+	public static final double DONT_SEE_TAG_WAIT_TIME = 0.5;
+	public static final double POSE_VALIDATION_TIME = 0.3;
+
+	// Controls
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
 

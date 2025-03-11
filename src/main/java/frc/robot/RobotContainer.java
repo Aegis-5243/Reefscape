@@ -140,23 +140,27 @@ public class RobotContainer {
 
 		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
 		
-		new JoystickButton(Constants.primaryStick, 11).onTrue(new SequentialCommandGroup(
-			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+		new JoystickButton(Constants.primaryStick, 11).whileTrue(new SequentialCommandGroup(
+			// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
 			new ElevatorTo(Units.Inches.of(10), m_elevatorSubsytem),
-			new ArmTo(Units.Degrees.of(120), m_armSubsystem)
+			new ParallelRaceGroup(
+				m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)), null),
+				new AlignAlgae(m_driveSubsystem);
+			)
 		));
 		
-		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
-			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-			new ParallelCommandGroup(
-				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.25);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
-				m_driveSubsystem.startEnd(() -> {m_driveSubsystem.mechDrive(.25, 0, 0);}, () -> {m_driveSubsystem.mechDrive(0, 0, 0);}).repeatedly()
-			)
-			// new ParallelCommandGroup(
-			// 	m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)), null)
-			// )
+		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
+		// 	new ArmTo(Units.Degrees.of(120), m_armSubsystem),
+		// 	new ParallelCommandGroup(
+		// 		m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.25);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
+		// 		m_driveSubsystem.startEnd(() -> {m_driveSubsystem.mechDrive(.25, 0, 0);}, () -> {m_driveSubsystem.mechDrive(0, 0, 0);}).repeatedly()
+		// 	)
+		// 	// new ParallelCommandGroup(
+		// 	// 	m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)), null)
+		// 	// )
 
-		));
+		// ));
 	}
 
 	/**
