@@ -178,8 +178,7 @@ public class DriveSubsystem extends SubsystemBase {
 		limiter = new SlewRateLimiter(.5);
 
 		/*
-		 * TODO: - Get wheel positions on robot.
-		 * - Get initial pose
+		 * TODO:
 		 * - Get max drive speed
 		 */
 		this.kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283), new Translation2d(0.259, -0.283),
@@ -205,7 +204,7 @@ public class DriveSubsystem extends SubsystemBase {
 				this::driveRobotSpeed,
 				new PPHolonomicDriveController(
 						new PIDConstants(1, 0, 0),
-						new PIDConstants(1.2, 0, 0)),
+						new PIDConstants(1, 0, 0)),
 				config,
 				() -> {
 					Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -424,14 +423,14 @@ public class DriveSubsystem extends SubsystemBase {
 	public ChassisSpeeds getChassisSpeeds() {
 		return kinematics.toChassisSpeeds(
 				new MecanumDriveWheelSpeeds(
-						Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond)
-								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
-						Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond)
-								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
-						Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond)
-								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2,
-						Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond)
-								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2));
+						Units.MetersPerSecond.of(Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2),
+						Units.MetersPerSecond.of(Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2),
+						Units.MetersPerSecond.of(Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2),
+						Units.MetersPerSecond.of(Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond)
+								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2)));
 	}
 
 	public void driveRobotSpeed(ChassisSpeeds speeds) {

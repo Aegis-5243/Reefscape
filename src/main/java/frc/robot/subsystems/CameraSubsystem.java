@@ -9,6 +9,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
@@ -26,6 +28,7 @@ public class CameraSubsystem extends SubsystemBase {
     public UsbCamera lifecam;
     public HttpCamera limelight1;
     public HttpCamera limelight2;
+    public AprilTagFieldLayout fieldLayout;
 
     /**
      * Creates a new CameraSubsystem
@@ -35,6 +38,8 @@ public class CameraSubsystem extends SubsystemBase {
 
         limelight1 = new HttpCamera(Constants.FRONT_LIMELIGHT, "http://10.52.43.11:5800");
         limelight2 = new HttpCamera(Constants.BACK_LIMELIGHT, "http://10.52.43.12:5800/");
+
+        fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
         CameraServer.startAutomaticCapture(0);
         CameraServer.startAutomaticCapture(limelight2);

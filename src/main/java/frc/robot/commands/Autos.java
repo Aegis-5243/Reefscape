@@ -7,6 +7,7 @@ package frc.robot.commands;
 import frc.robot.commands.ArmTo.ArmLocation;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
@@ -169,7 +170,7 @@ public final class Autos {
 			new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5))
 		);
 	}
-	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem) {
+	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem, CameraSubsystem m_cameraSubsystem) {
 		return new SequentialCommandGroup(
 			new Wait(4),
 
@@ -183,7 +184,7 @@ public final class Autos {
 			),
 
 			new ParallelRaceGroup(
-				new AlignCoralTMP(m_driveSubsystem),
+				new AlignCoral(m_driveSubsystem, m_cameraSubsystem),
 				new ElevatorCommand(m_elevatorSubsytem)
 			),
 			new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),

@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.AlignAlgae;
-import frc.robot.commands.AlignCoralTMP;
+import frc.robot.commands.AlignCoral;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
 import frc.robot.commands.AutonBringCoralUp;
@@ -78,7 +78,7 @@ public class RobotContainer {
 
 		m_chooser.setDefaultOption("Middle position L4 coral no limelight", Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
 		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
-		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
+		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem, m_cameraSubsystem));
 		m_chooser.addOption("DO NOT USE IN COMP", new EncoderDrive(m_driveSubsystem, Units.Meters.of(300), 1));
 		SmartDashboard.putData("auton chooser", m_chooser);
 
@@ -138,14 +138,17 @@ public class RobotContainer {
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.THROUGH, m_armSubsystem)));
+
 		new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
+
 		new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)));
+
 		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
@@ -165,8 +168,8 @@ public class RobotContainer {
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
 
-		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoralTMP(m_driveSubsystem));
-		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoralTMP(m_driveSubsystem, 1));
+		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem));
+		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, 1));
 
 		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
 		
