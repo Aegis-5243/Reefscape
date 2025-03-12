@@ -24,6 +24,10 @@ import edu.wpi.first.wpilibj.Joystick;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+	// public static final int FL = 12;
+	// public static final int FR = 11;
+	// public static final int BL = 14;
+	// public static final int BR = 13;
 	public static final int FL = 12;
 	public static final int FR = 11;
 	public static final int BL = 14;
@@ -147,7 +151,7 @@ public final class Constants {
 
 	public static final double ROT_SETPOINT_ALGAE_ALIGNMENT = 0;  // Rotation
 	public static final double ROT_TOLERANCE_ALGAE_ALIGNMENT = 1;
-	public static final double X_SETPOINT_ALGAE_ALIGNMENT = -0.45;  // Vertical pose
+	public static final double X_SETPOINT_ALGAE_ALIGNMENT = -0.3;  // Vertical pose
 	public static final double X_TOLERANCE_ALGAE_ALIGNMENT = 0.02;
 	public static final double Y_SETPOINT_ALGAE_ALIGNMENT = 0.0;  // Horizontal pose
 	public static final double Y_TOLERANCE_ALGAE_ALIGNMENT = 0.02;

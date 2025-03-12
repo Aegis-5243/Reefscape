@@ -170,7 +170,7 @@ public class RobotContainer {
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
 
-		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem));
+		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE));
 		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, 1));
 
 		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
@@ -179,8 +179,8 @@ public class RobotContainer {
 			// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
 			new ElevatorTo(Units.Inches.of(10), m_elevatorSubsytem),
-			new ParallelRaceGroup(
-				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(-.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
+			new ParallelCommandGroup(
+				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
 				new AlignAlgae(m_driveSubsystem)
 			)
 		));

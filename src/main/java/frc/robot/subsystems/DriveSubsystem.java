@@ -18,6 +18,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.studica.frc.AHRS;
@@ -97,28 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
 		this.frEncoder = fr.getAlternateEncoder();
 		this.blEncoder = bl.getAlternateEncoder();
 		this.brEncoder = br.getAlternateEncoder();
-
-		this.fl.configure(
-				new SparkMaxConfig().disableFollowerMode().inverted(false)
-						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
-								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		this.fr.configure(
-				new SparkMaxConfig().disableFollowerMode().inverted(true)
-						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
-								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		this.bl.configure(
-				new SparkMaxConfig().disableFollowerMode().inverted(false)
-						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
-								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		this.br.configure(
-				new SparkMaxConfig().disableFollowerMode().inverted(true)
-						.apply(new ClosedLoopConfig().pid(Constants.FL_kP, Constants.FL_kI, Constants.FL_kD)
-								.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+		
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
@@ -185,7 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
 				new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
 
 		this.poseEstimator = new MecanumDrivePoseEstimator(kinematics, this.gyro.getRotation2d(),
-				new MecanumDriveWheelPositions(), null);
+				new MecanumDriveWheelPositions(), Pose2d.kZero);
 
 		RobotConfig config;
 
@@ -509,9 +489,9 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (RobotState.isEnabled())
-			updatePoseEstimate();
-		System.out.println("x: " + flEncoder.getVelocity());
+		// if (RobotState.isEnabled())
+		// 	updatePoseEstimate();
+		System.out.println("x: " + flEncoder.getVelocity() / 60);
 	}
 
 	@Override

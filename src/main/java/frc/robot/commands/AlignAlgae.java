@@ -79,7 +79,7 @@ public class AlignAlgae extends Command {
                 stopTimer.reset();
             }
         } else {
-            m_subsystem.mechDrive(0, 0, 0);
+            m_subsystem.mechDrive(0.2, 0, 0);
         }
 	}
 
@@ -94,7 +94,8 @@ public class AlignAlgae extends Command {
 	public boolean isFinished() {
         // double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
 		// return !(x < -tolerance || x > tolerance) && time.hasElapsed(3);
-        return this.dontSeeTagTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME) ||
-            stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME);
+        // return this.dontSeeTagTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME) ||
+        //     stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME);
+        return false;
 	}
 }
