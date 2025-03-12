@@ -99,6 +99,9 @@ public class AlignCoral extends Command {
 
                 double yaw = m_driveSubsystem.gyro.getYaw() - startYaw;
 
+                if (yaw > 180) yaw -= 360;
+                if (yaw < -180) yaw += 360;
+
                 turn = (aprilTagAngle - yaw) / (45.0);
                 turn = turn > 1 ? 1 : turn;
                 turn = turn < -1 ? -1 : turn;
