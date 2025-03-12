@@ -8,6 +8,7 @@ import frc.robot.commands.AlignAlgae;
 import frc.robot.commands.AlignCoralTMP;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
+import frc.robot.commands.AutonBringCoralUp;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
@@ -24,6 +25,9 @@ import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -105,6 +109,30 @@ public class RobotContainer {
 		// pressed,
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
+
+			
+		NamedCommands.registerCommand("Mechanism to High Coral", new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
+
+			
+		NamedCommands.registerCommand("Mechanism to Low Coral", new SequentialCommandGroup(
+			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+			new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
+
+			
+		NamedCommands.registerCommand("Intake", new Intake(m_rollerSubsystem));
+
+		NamedCommands.registerCommand("Outtake", new Outtake(m_rollerSubsystem));
+
+		NamedCommands.registerCommand("Coral Up", new AutonBringCoralUp(m_rollerSubsystem));
 
 		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
