@@ -21,12 +21,15 @@ public class AlignCoral extends Command {
     private boolean turning;
     private Timer time;
     private double tolerance = 1;
+    private double startYaw;
 
     /**
      * Creates a new AlignCoral command.
-     * <p>Aligns robot with a left coral reef branch horizontally and rotationally (optional)
+     * <p>
+     * Aligns robot with a left coral reef branch horizontally and rotationally
+     * (optional)
      * 
-     * @param driveSubsystem Subsystem that handles drive operations
+     * @param driveSubsystem  Subsystem that handles drive operations
      * @param cameraSubsystem Subsystem that handles camera/vision operations
      */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem) {
@@ -35,11 +38,13 @@ public class AlignCoral extends Command {
 
     /**
      * Creates a new AlignCoral command.
-     * <p>Aligns robot with a coral reef branch horizontally and rotationally (optional)
+     * <p>
+     * Aligns robot with a coral reef branch horizontally and rotationally
+     * (optional)
      * 
-     * @param driveSubsystem Subsystem that handles drive operations
+     * @param driveSubsystem  Subsystem that handles drive operations
      * @param cameraSubsystem Subsystem that handles camera/vision operations
-     * @param pipeline Limelight pipeline to use with alignment
+     * @param pipeline        Limelight pipeline to use with alignment
      */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem, int pipeline) {
         this(driveSubsystem, cameraSubsystem, pipeline, false);
@@ -47,12 +52,15 @@ public class AlignCoral extends Command {
 
     /**
      * Creates a new AlignCoral command.
-     * <p>Aligns robot with a coral reef branch horizontally and rotationally (optional)
+     * <p>
+     * Aligns robot with a coral reef branch horizontally and rotationally
+     * (optional)
      * 
-     * @param driveSubsystem Subsystem that handles drive operations
+     * @param driveSubsystem  Subsystem that handles drive operations
      * @param cameraSubsystem Subsystem that handles camera/vision operations
-     * @param pipeline Limelight pipeline to use with alignment
-     * @param turn Is true if you wish to align robot rotationally with coral station.
+     * @param pipeline        Limelight pipeline to use with alignment
+     * @param turn            Is true if you wish to align robot rotationally with
+     *                        coral station.
      */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem, int pipeline, boolean turn) {
         this.m_driveSubsystem = driveSubsystem;
@@ -68,6 +76,7 @@ public class AlignCoral extends Command {
     @Override
     public void initialize() {
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, pipeline);
+        startYaw = m_driveSubsystem.gyro.getYaw();
         time.restart();
     }
 
@@ -75,7 +84,6 @@ public class AlignCoral extends Command {
     @Override
     public void execute() {
         double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
-        int id = (int) LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT);
         if (x < -tolerance || x > tolerance) {
             // formatting diff
 
@@ -84,20 +92,17 @@ public class AlignCoral extends Command {
             strafe = strafe < -1 ? -1 : strafe;
             strafe = Math.abs(strafe) < .25 ? Math.signum(strafe) * .25 : strafe;
 
-
             double turn = 0;
-            if (turning && m_cameraSubsystem.fieldLayout.getTagPose(id).isPresent()) {
-                double aprilTagAngle = m_cameraSubsystem.fieldLayout.getTagPose(id).get().getRotation()
-                        .getMeasureAngle().in(Units.Degrees) % 360;
-                
-                double yaw = m_driveSubsystem.gyro.getAngle() % 360;
+            if (turning) {
+                double aprilTagAngle = LimelightHelpers.getBotPose3d_TargetSpace(Constants.FRONT_LIMELIGHT)
+                        .getRotation().getMeasureAngle().in(Units.Degrees);
 
-                if (yaw < 0) yaw += 360;
+                double yaw = m_driveSubsystem.gyro.getYaw() - startYaw;
 
                 turn = (aprilTagAngle - yaw) / (45.0);
                 turn = turn > 1 ? 1 : turn;
-                strafe = strafe < -1 ? -1 : strafe;
-                strafe = Math.abs(strafe) < .25 ? Math.signum(strafe) * .25 : strafe;
+                turn = turn < -1 ? -1 : turn;
+                turn = Math.abs(turn) < .25 ? Math.signum(turn) * .25 : turn;
             }
 
             m_driveSubsystem.mechDrive(0, strafe, turn);
