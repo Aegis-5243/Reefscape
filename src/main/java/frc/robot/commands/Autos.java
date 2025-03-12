@@ -27,8 +27,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public final class Autos {
-	
+
 	public static ComplexWidget tmp;
+
 	/** Example static factory for an autonomous command. */
 	public static Command exampleAuto(DriveSubsystem subsystem) {
 		return Commands.sequence(subsystem.exampleMethodCommand(), new DriveCommand(subsystem));
@@ -37,10 +38,12 @@ public final class Autos {
 	/**
 	 * Command to run SysID routine for drive.
 	 * 
-	 * <p>Will disable WPILib motor safety for duration of test.
+	 * <p>
+	 * Will disable WPILib motor safety for duration of test.
+	 * 
 	 * @param subsystem The drive subsystem.
-	 * @param type The type of routine (i.e. qusistatic).
-	 * @param dir The direction to turn the motors.
+	 * @param type      The type of routine (i.e. qusistatic).
+	 * @param dir       The direction to turn the motors.
 	 * @return The command to run the routine.
 	 */
 	public static Command driveSysIdRoutine(DriveSubsystem subsystem, RoutineType type, SysIdRoutine.Direction dir) {
@@ -69,7 +72,7 @@ public final class Autos {
 
 	/**
 	 * @deprecated Use in built functions
-	 * Command to run a SysID routine.
+	 *             Command to run a SysID routine.
 	 * @param routine
 	 * @param type
 	 * @param dir
@@ -91,8 +94,10 @@ public final class Autos {
 
 	/**
 	 * Routine type for SysID routines
-	 * <p>Dynamic - Runs the motors at a constant rate
-	 * <p>Quasistaic - Runs motors at an increasing rate
+	 * <p>
+	 * Dynamic - Runs the motors at a constant rate
+	 * <p>
+	 * Quasistaic - Runs motors at an increasing rate
 	 */
 	public static enum RoutineType {
 		DYNAMIC,
@@ -101,7 +106,9 @@ public final class Autos {
 
 	/**
 	 * Test motor by running it at 50% power.
-	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
+	 * 
+	 * @param sub   Subsystem that contains this motor. Output command will require
+	 *              this subsystem.
 	 * @param motor Motor to run.
 	 * @return The command to run the motor
 	 */
@@ -111,7 +118,9 @@ public final class Autos {
 
 	/**
 	 * Test motor by running it.
-	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
+	 * 
+	 * @param sub   Subsystem that contains this motor. Output command will require
+	 *              this subsystem.
 	 * @param motor Motor to run.
 	 * @param speed Speed that the motor should run.
 	 * @return The command to run the motor
@@ -126,15 +135,17 @@ public final class Autos {
 
 	/**
 	 * Used to PID tune a motor
-	 * @param sub Subsystem that contains this motor. Output command will require this subsystem.
-	 * @param motor Motor to tune.
+	 * 
+	 * @param sub      Subsystem that contains this motor. Output command will
+	 *                 require this subsystem.
+	 * @param motor    Motor to tune.
 	 * @param motorPID PID controller of the motor.
-	 * @param encoder Encoder attached to the motor.
+	 * @param encoder  Encoder attached to the motor.
 	 * @return The command to tune the motor.
 	 */
 	public static Command tunePID(SubsystemBase sub, MotorController motor, PIDController motorPID, Encoder encoder) {
 		return sub.startRun(() -> {
-			tmp = Shuffleboard.getTab("pid test").add("PID", motorPID);//.withWidget(BuiltInWidgets.kPIDController);
+			tmp = Shuffleboard.getTab("pid test").add("PID", motorPID);// .withWidget(BuiltInWidgets.kPIDController);
 		}, () -> {
 			// motorPID.setP(tmp.getDouble(Constants.BL_kP));
 			motor.setVoltage(motorPID.calculate(encoder.getRate()));
@@ -143,59 +154,54 @@ public final class Autos {
 
 	}
 
-	public static Command middleStartL4Score(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem) {
+	public static Command middleStartL4Score(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem,
+			ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem) {
 		return new SequentialCommandGroup(
-			new Wait(5),
-			new ParallelCommandGroup(
-				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
-				new SequentialCommandGroup(
-					new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-					new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-					new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)
-				)
-			),
-							
-			new AutonBringCoralUp(m_rollerSubsystem),
-			new Wait(1),
-			new EncoderDrive(m_driveSubsystem, Units.Feet.of(2)),
-			new Wait(1),
-			new Outtake(m_rollerSubsystem),
-			new Wait(1)
-		);
+				new Wait(5),
+				new ParallelCommandGroup(
+						new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
+						new SequentialCommandGroup(
+								new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+								new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+								new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem))),
+
+				new AutonBringCoralUp(m_rollerSubsystem),
+				new Wait(1),
+				new EncoderDrive(m_driveSubsystem, Units.Feet.of(2)),
+				new Wait(1),
+				new Outtake(m_rollerSubsystem),
+				new Wait(1));
 	}
 
 	public static Command moveForward(double delay, DriveSubsystem m_driveSubsystem) {
 		return new SequentialCommandGroup(
-			new Wait(delay),
-			new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5))
-		);
+				new Wait(delay),
+				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)));
 	}
-	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem, ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem, CameraSubsystem m_cameraSubsystem) {
+
+	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem,
+			ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem, CameraSubsystem m_cameraSubsystem) {
 		return new SequentialCommandGroup(
-			new Wait(4),
+				new Wait(4),
 
-			new ParallelCommandGroup(
-				new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
-				new SequentialCommandGroup(
-					new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-					new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-					new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)
-				)
-			),
+				new ParallelCommandGroup(
+						new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
+						new SequentialCommandGroup(
+								new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+								new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+								new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem))),
 
-			new ParallelRaceGroup(
-				new AlignCoral(m_driveSubsystem, m_cameraSubsystem),
-				new ElevatorCommand(m_elevatorSubsytem)
-			),
-			new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
-			
-			new AutonBringCoralUp(m_rollerSubsystem),
-			new Wait(1),
-			new TimeDrive(m_driveSubsystem, 3, 0.1),
-			new Wait(2),
-			new Outtake(m_rollerSubsystem),
-			new Wait(1)
-		);
+				new ParallelRaceGroup(
+						new AlignCoral(m_driveSubsystem, m_cameraSubsystem),
+						new ElevatorCommand(m_elevatorSubsytem)),
+				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
+
+				new AutonBringCoralUp(m_rollerSubsystem),
+				new Wait(1),
+				new TimeDrive(m_driveSubsystem, 3, 0.1),
+				new Wait(2),
+				new Outtake(m_rollerSubsystem),
+				new Wait(1));
 	}
 
 	private Autos() {

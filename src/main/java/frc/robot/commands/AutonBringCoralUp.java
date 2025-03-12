@@ -4,10 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
@@ -15,16 +13,13 @@ public class AutonBringCoralUp extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final RollerSubsystem m_subsystem;
 	Timer time = new Timer();
+
 	/**
-	 * Creates a new Wait command.
-	 * <p>Waits for the specified number of seconds.
-	 * <p>Disables WPILib motor safty during waiting period.
-	 *
-	 * @param time How long to wait (in seconds)
+	 * Creates a new AutonBringCoralUp command.
+	 * @param sub Subsystem that handles rollers.
 	 */
 	public AutonBringCoralUp(RollerSubsystem sub) {
 		this.m_subsystem = sub;
-		
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
@@ -35,8 +30,8 @@ public class AutonBringCoralUp extends Command {
 	public void initialize() {
 		// m_subsystem.drive.setSafetyEnabled(false);
 		// this.timer.restart();
-        System.out.println("RollerUp START");
-        // m_subsystem.rollerEncoder.setPosition(1);
+		System.out.println("RollerUp START");
+		// m_subsystem.rollerEncoder.setPosition(1);
 		// m_subsystem.setTargetPosition(Units.Rotations.of(0));
 		time.restart();
 	}
@@ -50,7 +45,7 @@ public class AutonBringCoralUp extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-        System.out.println("RollerUp END");
+		System.out.println("RollerUp END");
 		m_subsystem.roller.set(0);
 
 	}

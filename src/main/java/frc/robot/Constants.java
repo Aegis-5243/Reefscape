@@ -133,6 +133,12 @@ public final class Constants {
 
 	public static final String FRONT_LIMELIGHT = "limelight";
 	public static final String BACK_LIMELIGHT = "limelight-two";
+
+	public static final int DRIVER_VIEW_PIPELINE = 3;
+	public static final int ODOMETRY_PIPIELINE = 0;
+	public static final int APRIL_TAG_PIPELINE = 0;
+	public static final int LEFT_CORAL_PIPELINE = 2;
+	public static final int RIGHT_CORAL_PIPELINE = 1;
 	
 	// Auton
 	public static final double X_ALGAE_ALIGNMENT_P = 3.3;

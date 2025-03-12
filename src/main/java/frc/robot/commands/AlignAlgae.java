@@ -27,7 +27,7 @@ public class AlignAlgae extends Command {
         yController = new PIDController(Constants.Y_ALGAE_ALIGNMENT_P, 0, 0);  // Horitontal movement
         rotController = new PIDController(Constants.ROT_ALGAE_ALIGNMENT_P, 0, 0);  // Rotation
         this.m_subsystem = subsystem;
-        this.pipeline = 0;
+        this.pipeline = Constants.APRIL_TAG_PIPELINE;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_subsystem);
     }

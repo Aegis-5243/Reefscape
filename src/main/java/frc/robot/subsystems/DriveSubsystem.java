@@ -306,6 +306,10 @@ public class DriveSubsystem extends SubsystemBase {
 		fieldMechDrive(-Constants.primaryStick.getY(), Constants.primaryStick.getX(), Constants.secondaryStick.getX());
 	}
 
+	/**
+	 * Updates current pose estimate using vision, gyro, and encoder data.
+	 * <p><b>MUST BE CALLED EVERY LOOP!
+	 */
 	public void updatePoseEstimate() {
 		poseEstimator.update(gyro.getRotation2d(),
 				new MecanumDriveWheelPositions(Utilities.rotationsToDistance(flEncoder.getPosition()),
@@ -316,7 +320,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// Modified from
 		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
 
-		LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
+		LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
 		boolean useMegaTag2 = true; // set to false to use MegaTag1
 		boolean doRejectUpdate = false;
 
@@ -365,7 +369,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		// For back limelight
-		LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, 0);
+		LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
 
 		doRejectUpdate = false;
 		if (useMegaTag2 == false) {
@@ -412,14 +416,26 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
+	/**
+	 * Gets the current pose estimate of the robot. Does not update pose estimate.
+	 * @return Current pose estimate of the robot.
+	 */
 	public Pose2d getPose() {
 		return poseEstimator.getEstimatedPosition();
 	}
 
+	/**
+	 * Set the current pose of the robot.
+	 * @param pose Pose of robot to set.
+	 */
 	public void setPose(Pose2d pose) {
 		poseEstimator.resetPose(pose);
 	}
 
+	/**
+	 * Get speed of robot chassis using wheel velocities.
+	 * @return The chassis speed of the robot.
+	 */
 	public ChassisSpeeds getChassisSpeeds() {
 		return kinematics.toChassisSpeeds(
 				new MecanumDriveWheelSpeeds(
@@ -433,6 +449,10 @@ public class DriveSubsystem extends SubsystemBase {
 								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2)));
 	}
 
+	/**
+	 * Drives the robot at a certain chassis speed. Uses PID.
+	 * @param speeds Target speed of the chassis.
+	 */
 	public void driveRobotSpeed(ChassisSpeeds speeds) {
 		MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
 
@@ -446,13 +466,13 @@ public class DriveSubsystem extends SubsystemBase {
 				.in(Units.RPM),
 				ControlType.kVelocity);
 
-		frPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.rearRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		blPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.rearLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
 				.in(Units.RPM),
 				ControlType.kVelocity);
 
-		frPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.rearLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		brPID.setReference(Units.RadiansPerSecond
+				.of(wheelSpeeds.rearRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
 				.in(Units.RPM),
 				ControlType.kVelocity);
 	}

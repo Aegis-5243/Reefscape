@@ -23,22 +23,37 @@ public class AlignCoral extends Command {
     private double tolerance = 1;
 
     /**
-     * Creates a new Wait command.
-     * <p>
-     * Waits for the specified number of seconds.
-     * <p>
-     * Disables WPILib motor safty during waiting period.
-     *
-     * @param time How long to wait (in seconds)
+     * Creates a new AlignCoral command.
+     * <p>Aligns robot with a left coral reef branch horizontally and rotationally (optional)
+     * 
+     * @param driveSubsystem Subsystem that handles drive operations
+     * @param cameraSubsystem Subsystem that handles camera/vision operations
      */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem) {
-        this(driveSubsystem, cameraSubsystem, 2);
+        this(driveSubsystem, cameraSubsystem, Constants.LEFT_CORAL_PIPELINE);
     }
 
+    /**
+     * Creates a new AlignCoral command.
+     * <p>Aligns robot with a coral reef branch horizontally and rotationally (optional)
+     * 
+     * @param driveSubsystem Subsystem that handles drive operations
+     * @param cameraSubsystem Subsystem that handles camera/vision operations
+     * @param pipeline Limelight pipeline to use with alignment
+     */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem, int pipeline) {
         this(driveSubsystem, cameraSubsystem, pipeline, false);
     }
 
+    /**
+     * Creates a new AlignCoral command.
+     * <p>Aligns robot with a coral reef branch horizontally and rotationally (optional)
+     * 
+     * @param driveSubsystem Subsystem that handles drive operations
+     * @param cameraSubsystem Subsystem that handles camera/vision operations
+     * @param pipeline Limelight pipeline to use with alignment
+     * @param turn Is true if you wish to align robot rotationally with coral station.
+     */
     public AlignCoral(DriveSubsystem driveSubsystem, CameraSubsystem cameraSubsystem, int pipeline, boolean turn) {
         this.m_driveSubsystem = driveSubsystem;
         this.m_cameraSubsystem = cameraSubsystem;
