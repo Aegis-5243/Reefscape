@@ -134,6 +134,8 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Coral Up", new AutonBringCoralUp(m_rollerSubsystem));
 
+		NamedCommands.registerCommand("Elevator Command", m_elevatorCommand);
+
 		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),

@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -23,6 +23,12 @@
                       "data": {
                         "name": "Mechanism to High Coral"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator Command"
+                      }
                     }
                   ]
                 }
@@ -31,44 +37,63 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Coral Up"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral to Left back out"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Left back out to Left coral scoring pos"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Outtake"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "Coral Up"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Coral to Left back out"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left back out to Left coral scoring pos"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
+                  "name": "Elevator Command"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "Left Scoring Pos Back out"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Command"
                 }
               }
             ]
@@ -100,7 +125,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -110,34 +135,60 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "Mechanism to Low Coral"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Mechanism to Low Coral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator Command"
+                      }
+                    }
+                  ]
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "Coral to Right Scoring Pos"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral to Right Scoring Pos"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Outtake"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right Scoring Pos to Coral"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Right Scoring Pos to Coral"
+                  "name": "Elevator Command"
                 }
               }
             ]
