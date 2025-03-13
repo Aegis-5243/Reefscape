@@ -29,11 +29,11 @@ import frc.robot.subsystems.RollerSubsystem;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -190,6 +190,32 @@ public class RobotContainer {
 				new AlignAlgae(m_driveSubsystem)
 			)
 		));
+
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kY.value).whileTrue(
+			m_rollerSubsystem.startRun(() -> {}, 
+			() -> {
+				m_rollerSubsystem.roller.set(.1);
+				m_rollerSubsystem.rollerEncoder.setPosition(0);
+			})
+		);
+
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kB.value).whileTrue(
+			m_rollerSubsystem.startRun(() -> {}, 
+			() -> {
+				m_rollerSubsystem.roller.set(-.1);
+				m_rollerSubsystem.rollerEncoder.setPosition(0);
+			})
+		);
+
+		// Cancel arm and elevator commands
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kA.value).whileTrue(
+			new ParallelCommandGroup(
+				m_elevatorSubsytem.runOnce(() -> {m_elevatorSubsytem.elevator(0);}),
+				m_armSubsystem.runOnce(() -> {m_armSubsystem.setpoint = m_armSubsystem.armEncoder.getPosition();})
+			)
+		);
+
+
 		
 		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
 		// 	new ArmTo(Units.Degrees.of(120), m_armSubsystem),

@@ -57,7 +57,6 @@ public class TimeDrive extends Command {
         if (yaw - tolerance > startYaw)
             turn -= 0.0005;
         // System.out.println("counts target: " + counts + ", current: " + m_subsystem.fl.getPosition());
-        System.out.println(speed);
         m_subsystem.mechDrive(speed, 0, turn);
     }
 

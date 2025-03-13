@@ -66,7 +66,6 @@ public class EncoderDrive extends Command {
         if (yaw - tolerance > startYaw)
             turn -= 0.0005;
         // System.out.println("counts target: " + counts + ", current: " + m_subsystem.fl.getPosition());
-        System.out.println(speed);
         m_subsystem.mechDrive(Math.signum(counts) * speed, 0, turn);
     }
 

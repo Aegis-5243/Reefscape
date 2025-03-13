@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import javax.sound.midi.MidiDevice;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +20,8 @@ public class AlignCoral extends Command {
     private final DriveSubsystem m_driveSubsystem;
     private final CameraSubsystem m_cameraSubsystem;
     private int pipeline;
+    private int oldPipeline;
+    private boolean limelight;
     private boolean turning;
     private Timer time;
     private double tolerance = 1;
@@ -75,6 +79,9 @@ public class AlignCoral extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        oldPipeline = (int) LimelightHelpers.getCurrentPipelineIndex(Constants.FRONT_LIMELIGHT);
+        limelight = m_driveSubsystem.odoUseLimelight;
+        m_driveSubsystem.odoUseLimelight = false;
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, pipeline);
         startYaw = m_driveSubsystem.gyro.getYaw();
         time.restart();
@@ -116,7 +123,8 @@ public class AlignCoral extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
+        LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, oldPipeline);
+        m_driveSubsystem.odoUseLimelight = limelight;
         m_driveSubsystem.mechDrive(0, 0, 0);
     }
 

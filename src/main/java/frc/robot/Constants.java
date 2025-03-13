@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -164,7 +165,9 @@ public final class Constants {
 	public static Joystick primaryStick = new Joystick(0);
 	public static Joystick secondaryStick = new Joystick(1);
 
-	public static Joystick tertiaryStick = new Joystick(2);
+	public static Joystick tertiaryStick = new Joystick(3);
+
+	public static XboxController emergencyController = new XboxController(2);
 
 	public static class OperatorConstants {
 		public static final int kDriverControllerPort = 0;

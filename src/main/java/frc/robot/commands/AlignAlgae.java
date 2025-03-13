@@ -19,6 +19,7 @@ public class AlignAlgae extends Command {
     private PIDController xController, yController, rotController;
 	private final DriveSubsystem m_subsystem;
     private Timer dontSeeTagTimer, stopTimer;
+    private boolean limelightOdo;
     private int pipeline;
     private double tolerance = 1;
 
@@ -35,6 +36,8 @@ public class AlignAlgae extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        limelightOdo = m_subsystem.odoUseLimelight;
+        m_subsystem.odoUseLimelight = false;
 
         this.stopTimer = new Timer();
         this.stopTimer.start();
@@ -86,6 +89,7 @@ public class AlignAlgae extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
+        m_subsystem.odoUseLimelight = limelightOdo;
         m_subsystem.mechDrive(0, 0, 0);
 	}
 
