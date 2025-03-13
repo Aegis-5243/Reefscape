@@ -190,6 +190,15 @@ public class RobotContainer {
 				new AlignAlgae(m_driveSubsystem)
 			)
 		));
+		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
+			// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
+			new ElevatorTo(Units.Inches.of(25.75), m_elevatorSubsytem),
+			new ParallelCommandGroup(
+				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
+				new AlignAlgae(m_driveSubsystem)
+			)
+		));
 		
 		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
 		// 	new ArmTo(Units.Degrees.of(120), m_armSubsystem),
