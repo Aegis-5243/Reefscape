@@ -19,6 +19,7 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.ArmTo.ArmLocation;
+import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CameraSubsystem;
@@ -33,11 +34,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -76,10 +79,16 @@ public class RobotContainer {
 		m_armSubsystem.setDefaultCommand(m_armCommand);
 		m_rollerSubsystem.setDefaultCommand(m_rollerCommand);
 
-		m_chooser.setDefaultOption("Middle position L4 coral no limelight", Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
+		CommandScheduler.getInstance().registerSubsystem(m_cameraSubsystem);
+
+		m_chooser.setDefaultOption("Middle position L4 coral no limelight",
+				Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
 		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
-		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem, m_cameraSubsystem));
-		m_chooser.addOption("DO NOT USE IN COMP", new EncoderDrive(m_driveSubsystem, Units.Meters.of(300), 1));
+		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
+				m_rollerSubsystem, m_cameraSubsystem));
+		// m_chooser.addOption("DO NOT USE IN COMP", new SequentialCommandGroup(
+		// ));
+
 		SmartDashboard.putData("auton chooser", m_chooser);
 
 		// Configure the trigger bindings
@@ -111,23 +120,20 @@ public class RobotContainer {
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
 		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
-			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-			new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
-			new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
+				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+				new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
 
-			
 		NamedCommands.registerCommand("Mechanism to High Coral", new SequentialCommandGroup(
-			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-			new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-			new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
+				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
-			
 		NamedCommands.registerCommand("Mechanism to Low Coral", new SequentialCommandGroup(
-			new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-			new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
-			new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
+				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+				new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
 
-			
 		NamedCommands.registerCommand("Intake", new Intake(m_rollerSubsystem));
 
 		NamedCommands.registerCommand("Outtake", new Outtake(m_rollerSubsystem));
@@ -162,8 +168,9 @@ public class RobotContainer {
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
 		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
-		
-		// new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+
+		// new JoystickButton(Constants.secondaryStick, 1).onTrue(new
+		// Outtake(m_rollerSubsystem));
 		new JoystickButton(Constants.secondaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
 		}, () -> {
 			m_rollerSubsystem.roller.set(-.2);
@@ -176,65 +183,90 @@ public class RobotContainer {
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
 
-		new JoystickButton(Constants.primaryStick, 5).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE));
+		new JoystickButton(Constants.primaryStick, 5)
+				.whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE));
 		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, 1));
 
 		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
-		
+
 		new JoystickButton(Constants.primaryStick, 11).whileTrue(new SequentialCommandGroup(
-			// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-			new ElevatorTo(Units.Inches.of(10), m_elevatorSubsytem),
-			new ParallelCommandGroup(
-				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
-				new AlignAlgae(m_driveSubsystem)
-			)
-		));
+				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
+				new ElevatorTo(Units.Inches.of(9), m_elevatorSubsytem),
+				new ParallelCommandGroup(
+						m_rollerSubsystem.startEnd(() -> {
+							m_rollerSubsystem.roller.set(.5);
+						}, () -> {
+							m_rollerSubsystem.roller.set(0);
+							m_rollerSubsystem.rollerEncoder.setPosition(0);
+						}),
+						new AlignAlgae(m_driveSubsystem))));
 		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
-			// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-			new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-			new ElevatorTo(Units.Inches.of(25.75), m_elevatorSubsytem),
-			new ParallelCommandGroup(
-				m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.5);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
-				new AlignAlgae(m_driveSubsystem)
-			)
-		));
+				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
+				new ElevatorTo(Units.Inches.of(24.75), m_elevatorSubsytem),
+				new ParallelCommandGroup(
+						m_rollerSubsystem.startEnd(() -> {
+							m_rollerSubsystem.roller.set(.5);
+						}, () -> {
+							m_rollerSubsystem.roller.set(0);
+							m_rollerSubsystem.rollerEncoder.setPosition(0);
+						}),
+						new AlignAlgae(m_driveSubsystem))));
 
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kY.value).whileTrue(
-			m_rollerSubsystem.startRun(() -> {}, 
-			() -> {
-				m_rollerSubsystem.roller.set(.1);
-				m_rollerSubsystem.rollerEncoder.setPosition(0);
-			})
-		);
+				m_rollerSubsystem.startRun(() -> {
+				},
+						() -> {
+							m_rollerSubsystem.roller.set(.1);
+							m_rollerSubsystem.rollerEncoder.setPosition(0);
+						}));
 
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kB.value).whileTrue(
-			m_rollerSubsystem.startRun(() -> {}, 
-			() -> {
-				m_rollerSubsystem.roller.set(-.1);
-				m_rollerSubsystem.rollerEncoder.setPosition(0);
-			})
-		);
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kA.value).whileTrue(
+				m_rollerSubsystem.startRun(() -> {
+				},
+						() -> {
+							m_rollerSubsystem.roller.set(-.1);
+							m_rollerSubsystem.rollerEncoder.setPosition(0);
+						}));
 
 		// Cancel arm and elevator commands
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kA.value).whileTrue(
-			new ParallelCommandGroup(
-				m_elevatorSubsytem.runOnce(() -> {m_elevatorSubsytem.elevator(0);}),
-				m_armSubsystem.runOnce(() -> {m_armSubsystem.setpoint = m_armSubsystem.armEncoder.getPosition();})
-			)
-		);
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kB.value).whileTrue(
+				new ParallelCommandGroup(
+						m_elevatorSubsytem.runOnce(() -> {
+							m_elevatorSubsytem.elevator(0);
+						}),
+						m_armSubsystem.runOnce(() -> {
+							m_armSubsystem.setpoint = m_armSubsystem.armEncoder.getPosition();
+						})));
 
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftStick.value)
+				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward));
 
+				
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightStick.value)
+			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward));
 		
-		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
-		// 	new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-		// 	new ParallelCommandGroup(
-		// 		m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.25);}, () -> {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
-		// 		m_driveSubsystem.startEnd(() -> {m_driveSubsystem.mechDrive(.25, 0, 0);}, () -> {m_driveSubsystem.mechDrive(0, 0, 0);}).repeatedly()
-		// 	)
-		// 	// new ParallelCommandGroup(
-		// 	// 	m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)), null)
-		// 	// )
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftBumper.value)
+			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse));
+				
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightBumper.value)
+			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse));
+
+
+		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new
+		// SequentialCommandGroup(
+		// new ArmTo(Units.Degrees.of(120), m_armSubsystem),
+		// new ParallelCommandGroup(
+		// m_rollerSubsystem.startEnd(() -> {m_rollerSubsystem.roller.set(.25);}, () ->
+		// {m_rollerSubsystem.roller.set(0);m_rollerSubsystem.rollerEncoder.setPosition(0);}),
+		// m_driveSubsystem.startEnd(() -> {m_driveSubsystem.mechDrive(.25, 0, 0);}, ()
+		// -> {m_driveSubsystem.mechDrive(0, 0, 0);}).repeatedly()
+		// )
+		// // new ParallelCommandGroup(
+		// // m_rollerSubsystem.startEnd(() -> (m_rollerSubsystem.roller.set(-0.5)),
+		// null)
+		// // )
 
 		// ));
 	}

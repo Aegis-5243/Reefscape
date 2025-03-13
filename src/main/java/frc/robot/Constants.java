@@ -147,8 +147,8 @@ public final class Constants {
 	
 	// Auton
 	public static final double X_ALGAE_ALIGNMENT_P = 3.3;
-	public static final double Y_ALGAE_ALIGNMENT_P = 3.3;
-	public static final double ROT_ALGAE_ALIGNMENT_P = 0.058;
+	public static final double Y_ALGAE_ALIGNMENT_P = 0.6;
+	public static final double ROT_ALGAE_ALIGNMENT_P = 0.010;
 
 	public static final double ROT_SETPOINT_ALGAE_ALIGNMENT = 0;  // Rotation
 	public static final double ROT_TOLERANCE_ALGAE_ALIGNMENT = 1;

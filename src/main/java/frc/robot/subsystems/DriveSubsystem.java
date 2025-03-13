@@ -98,7 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
 		this.frEncoder = fr.getAlternateEncoder();
 		this.blEncoder = bl.getAlternateEncoder();
 		this.brEncoder = br.getAlternateEncoder();
-		
+
 		this.flFeedForward = new SimpleMotorFeedforward(Constants.FL_kS, Constants.FL_kV, Constants.FL_kA);
 		this.frFeedForward = new SimpleMotorFeedforward(Constants.FR_kS, Constants.FR_kV, Constants.FR_kA);
 		this.blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
@@ -293,7 +293,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Updates current pose estimate using vision, gyro, and encoder data.
-	 * <p><b>MUST BE CALLED EVERY LOOP!
+	 * <p>
+	 * <b>MUST BE CALLED EVERY LOOP!
 	 */
 	public void updatePoseEstimate() {
 		poseEstimator.update(gyro.getRotation2d(),
@@ -305,32 +306,35 @@ public class DriveSubsystem extends SubsystemBase {
 		// Modified from
 		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
 		if (odoUseLimelight) {
-			
+
 			LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
 			boolean useMegaTag2 = true; // set to false to use MegaTag1
 			boolean doRejectUpdate = false;
 
 			// For Front limelight
 			if (useMegaTag2 == false) {
-				LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
+				LimelightHelpers.PoseEstimate mt1 = LimelightHelpers
+						.getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
 
-				if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-					if (mt1.rawFiducials[0].ambiguity > .7) {
+				if (mt1 != null) {
+					if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+						if (mt1.rawFiducials[0].ambiguity > .7) {
+							doRejectUpdate = true;
+						}
+						if (mt1.rawFiducials[0].distToCamera > 3) {
+							doRejectUpdate = true;
+						}
+					}
+					if (mt1.tagCount == 0) {
 						doRejectUpdate = true;
 					}
-					if (mt1.rawFiducials[0].distToCamera > 3) {
-						doRejectUpdate = true;
-					}
-				}
-				if (mt1.tagCount == 0) {
-					doRejectUpdate = true;
-				}
 
-				if (!doRejectUpdate) {
-					poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-					poseEstimator.addVisionMeasurement(
-							mt1.pose,
-							mt1.timestampSeconds);
+					if (!doRejectUpdate) {
+						poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+						poseEstimator.addVisionMeasurement(
+								mt1.pose,
+								mt1.timestampSeconds);
+					}
 				}
 
 			} else if (useMegaTag2 == true) {
@@ -338,19 +342,22 @@ public class DriveSubsystem extends SubsystemBase {
 						poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
 				LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
 						.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
-				if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
-													// ignore vision updates
-				{
-					doRejectUpdate = true;
-				}
-				if (mt2.tagCount == 0) {
-					doRejectUpdate = true;
-				}
-				if (!doRejectUpdate) {
-					poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-					poseEstimator.addVisionMeasurement(
-							mt2.pose,
-							mt2.timestampSeconds);
+				if (mt2 != null) {
+					if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per
+														// second,
+					// ignore vision updates
+					{
+						doRejectUpdate = true;
+					}
+					if (mt2.tagCount == 0) {
+						doRejectUpdate = true;
+					}
+					if (!doRejectUpdate) {
+						poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+						poseEstimator.addVisionMeasurement(
+								mt2.pose,
+								mt2.timestampSeconds);
+					}
 				}
 			}
 
@@ -359,25 +366,27 @@ public class DriveSubsystem extends SubsystemBase {
 
 			doRejectUpdate = false;
 			if (useMegaTag2 == false) {
-				LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.BACK_LIMELIGHT);
-
-				if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-					if (mt1.rawFiducials[0].ambiguity > .7) {
+				LimelightHelpers.PoseEstimate mt1 = LimelightHelpers
+						.getBotPoseEstimate_wpiBlue(Constants.BACK_LIMELIGHT);
+				if (mt1 != null) {
+					if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+						if (mt1.rawFiducials[0].ambiguity > .7) {
+							doRejectUpdate = true;
+						}
+						if (mt1.rawFiducials[0].distToCamera > 3) {
+							doRejectUpdate = true;
+						}
+					}
+					if (mt1.tagCount == 0) {
 						doRejectUpdate = true;
 					}
-					if (mt1.rawFiducials[0].distToCamera > 3) {
-						doRejectUpdate = true;
-					}
-				}
-				if (mt1.tagCount == 0) {
-					doRejectUpdate = true;
-				}
 
-				if (!doRejectUpdate) {
-					poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-					poseEstimator.addVisionMeasurement(
-							mt1.pose,
-							mt1.timestampSeconds);
+					if (!doRejectUpdate) {
+						poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+						poseEstimator.addVisionMeasurement(
+								mt1.pose,
+								mt1.timestampSeconds);
+					}
 				}
 
 			} else if (useMegaTag2 == true) {
@@ -385,19 +394,22 @@ public class DriveSubsystem extends SubsystemBase {
 						poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
 				LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
 						.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.BACK_LIMELIGHT);
-				if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
-													// ignore vision updates
-				{
-					doRejectUpdate = true;
-				}
-				if (mt2.tagCount == 0) {
-					doRejectUpdate = true;
-				}
-				if (!doRejectUpdate) {
-					poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-					poseEstimator.addVisionMeasurement(
-							mt2.pose,
-							mt2.timestampSeconds);
+				if (mt2 != null) {
+					if (Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per
+														// second,
+														// ignore vision updates
+					{
+						doRejectUpdate = true;
+					}
+					if (mt2.tagCount == 0) {
+						doRejectUpdate = true;
+					}
+					if (!doRejectUpdate) {
+						poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+						poseEstimator.addVisionMeasurement(
+								mt2.pose,
+								mt2.timestampSeconds);
+					}
 				}
 			}
 		}
@@ -407,6 +419,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Gets the current pose estimate of the robot. Does not update pose estimate.
+	 * 
 	 * @return Current pose estimate of the robot.
 	 */
 	public Pose2d getPose() {
@@ -415,6 +428,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Set the current pose of the robot.
+	 * 
 	 * @param pose Pose of robot to set.
 	 */
 	public void setPose(Pose2d pose) {
@@ -423,6 +437,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Get speed of robot chassis using wheel velocities.
+	 * 
 	 * @return The chassis speed of the robot.
 	 */
 	public ChassisSpeeds getChassisSpeeds() {
@@ -440,6 +455,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Drives the robot at a certain chassis speed. Uses PID.
+	 * 
 	 * @param speeds Target speed of the chassis.
 	 */
 	public void driveRobotSpeed(ChassisSpeeds speeds) {
@@ -498,10 +514,13 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (RobotState.isEnabled())
+		if (RobotState.isEnabled()) {
 			updatePoseEstimate();
-		
-		System.out.println("x: " + flEncoder.getVelocity() / 60);
+			System.out.println("fl: " + flEncoder.getVelocity());
+			System.out.println("fr: " + frEncoder.getVelocity());
+			System.out.println("br: " + brEncoder.getVelocity());
+			System.out.println("bl: " + blEncoder.getVelocity());
+		}
 	}
 
 	@Override

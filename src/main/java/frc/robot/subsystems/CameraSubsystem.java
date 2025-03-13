@@ -36,6 +36,7 @@ public class CameraSubsystem extends SubsystemBase {
         CameraServer.startAutomaticCapture(0);
         CameraServer.startAutomaticCapture(limelight2);
         CameraServer.startAutomaticCapture(limelight2);
+        LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
         
     }
 
@@ -71,7 +72,6 @@ public class CameraSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        System.out.println(LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT));
         
     }
 

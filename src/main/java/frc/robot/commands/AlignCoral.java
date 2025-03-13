@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import javax.sound.midi.MidiDevice;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,18 +15,21 @@ import frc.robot.Constants;
 import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Utilities;
 
 /** An example command that uses an example subsystem. */
 public class AlignCoral extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final DriveSubsystem m_driveSubsystem;
     private final CameraSubsystem m_cameraSubsystem;
+    
+    private PIDController yController, rotController;
     private int pipeline;
     private int oldPipeline;
     private boolean limelight;
     private boolean turning;
     private Timer time;
-    private double tolerance = 1;
+    private double tolerance = 1.5;
     private double startYaw;
 
     /**
@@ -71,6 +76,8 @@ public class AlignCoral extends Command {
         this.m_cameraSubsystem = cameraSubsystem;
         this.pipeline = pipeline;
         this.turning = turn;
+        yController = new PIDController(Constants.Y_ALGAE_ALIGNMENT_P, 0, 0);  // Horitontal movement
+        rotController = new PIDController(Constants.ROT_ALGAE_ALIGNMENT_P, 0, 0);  // Rotation
         this.time = new Timer();
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_driveSubsystem, m_cameraSubsystem);
@@ -83,40 +90,56 @@ public class AlignCoral extends Command {
         limelight = m_driveSubsystem.odoUseLimelight;
         m_driveSubsystem.odoUseLimelight = false;
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, pipeline);
-        startYaw = m_driveSubsystem.gyro.getYaw();
+        // startYaw = m_driveSubsystem.gyro.getYaw();
+        rotController.setSetpoint(Constants.ROT_SETPOINT_ALGAE_ALIGNMENT);
+        rotController.setTolerance(Constants.ROT_TOLERANCE_ALGAE_ALIGNMENT);
+
+
+        yController.setSetpoint(Constants.Y_SETPOINT_ALGAE_ALIGNMENT);
+        yController.setTolerance(Constants.Y_TOLERANCE_ALGAE_ALIGNMENT);
+
         time.restart();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
-        if (x < -tolerance || x > tolerance) {
+        if (LimelightHelpers.getTV(Constants.FRONT_LIMELIGHT) &&
+        Utilities.isTagOnReef(LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT))) {
             // formatting diff
 
-            double strafe = (x) / (120);
-            strafe = strafe > 1 ? 1 : strafe;
-            strafe = strafe < -1 ? -1 : strafe;
-            strafe = Math.abs(strafe) < .25 ? Math.signum(strafe) * .25 : strafe;
+            // double strafe = (x) / (150);
+            // strafe = strafe > 1 ? 1 : strafe;
+            // strafe = strafe < -1 ? -1 : strafe;
+            // strafe = Math.abs(strafe) < .2 ? Math.signum(strafe) * .2 : strafe;
 
-            double turn = 0;
-            if (turning) {
-                double aprilTagAngle = LimelightHelpers.getBotPose3d_TargetSpace(Constants.FRONT_LIMELIGHT)
-                        .getRotation().getMeasureAngle().in(Units.Degrees);
+            // double turn = 0;
+            // if (turning) {
+            //     double aprilTagAngle = LimelightHelpers.getBotPose3d_TargetSpace(Constants.FRONT_LIMELIGHT)
+            //             .getRotation().getMeasureAngle().in(Units.Degrees);
 
-                double yaw = m_driveSubsystem.gyro.getYaw() - startYaw;
+            //     turn = (aprilTagAngle) / (45.0);
+            //     turn = turn > 1 ? 1 : turn;
+            //     turn = turn < -1 ? -1 : turn;
+            //     turn = Math.abs(turn) < .25 ? Math.signum(turn) * .25 : turn;
+            // }
 
-                if (yaw > 180) yaw -= 360;
-                if (yaw < -180) yaw += 360;
+            double[] postions = LimelightHelpers.getBotPose_TargetSpace(Constants.FRONT_LIMELIGHT);
+            double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
+            // double xSpeed = xController.calculate(postions[2]);
+            double xSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
+            // double ySpeed = yController.calculate(postions[0]);
+            double ySpeed = -yController.calculate(x);
+            double rotValue = rotController.calculate(postions[4]);
 
-                turn = (aprilTagAngle - yaw) / (45.0);
-                turn = turn > 1 ? 1 : turn;
-                turn = turn < -1 ? -1 : turn;
-                turn = Math.abs(turn) < .25 ? Math.signum(turn) * .25 : turn;
-            }
+            double maxSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
+            xSpeed = MathUtil.clamp(xSpeed, -maxSpeed, maxSpeed);
+            ySpeed = MathUtil.clamp(ySpeed, -maxSpeed, maxSpeed);
 
-            m_driveSubsystem.mechDrive(0, strafe, turn);
-
+            m_driveSubsystem.mechDrive(0, ySpeed, rotValue);
+            
+        } else {
+            m_driveSubsystem.mechDrive(0, 0, 0);
         }
     }
 
@@ -131,7 +154,9 @@ public class AlignCoral extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
-        return !(x < -tolerance || x > tolerance) && time.hasElapsed(3);
+        // TODO: only works in whileTrue, fix if used in auton
+        return false;
+        // double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
+        // return !(x < -tolerance || x > tolerance) && time.hasElapsed(3);
     }
 }

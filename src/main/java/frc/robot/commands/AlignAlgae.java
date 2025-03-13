@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Utilities;
 
 /** An example command that uses an example subsystem. */
 public class AlignAlgae extends Command {
@@ -54,23 +55,21 @@ public class AlignAlgae extends Command {
         yController.setTolerance(Constants.Y_TOLERANCE_ALGAE_ALIGNMENT);
     }
     
-    public boolean isTagOnReef(double tagId) {
-        return (17 <= tagId && tagId <= 22) || (6 <= tagId && tagId <= 11);
-    }
+    
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if (LimelightHelpers.getTV(Constants.FRONT_LIMELIGHT) &&
-            isTagOnReef(LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT)))
+            Utilities.isTagOnReef(LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT)))
         {
             this.dontSeeTagTimer.reset();
             double[] postions = LimelightHelpers.getBotPose_TargetSpace(Constants.FRONT_LIMELIGHT);
 
             // double xSpeed = xController.calculate(postions[2]);
             double xSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
-            double ySpeed = -yController.calculate(postions[0]);
-            double rotValue = -rotController.calculate(postions[4]);
+            double ySpeed = yController.calculate(postions[0]);
+            double rotValue = rotController.calculate(postions[4]);
 
             double maxSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
             xSpeed = MathUtil.clamp(xSpeed, -maxSpeed, maxSpeed);

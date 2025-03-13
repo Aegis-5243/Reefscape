@@ -62,6 +62,10 @@ public class Utilities {
         motor.set(.25);
     }
 
+    public static boolean isTagOnReef(double tagId) {
+        return (17 <= tagId && tagId <= 22) || (6 <= tagId && tagId <= 11);
+    }
+
     private Utilities() {
     }
 }
