@@ -162,11 +162,17 @@ public class RobotContainer {
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
 		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
-		new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+		
+		// new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+		new JoystickButton(Constants.secondaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
+		}, () -> {
+			m_rollerSubsystem.roller.set(-.2);
+			m_rollerSubsystem.rollerEncoder.setPosition(0);
+		}));
 
 		new JoystickButton(Constants.primaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
 		}, () -> {
-			m_rollerSubsystem.roller.set(.05);
+			m_rollerSubsystem.roller.set(.1);
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
 
