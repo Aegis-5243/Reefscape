@@ -78,8 +78,7 @@ public class AlignAlgae extends Command {
 
             m_subsystem.mechDrive(xSpeed, ySpeed, rotValue);
             if (!rotController.atSetpoint() ||
-                !yController.atSetpoint() ||
-                !xController.atSetpoint()) {
+                !yController.atSetpoint()) {
                 stopTimer.reset();
             }
         } else {
