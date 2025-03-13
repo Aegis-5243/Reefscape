@@ -156,7 +156,7 @@ public final class Constants {
 	public static final double X_TOLERANCE_ALGAE_ALIGNMENT = 0.02;
 	public static final double Y_SETPOINT_ALGAE_ALIGNMENT = 0.0;  // Horizontal pose
 	public static final double Y_TOLERANCE_ALGAE_ALIGNMENT = 0.02;
-	public static final double MAX_SPEED_ALGAE_ALIGNMENT = 0.3;
+	public static final double MAX_SPEED_ALGAE_ALIGNMENT = 0.1;
 
 	public static final double DONT_SEE_TAG_WAIT_TIME = 0.5;
 	public static final double POSE_VALIDATION_TIME = 0.3;

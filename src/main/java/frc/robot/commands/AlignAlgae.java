@@ -16,7 +16,7 @@ import frc.robot.util.LimelightHelpers;
 public class AlignAlgae extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
-    private PIDController xController, yController, rotController;
+    private PIDController yController, rotController;
 	private final DriveSubsystem m_subsystem;
     private Timer dontSeeTagTimer, stopTimer;
     private boolean limelightOdo;
@@ -24,7 +24,7 @@ public class AlignAlgae extends Command {
     private double tolerance = 1;
 
     public AlignAlgae(DriveSubsystem subsystem) {
-        xController = new PIDController(Constants.X_ALGAE_ALIGNMENT_P, 0, 0);  // Vertical movement
+        // xController = new PIDController(Constants.X_ALGAE_ALIGNMENT_P, 0, 0);  // Vertical movement
         yController = new PIDController(Constants.Y_ALGAE_ALIGNMENT_P, 0, 0);  // Horitontal movement
         rotController = new PIDController(Constants.ROT_ALGAE_ALIGNMENT_P, 0, 0);  // Rotation
         this.m_subsystem = subsystem;
@@ -47,8 +47,8 @@ public class AlignAlgae extends Command {
         rotController.setSetpoint(Constants.ROT_SETPOINT_ALGAE_ALIGNMENT);
         rotController.setTolerance(Constants.ROT_TOLERANCE_ALGAE_ALIGNMENT);
 
-        xController.setSetpoint(Constants.X_SETPOINT_ALGAE_ALIGNMENT);
-        xController.setTolerance(Constants.X_TOLERANCE_ALGAE_ALIGNMENT);
+        // xController.setSetpoint(Constants.X_SETPOINT_ALGAE_ALIGNMENT);
+        // xController.setTolerance(Constants.X_TOLERANCE_ALGAE_ALIGNMENT);
 
         yController.setSetpoint(Constants.Y_SETPOINT_ALGAE_ALIGNMENT);
         yController.setTolerance(Constants.Y_TOLERANCE_ALGAE_ALIGNMENT);
@@ -67,7 +67,8 @@ public class AlignAlgae extends Command {
             this.dontSeeTagTimer.reset();
             double[] postions = LimelightHelpers.getBotPose_TargetSpace(Constants.FRONT_LIMELIGHT);
 
-            double xSpeed = xController.calculate(postions[2]);
+            // double xSpeed = xController.calculate(postions[2]);
+            double xSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
             double ySpeed = -yController.calculate(postions[0]);
             double rotValue = -rotController.calculate(postions[4]);
 
