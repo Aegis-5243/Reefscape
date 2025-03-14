@@ -83,6 +83,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public boolean odoUseLimelight;
 
+	public double offsetHeadingDeg;
+
 	public Field2d field;
 
 	/**
@@ -149,6 +151,8 @@ public class DriveSubsystem extends SubsystemBase {
 		this.gyro = new AHRS(NavXComType.kUSB1);
 
 		this.gyro.reset();
+
+		this.offsetHeadingDeg = 0.0;
 
 		// Make it so getAngle is zero when facing red aliiance station
 		// Needed for field coordinates, which are based on blue alliance.
@@ -249,6 +253,26 @@ public class DriveSubsystem extends SubsystemBase {
 		// ySpeed *= squaredMag;
 		// }
 		// if (zSpeed != 0) zSpeed = zSpeed * Math.abs(zSpeed);
+
+		// If throttle on primary controller is active then use omni-directional drive
+
+		if (primaryStick.getRawButton(13)) {
+			
+			offsetHeadingDeg = gyro.getYaw();
+		}
+
+		if (primaryStick.getThrottle() > 0.5) {
+			heading = gyro.getYaw()
+			
+			double headingDeg = heading - offsetHeadingDeg;
+			double headingRad = headingDeg / 180.0 * Math.PI;
+
+			double rotX = xSpeed * Math.cos(headingRad) - ySpeed * Math.sin(headingRad);
+        	double rotY = xSpeed * Math.sin(headingRad) + ySpeed * Math.cos(headingRad);
+
+			xSpeed = rotX;
+			ySpeed = rotY;
+		}
 
 		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}
