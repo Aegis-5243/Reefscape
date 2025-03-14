@@ -4,14 +4,16 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Utilities;
-
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class EncoderDrive extends Command {
+public class EncoderTurn extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final DriveSubsystem m_subsystem;
     public double startYaw;
@@ -32,13 +34,13 @@ public class EncoderDrive extends Command {
      * @param subsystem The subsystem used by this command.
 	 * @param distance Distance to drive
      */
-    public EncoderDrive(DriveSubsystem subsystem, Distance distance) {
-        this(subsystem, distance, 0.5);
+    public EncoderTurn(DriveSubsystem subsystem, Angle angle) {
+        this(subsystem, angle, 0.5);
     }
     
-    public EncoderDrive(DriveSubsystem subsystem, Distance distance, double speed) {
+    public EncoderTurn(DriveSubsystem subsystem, Angle angle, double speed) {
         m_subsystem = subsystem;
-        this.counts = Utilities.distanceToRotations(distance);
+        this.counts = (angle.in(Units.Degrees) * Constants.TRACK_WIDTH.in(Units.Inches)) / (360 * Constants.WHEEL_DIAMETER.in(Units.Inches)) * 1.35;
         this.speed = speed;
         
         // Use addRequirements() here to declare subsystem dependencies.
@@ -60,14 +62,8 @@ public class EncoderDrive extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        yaw = m_subsystem.gyro.getYaw();
-        if (yaw + tolerance < startYaw)
-            turn += 0.0005;
-        if (yaw - tolerance > startYaw)
-            turn -= 0.0005;
-        System.out.println();
         // System.out.println("counts target: " + counts + ", current: " + m_subsystem.fl.getPosition());
-        m_subsystem.mechDrive(Math.signum(counts) * speed, 0, turn);
+        m_subsystem.mechDrive(0, 0, Math.signum(counts) * speed);
     }
 
     // Called once the command ends or is interrupted.

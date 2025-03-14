@@ -46,7 +46,7 @@ public class Turn extends Command {
         if (yaw < heading - tolerance || yaw > heading + tolerance) {
             // formatting diff
 
-            double diff = (heading - yaw) / (200);
+            double diff = (heading - yaw) / (10000.0);
             diff = diff > 1 ? 1 : diff;
             diff = diff < -1 ? -1 : diff;
             diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;

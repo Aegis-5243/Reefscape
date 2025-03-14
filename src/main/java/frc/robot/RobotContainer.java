@@ -15,9 +15,11 @@ import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorTo;
 import frc.robot.commands.EncoderDrive;
+import frc.robot.commands.EncoderTurn;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
+import frc.robot.commands.Turn;
 import frc.robot.commands.ArmTo.ArmLocation;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorTo.ElevatorLocation;
@@ -86,8 +88,7 @@ public class RobotContainer {
 		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
 		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
 				m_rollerSubsystem, m_cameraSubsystem));
-		// m_chooser.addOption("DO NOT USE IN COMP", new SequentialCommandGroup(
-		// ));
+		m_chooser.addOption("DO NOT USE IN COMP", Autos.coralmaybe(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem, m_cameraSubsystem));
 
 		SmartDashboard.putData("auton chooser", m_chooser);
 

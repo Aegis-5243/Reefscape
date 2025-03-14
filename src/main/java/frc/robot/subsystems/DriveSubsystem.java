@@ -514,13 +514,13 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (RobotState.isEnabled()) {
-			updatePoseEstimate();
-			System.out.println("fl: " + flEncoder.getVelocity());
-			System.out.println("fr: " + frEncoder.getVelocity());
-			System.out.println("br: " + brEncoder.getVelocity());
-			System.out.println("bl: " + blEncoder.getVelocity());
-		}
+		// if (RobotState.isEnabled()) {
+		// 	updatePoseEstimate();
+		// 	System.out.println("fl: " + flEncoder.getPosition());
+		// 	System.out.println("fr: " + frEncoder.getPosition());
+		// 	System.out.println("br: " + brEncoder.getPosition());
+		// 	System.out.println("bl: " + blEncoder.getPosition());
+		// }
 	}
 
 	@Override
