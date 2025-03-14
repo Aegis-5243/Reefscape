@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AlignAlgae;
 import frc.robot.commands.AlignCoral;
+import frc.robot.commands.AlignCoralAuto;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmTo;
 import frc.robot.commands.AutonBringCoralUp;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.units.Units;
@@ -66,7 +68,7 @@ public class RobotContainer {
 	private final ArmCommand m_armCommand = new ArmCommand(m_armSubsystem);
 	private final RollerCommand m_rollerCommand = new RollerCommand(m_rollerSubsystem);
 
-	private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+	private final SendableChooser<Command> m_chooser;
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	// private final CommandXboxController m_driverController = new
 	// CommandXboxController(
@@ -83,7 +85,8 @@ public class RobotContainer {
 
 		CommandScheduler.getInstance().registerSubsystem(m_cameraSubsystem);
 
-		m_chooser.setDefaultOption("Middle position L4 coral no limelight",
+		m_chooser = AutoBuilder.buildAutoChooser();
+		m_chooser.addOption("Middle position L4 coral no limelight",
 				Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
 		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
 		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,

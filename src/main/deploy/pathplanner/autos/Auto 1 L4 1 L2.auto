@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -23,12 +23,6 @@
                       "data": {
                         "name": "Mechanism to High Coral"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Elevator Command"
-                      }
                     }
                   ]
                 }
@@ -45,15 +39,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Up"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "Coral to Left back out"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Coral Up"
                       }
                     },
                     {
@@ -125,7 +119,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -142,12 +136,6 @@
                       "type": "named",
                       "data": {
                         "name": "Mechanism to Low Coral"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Elevator Command"
                       }
                     }
                   ]
@@ -192,6 +180,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Mechanism to Intake"
           }
         }
       ]

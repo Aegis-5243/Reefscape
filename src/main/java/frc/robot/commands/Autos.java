@@ -192,7 +192,7 @@ public final class Autos {
 					new EncoderDrive(m_driveSubsystem, Units.Inches.of(64)),
 					// new ElevatorCommand(m_elevatorSubsytem)
 				// )
-				new AlignCoral(m_driveSubsystem, m_cameraSubsystem),
+				new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem),
 				new EncoderDrive(m_driveSubsystem, Units.Inches.of(6), .15),
 				// score
 				new EncoderDrive(m_driveSubsystem, Units.Inches.of(-64))
@@ -218,7 +218,7 @@ public final class Autos {
 								new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem))),
 
 				new ParallelRaceGroup(
-						new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
+						new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
 						new ElevatorCommand(m_elevatorSubsytem)),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
 

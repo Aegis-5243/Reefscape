@@ -307,7 +307,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
 		if (odoUseLimelight) {
 
-			LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
+			// LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
 			boolean useMegaTag2 = true; // set to false to use MegaTag1
 			boolean doRejectUpdate = false;
 
@@ -362,7 +362,7 @@ public class DriveSubsystem extends SubsystemBase {
 			}
 
 			// For back limelight
-			LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
+			// LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, Constants.ODOMETRY_PIPIELINE);
 
 			doRejectUpdate = false;
 			if (useMegaTag2 == false) {
@@ -454,32 +454,38 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Drives the robot at a certain chassis speed. Uses PID.
+	 * Drives the robot at a certain chassis speed. Uses FeedForward.
 	 * 
 	 * @param speeds Target speed of the chassis.
 	 */
 	public void driveRobotSpeed(ChassisSpeeds speeds) {
 		MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+		
+		fl.setVoltage(flFeedForward.calculate(Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.frontLeftMetersPerSecond));
+		fr.setVoltage(frFeedForward.calculate(Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.frontRightMetersPerSecond));
+		bl.setVoltage(blFeedForward.calculate(Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.rearLeftMetersPerSecond));
+		br.setVoltage(brFeedForward.calculate(Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.rearRightMetersPerSecond));
 
-		flPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.frontLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
-				.in(Units.RPM),
-				ControlType.kVelocity);
+		// flZPID.setReference(Units.RadiansPerSecond
+		// 		.of(wheelSpeeds.frontLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		// 		.in(Units.RPM),
+		// 		ControlType.kVelocity);
 
-		frPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.frontRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
-				.in(Units.RPM),
-				ControlType.kVelocity);
+		// frPID.setReference(Units.RadiansPerSecond
+		// 		.of(wheelSpeeds.frontRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		// 		.in(Units.RPM),
+		// 		ControlType.kVelocity);
 
-		blPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.rearLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
-				.in(Units.RPM),
-				ControlType.kVelocity);
+		// blPID.setReference(Units.RadiansPerSecond
+		// 		.of(wheelSpeeds.rearLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		// 		.in(Units.RPM),
+		// 		ControlType.kVelocity);
 
-		brPID.setReference(Units.RadiansPerSecond
-				.of(wheelSpeeds.rearRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
-				.in(Units.RPM),
-				ControlType.kVelocity);
+		// brPID.setReference(Units.RadiansPerSecond
+		// 		.of(wheelSpeeds.rearRightMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))
+		// 		.in(Units.RPM),
+		// 		ControlType.kVelocity);
+
 	}
 
 	public static DriveSubsystem getInstance() {
@@ -514,13 +520,13 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		// if (RobotState.isEnabled()) {
-		// 	updatePoseEstimate();
+		if (RobotState.isEnabled()) {
+			updatePoseEstimate();
 		// 	System.out.println("fl: " + flEncoder.getPosition());
 		// 	System.out.println("fr: " + frEncoder.getPosition());
 		// 	System.out.println("br: " + brEncoder.getPosition());
 		// 	System.out.println("bl: " + blEncoder.getPosition());
-		// }
+		}
 	}
 
 	@Override

@@ -39,21 +39,21 @@ public final class Constants {
 	public static final int[] BL_ENCODER_PORTS = { 5, 4 };
 	public static final int[] BR_ENCODER_PORTS = { 3, 2 };
 
-	public static final double FR_kA = 0;
+	public static final double FR_kA = 0.32;
 	public static final double FR_kS = 0;
-	public static final double FR_kV = 0;
+	public static final double FR_kV = 3.26;
 
-	public static final double FL_kA = 0;
+	public static final double FL_kA = 0.32;
 	public static final double FL_kS = 0;
-	public static final double FL_kV = 0;
+	public static final double FL_kV = 3.26;
 
-	public static final double BR_kA = 0;
+	public static final double BR_kA = 0.32;
 	public static final double BR_kS = 0;
-	public static final double BR_kV = 0;
+	public static final double BR_kV = 3.26;
 
-	public static final double BL_kA = 0;
+	public static final double BL_kA = 0.32;
 	public static final double BL_kS = 0;
-	public static final double BL_kV = 0;
+	public static final double BL_kV = 3.26;
 
 	public static final double FL_kP = 0.017002;
 	public static final double FL_kI = 0.0;
