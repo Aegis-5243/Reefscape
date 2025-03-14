@@ -23,6 +23,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
@@ -256,25 +257,28 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// If throttle on primary controller is active then use omni-directional drive
 
-		if (primaryStick.getRawButton(13)) {
+		if (Constants.primaryStick.getRawButton(13)) {
 			
 			offsetHeadingDeg = gyro.getYaw();
 		}
 
-		if (primaryStick.getThrottle() > 0.5) {
-			heading = gyro.getYaw()
+		if (Constants.primaryStick.getThrottle() > 0.5) {
+			double heading = gyro.getYaw();
 			
-			double headingDeg = heading - offsetHeadingDeg;
-			double headingRad = headingDeg / 180.0 * Math.PI;
+			// double headingDeg = heading - offsetHeadingDeg;
+			// double headingRad = headingDeg / 180.0 * Math.PI;
 
-			double rotX = xSpeed * Math.cos(headingRad) - ySpeed * Math.sin(headingRad);
-        	double rotY = xSpeed * Math.sin(headingRad) + ySpeed * Math.cos(headingRad);
+			// double rotX = xSpeed * Math.cos(headingRad) - ySpeed * Math.sin(headingRad);
+        	// double rotY = xSpeed * Math.sin(headingRad) + ySpeed * Math.cos(headingRad);
 
-			xSpeed = rotX;
-			ySpeed = rotY;
+			// xSpeed = rotX;
+			// ySpeed = rotY;
+
+			drive.driveCartesian(xSpeed, ySpeed, zSpeed, gyro.getRotation2d().minus(Rotation2d.fromDegrees(offsetHeadingDeg)));
+		} else {
+
+			drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 		}
-
-		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
 	}
 
 	/**
