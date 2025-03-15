@@ -240,13 +240,22 @@ public class DriveSubsystem extends SubsystemBase {
 		double squaredMag = xSpeed * xSpeed + ySpeed * ySpeed;
 		if (squaredMag < stickDeadzone * stickDeadzone)
 			xSpeed = ySpeed = 0;
+		else {
+			// change xspeed and yspeed to start at a magnitude of 0 when leaving deadzone
+			if (squaredMag < 1) {
+				double angle = Math.atan2(ySpeed, xSpeed);
+				// change mag to be from dz - 1 to 0 - 1
+				squaredMag = (Math.sqrt(squaredMag) - stickDeadzone) / (1-stickDeadzone);
+				xSpeed = squaredMag * Math.cos(angle);
+				ySpeed = squaredMag * Math.sin(angle);
+			}
+		}
 		
 
 		if (Math.abs(zSpeed) < stickDeadzone)
 			zSpeed = 0;
 
-		if (squaredMag > 1)
-			squaredMag = 1;
+	
 
 		// Apply exponential rates
 		// if (xSpeed != 0 || ySpeed != 0) {
