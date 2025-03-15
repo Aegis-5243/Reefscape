@@ -64,6 +64,7 @@ public class TimeDrive extends Command {
     @Override
     public void end(boolean interrupted) {
         System.out.println("Drive END");
+        m_subsystem.mechDrive(0,0,0);
     }
 
     // Returns true when the command should end.

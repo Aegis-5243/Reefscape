@@ -218,13 +218,12 @@ public final class Autos {
 
 				new ParallelRaceGroup(
 						new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
-						new ElevatorCommand(m_elevatorSubsytem)
-						),
+						new ElevatorCommand(m_elevatorSubsytem)),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
 
 				new AutonBringCoralUp(m_rollerSubsystem),
 				new Wait(1),
-				new TimeDrive(m_driveSubsystem, .2, 0.2),
+				new TimeDrive(m_driveSubsystem, 2, 0.2),
 				new Wait(2),
 				new Outtake(m_rollerSubsystem),
 				new ElevatorCommand(m_elevatorSubsytem)

@@ -136,10 +136,10 @@ public class AlignCoral extends Command {
             xSpeed = MathUtil.clamp(xSpeed, -maxSpeed, maxSpeed);
             ySpeed = MathUtil.clamp(ySpeed, -maxSpeed, maxSpeed);
 
-            m_driveSubsystem.mechDrive(0, ySpeed, rotValue);
+            m_driveSubsystem.mechDrive(xSpeed, ySpeed, rotValue);
             
         } else {
-            m_driveSubsystem.mechDrive(0, 0, 0);
+            m_driveSubsystem.mechDrive(Constants.MAX_SPEED_ALGAE_ALIGNMENT, 0, 0);
         }
     }
 

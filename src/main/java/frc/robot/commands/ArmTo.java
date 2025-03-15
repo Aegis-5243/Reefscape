@@ -78,6 +78,6 @@ public class ArmTo extends Command {
 	@Override
 	public boolean isFinished() {
 		
-		return m_subsystem.armEncoder.getPosition() - target < .4 && m_subsystem.armEncoder.getPosition() - target > -.4;
+		return Math.abs(m_subsystem.armEncoder.getPosition() - target) < .5;
 	}
 }

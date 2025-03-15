@@ -91,7 +91,8 @@ public class RobotContainer {
 		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
 		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
 				m_rollerSubsystem, m_cameraSubsystem));
-		m_chooser.addOption("DO NOT USE IN COMP", Autos.coralmaybe(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem, m_cameraSubsystem));
+		m_chooser.addOption("DO NOT USE IN COMP", Autos.coralmaybe(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
+				m_rollerSubsystem, m_cameraSubsystem));
 
 		SmartDashboard.putData("auton chooser", m_chooser);
 
@@ -173,13 +174,13 @@ public class RobotContainer {
 
 		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
 
-		// new JoystickButton(Constants.secondaryStick, 1).onTrue(new
-		// Outtake(m_rollerSubsystem));
-		new JoystickButton(Constants.secondaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
-		}, () -> {
-			m_rollerSubsystem.roller.set(-.2);
-			m_rollerSubsystem.rollerEncoder.setPosition(0);
-		}));
+		new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
+		// new JoystickButton(Constants.secondaryStick,
+		// 1).whileTrue(m_rollerSubsystem.startRun(() -> {
+		// }, () -> {
+		// m_rollerSubsystem.roller.set(-.2);
+		// m_rollerSubsystem.rollerEncoder.setPosition(0);
+		// }));
 
 		new JoystickButton(Constants.primaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
 		}, () -> {
@@ -196,7 +197,7 @@ public class RobotContainer {
 		new JoystickButton(Constants.primaryStick, 11).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-				new ElevatorTo(Units.Inches.of(9), m_elevatorSubsytem),
+				new ElevatorTo(Units.Inches.of(9.5), m_elevatorSubsytem),
 				new ParallelCommandGroup(
 						m_rollerSubsystem.startEnd(() -> {
 							m_rollerSubsystem.roller.set(.5);
@@ -247,16 +248,14 @@ public class RobotContainer {
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftStick.value)
 				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward));
 
-				
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightStick.value)
-			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward));
-		
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftBumper.value)
-			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse));
-				
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightBumper.value)
-			.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse));
+				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward));
 
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftBumper.value)
+				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse));
+
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightBumper.value)
+				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse));
 
 		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new
 		// SequentialCommandGroup(

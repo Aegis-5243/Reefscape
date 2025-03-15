@@ -81,7 +81,7 @@ public class AlignAlgae extends Command {
                 stopTimer.reset();
             }
         } else {
-            m_subsystem.mechDrive(0.2, 0, 0);
+            m_subsystem.mechDrive(Constants.MAX_SPEED_ALGAE_ALIGNMENT, 0, 0);
         }
 	}
 

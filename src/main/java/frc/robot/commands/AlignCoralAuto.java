@@ -44,15 +44,16 @@ public class AlignCoralAuto extends Command {
         this.m_cameraSubsystem = cameraSubsystem;
         this.pipeline = pipeline;
         this.turning = turn;
-        this.time = new Timer();
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_driveSubsystem, m_cameraSubsystem);
     }
-
+    
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, pipeline);
+        time = new Timer();
+        System.out.println("Align Start");
         time.restart();
     }
 
@@ -81,12 +82,13 @@ public class AlignCoralAuto extends Command {
     public void end(boolean interrupted) {
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
         m_driveSubsystem.mechDrive(0, 0, 0);
+        System.out.println("finshed algae align auto");
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
-        return !(x < -tolerance || x > tolerance) && time.hasElapsed(2) || time.hasElapsed(4);
+        return (!(x < -tolerance || x > tolerance) && time.hasElapsed(2)) || time.hasElapsed(3);
     }
 }

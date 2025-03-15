@@ -66,7 +66,7 @@ public class EncoderDrive extends Command {
         if (yaw - tolerance > startYaw)
             turn -= 0.0005;
         System.out.println();
-        System.out.println("counts target: " + counts + ", current: " + m_subsystem.flEncoder.getPosition());
+        System.out.println("counts target: " + counts + ", current: " + (m_subsystem.frEncoder.getPosition() - zeroFR));
         m_subsystem.mechDrive(Math.signum(counts) * speed, 0, turn);
     }
 
@@ -74,11 +74,12 @@ public class EncoderDrive extends Command {
     @Override
     public void end(boolean interrupted) {
         System.out.println("Drive END");
+        m_subsystem.mechDrive(0,0,0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(m_subsystem.flEncoder.getPosition() - zeroFL) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
+        return Math.abs(m_subsystem.frEncoder.getPosition() - zeroFR) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
     }
 }

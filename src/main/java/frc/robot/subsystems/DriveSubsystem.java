@@ -561,6 +561,8 @@ public class DriveSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 		if (RobotState.isEnabled()) {
 			updatePoseEstimate();
+			drive.setSafetyEnabled(false);
+			odoUseLimelight = false;
 		// 	System.out.println("fl: " + flEncoder.getPosition());
 		// 	System.out.println("fr: " + frEncoder.getPosition());
 		// 	System.out.println("br: " + brEncoder.getPosition());
