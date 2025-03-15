@@ -32,7 +32,7 @@ public class ElevatorDown extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_subsystem.elevator(-.25);
+        m_subsystem.elevator(-0.40);
     }
 
     // Called once the command ends or is interrupted.

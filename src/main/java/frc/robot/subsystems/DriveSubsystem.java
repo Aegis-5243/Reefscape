@@ -274,7 +274,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (Constants.primaryStick.getThrottle() < -0.5) {
 			double heading = gyro.getYaw();
-			System.out.println(heading - offsetHeadingDeg);
+			// System.out.println(heading - offsetHeadingDeg);
 			
 			double headingDeg = offsetHeadingDeg - heading;
 			double headingRad = headingDeg / 180.0 * Math.PI;

@@ -66,7 +66,7 @@ public class AlignCoralAuto extends Command {
             double strafe = (x) / (150);
             strafe = strafe > 1 ? 1 : strafe;
             strafe = strafe < -1 ? -1 : strafe;
-            strafe = Math.abs(strafe) < .075 ? Math.signum(strafe) * .075 : strafe;
+            strafe = Math.abs(strafe) < .2 ? Math.signum(strafe) * .2 : strafe;
 
 
             double turn = 0;
@@ -87,6 +87,6 @@ public class AlignCoralAuto extends Command {
     @Override
     public boolean isFinished() {
         double x = LimelightHelpers.getTX(Constants.FRONT_LIMELIGHT);
-        return !(x < -tolerance || x > tolerance) && time.hasElapsed(3);
+        return !(x < -tolerance || x > tolerance) && time.hasElapsed(2) || time.hasElapsed(4);
     }
 }

@@ -179,24 +179,23 @@ public final class Autos {
 		return new SequentialCommandGroup(
 				new ParallelCommandGroup(
 						new EncoderDrive(m_driveSubsystem, Units.Feet.of(8))
-						// new SequentialCommandGroup(
-						// 		new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-						// 		new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-						// 		new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)))
+				// new SequentialCommandGroup(
+				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				// new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+				// new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)))
 				),
 				new Wait(5),
 				new EncoderTurn(m_driveSubsystem, Units.Degrees.of(-100)),
 				new Wait(1),
 				// new AutonBringCoralUp(m_rollerSubsystem),
 				// new ParallelRaceGroup(
-					new EncoderDrive(m_driveSubsystem, Units.Inches.of(64)),
-					// new ElevatorCommand(m_elevatorSubsytem)
+				new EncoderDrive(m_driveSubsystem, Units.Inches.of(64)),
+				// new ElevatorCommand(m_elevatorSubsytem)
 				// )
 				new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem),
 				new EncoderDrive(m_driveSubsystem, Units.Inches.of(6), .15),
 				// score
-				new EncoderDrive(m_driveSubsystem, Units.Inches.of(-64))
-		);
+				new EncoderDrive(m_driveSubsystem, Units.Inches.of(-64)));
 	}
 
 	public static Command moveForward(double delay, DriveSubsystem m_driveSubsystem) {
@@ -208,10 +207,10 @@ public final class Autos {
 	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem,
 			ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem, CameraSubsystem m_cameraSubsystem) {
 		return new SequentialCommandGroup(
-				new Wait(4),
+				new Wait(2),
 
 				new ParallelCommandGroup(
-						new EncoderDrive(m_driveSubsystem, Units.Feet.of(4.5)),
+						new EncoderDrive(m_driveSubsystem, Units.Feet.of(5.25)),
 						new SequentialCommandGroup(
 								new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 								new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
@@ -219,15 +218,19 @@ public final class Autos {
 
 				new ParallelRaceGroup(
 						new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
-						new ElevatorCommand(m_elevatorSubsytem)),
+						new ElevatorCommand(m_elevatorSubsytem)
+						),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
 
 				new AutonBringCoralUp(m_rollerSubsystem),
 				new Wait(1),
-				new TimeDrive(m_driveSubsystem, .5, 0.2),
+				new TimeDrive(m_driveSubsystem, .2, 0.2),
 				new Wait(2),
 				new Outtake(m_rollerSubsystem),
-				new Wait(1));
+				new ElevatorCommand(m_elevatorSubsytem)
+
+		// new Wait(3)
+		);
 	}
 
 	private Autos() {

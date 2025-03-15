@@ -208,7 +208,7 @@ public class RobotContainer {
 		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-				new ElevatorTo(Units.Inches.of(24.75), m_elevatorSubsytem),
+				new ElevatorTo(Units.Inches.of(26), m_elevatorSubsytem),
 				new ParallelCommandGroup(
 						m_rollerSubsystem.startEnd(() -> {
 							m_rollerSubsystem.roller.set(.5);
