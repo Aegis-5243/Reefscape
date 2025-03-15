@@ -64,7 +64,8 @@ public class AlignCoralAuto extends Command {
         if (x < -tolerance || x > tolerance) {
             // formatting diff
 
-            double strafe = (x) / (150);
+            double strafe = (x) / (350.0);
+            // System.out.println("calib strafe: " + strafe);
             strafe = strafe > 1 ? 1 : strafe;
             strafe = strafe < -1 ? -1 : strafe;
             strafe = Math.abs(strafe) < .2 ? Math.signum(strafe) * .2 : strafe;

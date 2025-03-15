@@ -132,14 +132,16 @@ public class AlignCoral extends Command {
             double ySpeed = -yController.calculate(x);
             double rotValue = rotController.calculate(postions[4]);
 
-            double maxSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT;
+            double maxSpeed = Constants.MAX_SPEED_ALGAE_ALIGNMENT / 2;
             xSpeed = MathUtil.clamp(xSpeed, -maxSpeed, maxSpeed);
             ySpeed = MathUtil.clamp(ySpeed, -maxSpeed, maxSpeed);
+
+            // xSpeed = maxSpeed - Math.abs(ySpeed);
 
             m_driveSubsystem.mechDrive(xSpeed, ySpeed, rotValue);
             
         } else {
-            m_driveSubsystem.mechDrive(Constants.MAX_SPEED_ALGAE_ALIGNMENT, 0, 0);
+            m_driveSubsystem.mechDrive(Constants.MAX_SPEED_ALGAE_ALIGNMENT / 2, 0, 0);
         }
     }
 

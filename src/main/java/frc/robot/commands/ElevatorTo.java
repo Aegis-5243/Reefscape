@@ -39,7 +39,7 @@ public class ElevatorTo extends Command {
         INTAKE(Units.Inches.of(0)),
 		THROUGH(Units.Inches.of(3.5)),
         LOW_CORAL(Units.Inches.of(13)),
-        MID_CORAL(Units.Inches.of(28.5)),
+        MID_CORAL(Units.Inches.of(30)),
         HIGH_CORAL(Units.Inches.of(50));
 
         private final Distance loc;

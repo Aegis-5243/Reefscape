@@ -207,7 +207,7 @@ public final class Autos {
 	public static Command limlit(DriveSubsystem m_driveSubsystem, ArmSubsystem m_armSubsystem,
 			ElevatorSubsytem m_elevatorSubsytem, RollerSubsystem m_rollerSubsystem, CameraSubsystem m_cameraSubsystem) {
 		return new SequentialCommandGroup(
-				new Wait(2),
+				new Wait(1),
 
 				new ParallelCommandGroup(
 						new EncoderDrive(m_driveSubsystem, Units.Feet.of(5.25)),
@@ -222,11 +222,16 @@ public final class Autos {
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
 
 				new AutonBringCoralUp(m_rollerSubsystem),
-				new Wait(1),
+				new Wait(0.4),
 				new TimeDrive(m_driveSubsystem, 2, 0.2),
-				new Wait(2),
-				new Outtake(m_rollerSubsystem),
-				new ElevatorCommand(m_elevatorSubsytem)
+				new Wait(1),
+				new ParallelRaceGroup(
+					new Outtake(m_rollerSubsystem),
+					new Wait(1)	
+				),
+				new ParallelCommandGroup(
+						new ElevatorCommand(m_elevatorSubsytem),
+						new TimeDrive(m_driveSubsystem, 0.7, -0.4))
 
 		// new Wait(3)
 		);
