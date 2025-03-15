@@ -141,7 +141,7 @@ public final class Constants {
 
 	public static final int DRIVER_VIEW_PIPELINE = 3;
 	public static final int ODOMETRY_PIPIELINE = 0;
-	public static final int APRIL_TAG_PIPELINE = 0;
+	public static final int APRIL_TAG_PIPELINE = 4;
 	public static final int LEFT_CORAL_PIPELINE = 2;
 	public static final int RIGHT_CORAL_PIPELINE = 1;
 	
