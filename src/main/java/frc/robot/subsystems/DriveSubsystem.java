@@ -236,10 +236,11 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void DSMechDrive(double xSpeed, double ySpeed, double zSpeed) {
 		// Apply deadzone
-		double stickDeadzone = 0.1;
+		double stickDeadzone = 0.15;
 		double squaredMag = xSpeed * xSpeed + ySpeed * ySpeed;
 		if (squaredMag < stickDeadzone * stickDeadzone)
 			xSpeed = ySpeed = 0;
+		
 
 		if (Math.abs(zSpeed) < stickDeadzone)
 			zSpeed = 0;
@@ -257,28 +258,29 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// If throttle on primary controller is active then use omni-directional drive
 
-		if (Constants.primaryStick.getRawButton(13)) {
+		if (Constants.primaryStick.getRawButton(9)) {
 			
 			offsetHeadingDeg = gyro.getYaw();
 		}
 
-		if (Constants.primaryStick.getThrottle() > 0.5) {
+		if (Constants.primaryStick.getThrottle() < -0.5) {
 			double heading = gyro.getYaw();
+			System.out.println(heading - offsetHeadingDeg);
 			
-			// double headingDeg = heading - offsetHeadingDeg;
-			// double headingRad = headingDeg / 180.0 * Math.PI;
+			double headingDeg = offsetHeadingDeg - heading;
+			double headingRad = headingDeg / 180.0 * Math.PI;
 
-			// double rotX = xSpeed * Math.cos(headingRad) - ySpeed * Math.sin(headingRad);
-        	// double rotY = xSpeed * Math.sin(headingRad) + ySpeed * Math.cos(headingRad);
+			double rotX = xSpeed * Math.cos(headingRad) - ySpeed * Math.sin(headingRad);
+        	double rotY = xSpeed * Math.sin(headingRad) + ySpeed * Math.cos(headingRad);
 
-			// xSpeed = rotX;
-			// ySpeed = rotY;
+			xSpeed = rotX;
+			ySpeed = rotY;
 
-			drive.driveCartesian(xSpeed, ySpeed, zSpeed, gyro.getRotation2d().minus(Rotation2d.fromDegrees(offsetHeadingDeg)));
-		} else {
+			// drive.driveCartesian(xSpeed, ySpeed, zSpeed, gyro.getRotation2d().minus(Rotation2d.fromDegrees(offsetHeadingDeg)));
+		} 
 
-			drive.driveCartesian(xSpeed, ySpeed, zSpeed);
-		}
+		drive.driveCartesian(xSpeed, ySpeed, zSpeed);
+		
 	}
 
 	/**

@@ -46,10 +46,10 @@ public class Turn extends Command {
         if (yaw < heading - tolerance || yaw > heading + tolerance) {
             // formatting diff
 
-            double diff = (heading - yaw) / (10000.0);
+            double diff = (heading - yaw) / (120.0);
             diff = diff > 1 ? 1 : diff;
             diff = diff < -1 ? -1 : diff;
-            diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
+            diff = Math.abs(diff) < .075 ? Math.signum(diff) * .075 : diff;
             m_subsystem.mechDrive(0, 0, diff);;
         }
     }
