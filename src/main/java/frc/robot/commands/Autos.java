@@ -12,6 +12,7 @@ import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.util.LimelightHelpers;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Encoder;
@@ -216,6 +217,7 @@ public final class Autos {
 								new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
 								new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem))),
 
+				// (new Turn(m_driveSubsystem, m_cameraSubsystem.fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT)).orElse())),
 				new ParallelRaceGroup(
 						new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
 						new ElevatorCommand(m_elevatorSubsytem)),
@@ -231,7 +233,7 @@ public final class Autos {
 				),
 				new ParallelCommandGroup(
 						new ElevatorCommand(m_elevatorSubsytem),
-						new TimeDrive(m_driveSubsystem, 0.7, -0.4))
+						new TimeDrive(m_driveSubsystem, 0.5, -0.4))
 
 		// new Wait(3)
 		);

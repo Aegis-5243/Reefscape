@@ -80,6 +80,6 @@ public class EncoderDrive extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(m_subsystem.frEncoder.getPosition() - zeroFR) > Math.abs(counts);// && Math.abs(m_subsystem.frEncoder.get() - zeroFR) > Math.abs(counts) && Math.abs(m_subsystem.blEncoder.get() - zeroBL) > Math.abs(counts) && Math.abs(m_subsystem.brEncoder.get() - zeroBR) > Math.abs(counts);
+        return Math.abs(m_subsystem.flEncoder.getPosition() - zeroFL) > Math.abs(counts) || Math.abs(m_subsystem.frEncoder.getPosition() - zeroFR) > Math.abs(counts) || Math.abs(m_subsystem.blEncoder.getPosition() - zeroBL) > Math.abs(counts) || Math.abs(m_subsystem.brEncoder.getPosition() - zeroBR) > Math.abs(counts);
     }
 }

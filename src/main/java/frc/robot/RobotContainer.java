@@ -86,11 +86,11 @@ public class RobotContainer {
 		CommandScheduler.getInstance().registerSubsystem(m_cameraSubsystem);
 
 		m_chooser = AutoBuilder.buildAutoChooser();
+		m_chooser.setDefaultOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
+			m_rollerSubsystem, m_cameraSubsystem));
+		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
 		m_chooser.addOption("Middle position L4 coral no limelight",
 				Autos.middleStartL4Score(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem, m_rollerSubsystem));
-		m_chooser.addOption("Move forward", Autos.moveForward(5, m_driveSubsystem));
-		m_chooser.addOption("limlit", Autos.limlit(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
-				m_rollerSubsystem, m_cameraSubsystem));
 		m_chooser.addOption("DO NOT USE IN COMP", Autos.coralmaybe(m_driveSubsystem, m_armSubsystem, m_elevatorSubsytem,
 				m_rollerSubsystem, m_cameraSubsystem));
 
@@ -146,34 +146,41 @@ public class RobotContainer {
 		NamedCommands.registerCommand("Coral Up", new AutonBringCoralUp(m_rollerSubsystem));
 
 		NamedCommands.registerCommand("Elevator Command", m_elevatorCommand);
-
+		
+		// Arm to L1
 		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.THROUGH, m_armSubsystem)));
 
+		// Arm to L2
 		new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
 
+		// Arm to L3
 		new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)));
 
+		// Arm to intake pos
 		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
 
+		// Arm to L4
 		new JoystickButton(Constants.primaryStick, 4).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
+		// Intake coral
 		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
 
+		// Outtake coral
 		new JoystickButton(Constants.secondaryStick, 1).onTrue(new Outtake(m_rollerSubsystem));
 		// new JoystickButton(Constants.secondaryStick,
 		// 1).whileTrue(m_rollerSubsystem.startRun(() -> {
@@ -182,18 +189,24 @@ public class RobotContainer {
 		// m_rollerSubsystem.rollerEncoder.setPosition(0);
 		// }));
 
+		// Retract coral
 		new JoystickButton(Constants.primaryStick, 1).whileTrue(m_rollerSubsystem.startRun(() -> {
 		}, () -> {
 			m_rollerSubsystem.roller.set(.1);
 			m_rollerSubsystem.rollerEncoder.setPosition(0);
 		}));
 
+		// Align and move toward left coral
 		new JoystickButton(Constants.primaryStick, 5)
 				.whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE));
-		new JoystickButton(Constants.primaryStick, 6).whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, 1));
+		// Align and move toward right coral
+		new JoystickButton(Constants.primaryStick, 6)
+				.whileTrue(new AlignCoral(m_driveSubsystem, m_cameraSubsystem, Constants.RIGHT_CORAL_PIPELINE));
 
+		// Force elevator down
 		new JoystickButton(Constants.primaryStick, 3).whileTrue(new ElevatorDown(m_elevatorSubsytem));
 
+		// Align low algae
 		new JoystickButton(Constants.primaryStick, 11).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
@@ -206,6 +219,7 @@ public class RobotContainer {
 							m_rollerSubsystem.rollerEncoder.setPosition(0);
 						}),
 						new AlignAlgae(m_driveSubsystem))));
+		// Align high algae
 		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
@@ -218,7 +232,8 @@ public class RobotContainer {
 							m_rollerSubsystem.rollerEncoder.setPosition(0);
 						}),
 						new AlignAlgae(m_driveSubsystem))));
-
+		
+		// EC retract coral
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kY.value).whileTrue(
 				m_rollerSubsystem.startRun(() -> {
 				},
@@ -226,7 +241,8 @@ public class RobotContainer {
 							m_rollerSubsystem.roller.set(.1);
 							m_rollerSubsystem.rollerEncoder.setPosition(0);
 						}));
-
+		
+		// EC expel coral
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kA.value).whileTrue(
 				m_rollerSubsystem.startRun(() -> {
 				},
@@ -244,18 +260,23 @@ public class RobotContainer {
 						m_armSubsystem.runOnce(() -> {
 							m_armSubsystem.setpoint = m_armSubsystem.armEncoder.getPosition();
 						})));
+		
+		// EC force elevator down
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kBack.value).whileTrue(new ElevatorDown(m_elevatorSubsytem));
+		// EC force elevator up
+		new JoystickButton(Constants.emergencyController, XboxController.Button.kStart.value).whileTrue(new ElevatorDown(m_elevatorSubsytem, .4));
+		
+		// new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftStick.value)
+		// 		.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward));
 
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftStick.value)
-				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kForward));
+		// new JoystickButton(Constants.emergencyController, XboxController.Button.kRightStick.value)
+		// 		.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward));
 
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightStick.value)
-				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kForward));
+		// new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftBumper.value)
+		// 		.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse));
 
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kLeftBumper.value)
-				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.QUASISTATIC, Direction.kReverse));
-
-		new JoystickButton(Constants.emergencyController, XboxController.Button.kRightBumper.value)
-				.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse));
+		// new JoystickButton(Constants.emergencyController, XboxController.Button.kRightBumper.value)
+		// 		.whileTrue(Autos.driveSysIdRoutine(m_driveSubsystem, RoutineType.DYNAMIC, Direction.kReverse));
 
 		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new
 		// SequentialCommandGroup(
@@ -281,6 +302,8 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
+		// Command auton = m_chooser.getSelected();
+		// if (auton == null) auton = Autos.moveForward(5, m_driveSubsystem);
 		return m_chooser.getSelected();
 	}
 }

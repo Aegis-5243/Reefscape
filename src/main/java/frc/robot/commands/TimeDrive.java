@@ -45,6 +45,7 @@ public class TimeDrive extends Command {
     @Override
     public void initialize() {
         time.restart();
+        startYaw = m_subsystem.gyro.getYaw();
         System.out.println("Drive Start");
     }
 

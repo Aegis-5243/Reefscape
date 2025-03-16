@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorDown extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final ElevatorSubsytem m_subsystem;
+    private double speed;
 
     /**
      * Creates a new ElevatorCommand.
@@ -19,9 +20,14 @@ public class ElevatorDown extends Command {
      * @param subsystem The subsystem used by this command.
      */
     public ElevatorDown(ElevatorSubsytem subsystem) {
-        m_subsystem = subsystem;
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(subsystem);
+        this(subsystem, -.4);
+    }
+
+    public ElevatorDown(ElevatorSubsytem subsytem, double speed) {
+        m_subsystem = subsytem;
+        this.speed = speed;
+
+        addRequirements(m_subsystem);
     }
 
     // Called when the command is initially scheduled.
@@ -32,7 +38,7 @@ public class ElevatorDown extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_subsystem.elevator(-0.40);
+        m_subsystem.elevator(speed);
     }
 
     // Called once the command ends or is interrupted.

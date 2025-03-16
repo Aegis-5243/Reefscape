@@ -43,8 +43,8 @@ public class ArmTo extends Command {
     public static enum ArmLocation {
         INTAKE(Units.Degrees.of(17)),
 		THROUGH(Units.Degrees.of(45)),
-        LOW_CORAL(Units.Degrees.of(55)),
-        MID_CORAL(Units.Degrees.of(55)),
+        LOW_CORAL(Units.Degrees.of(45)),
+        MID_CORAL(Units.Degrees.of(45)),
         HIGH_CORAL(Units.Degrees.of(55)),
         DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(55));
 
