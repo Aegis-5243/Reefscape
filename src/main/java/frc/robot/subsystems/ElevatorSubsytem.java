@@ -50,16 +50,16 @@ public class ElevatorSubsytem extends SubsystemBase {
 		this.elevator = new SparkMax(Constants.ELEVATOR_PRIMARY, MotorType.kBrushless);
 		this.elevatorMinion = new SparkMax(Constants.ELEVATOR_SECONDARY, MotorType.kBrushless);
 
-		elevator.configure(
-				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(true)
-						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		// elevator.configure(
+		// 		new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(true)
+		// 				.apply(new SoftLimitConfig().reverseSoftLimit(0)),
+		// 		ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		// With own pid
-		elevatorMinion.configure(
-				new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
-						.apply(new SoftLimitConfig().reverseSoftLimit(0)),
-				ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		// // With own pid
+		// elevatorMinion.configure(
+		// 		new SparkMaxConfig().idleMode(IdleMode.kCoast).follow(elevator).inverted(false)
+		// 				.apply(new SoftLimitConfig().reverseSoftLimit(0)),
+		// 		ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		this.elevatorEncoder = elevator.getEncoder();
 		this.elevatorMinionEncoder = elevatorMinion.getEncoder();
@@ -99,7 +99,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public void elevator(double speed) {
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
-		applySpeed(speed, elevatorMinion);
+		// applySpeed(speed, elevatorMinion);
 	}
 
 	/**
@@ -113,12 +113,14 @@ public class ElevatorSubsytem extends SubsystemBase {
 			motor.getEncoder().setPosition(0);
 		}
 
+		// if (!motor.equals(elevatorMinion)) {
+			
+			speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
+					* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT.in(Units.Meters)
+					&& speed > 0) ? 0 : speed;
 
-		speed = (elevatorEncoder.getPosition() <= 0 && speed < 0) || (elevatorEncoder.getPosition()
-				* Constants.ELEVATOR_HEIGHT_PER_MOTOR_ROT.in(Units.Meters) >= Constants.ELEVATOR_MAX_HEIGHT.in(Units.Meters)
-				&& speed > 0) ? 0 : speed;
-
-		motor.set(speed);
+			motor.set(speed);
+		// }
 	}
 
 	@Deprecated
@@ -150,13 +152,13 @@ public class ElevatorSubsytem extends SubsystemBase {
 		} else {
 			done = true;
 		}
-		if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
-			double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (40);
-			diff = diff > 1 ? 1 : diff;
-			diff = diff < -1 ? -1 : diff;
-			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
-			applySpeed(diff, elevatorMinion);
-		}
+		// if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
+		// 	double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (40);
+		// 	diff = diff > 1 ? 1 : diff;
+		// 	diff = diff < -1 ? -1 : diff;
+		// 	diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
+		// 	// applySpeed(diff, elevatorMinion);
+		// }
 	}
 
 	
