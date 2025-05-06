@@ -123,10 +123,8 @@ public class ElevatorSubsytem extends SubsystemBase {
 		// }
 	}
 
-	@Deprecated
 	public void setTargetPositionPID(double rotations) {
-		elevatorPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
-		elevatorMinionPIDController.setReference(rotations, ControlType.kMAXMotionPositionControl);
+		elevatorPIDController.setReference(rotations, ControlType.kPosition);
 	}
 
 	/**

@@ -14,7 +14,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorDown;
-import frc.robot.commands.ElevatorTo;
+import frc.robot.commands.ElevatorToPID;
 import frc.robot.commands.EncoderDrive;
 import frc.robot.commands.EncoderTurn;
 import frc.robot.commands.Intake;
@@ -23,7 +23,7 @@ import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Turn;
 import frc.robot.commands.ArmTo.ArmLocation;
 import frc.robot.commands.Autos.RoutineType;
-import frc.robot.commands.ElevatorTo.ElevatorLocation;
+import frc.robot.commands.ElevatorToPID.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -126,17 +126,17 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.INTAKE, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
 
 		NamedCommands.registerCommand("Mechanism to High Coral", new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
 		NamedCommands.registerCommand("Mechanism to Low Coral", new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
 
 		NamedCommands.registerCommand("Intake", new Intake(m_rollerSubsystem));
@@ -150,31 +150,31 @@ public class RobotContainer {
 		// Arm to L1
 		new JoystickButton(Constants.secondaryStick, 3).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.THROUGH, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.THROUGH, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.THROUGH, m_armSubsystem)));
 
 		// Arm to L2
 		new JoystickButton(Constants.secondaryStick, 4).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.LOW_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.LOW_CORAL, m_armSubsystem)));
 
 		// Arm to L3
 		new JoystickButton(Constants.secondaryStick, 5).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.MID_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.MID_CORAL, m_armSubsystem)));
 
 		// Arm to intake pos
 		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.INTAKE, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
 
 		// Arm to L4
 		new JoystickButton(Constants.primaryStick, 4).onTrue(new SequentialCommandGroup(
 				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
-				new ElevatorTo(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
+				new ElevatorToPID(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
 
 		// Intake coral
@@ -210,7 +210,7 @@ public class RobotContainer {
 		new JoystickButton(Constants.primaryStick, 11).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-				new ElevatorTo(Units.Inches.of(9.5), m_elevatorSubsytem),
+				new ElevatorToPID(Units.Inches.of(9.5), m_elevatorSubsytem),
 				new ParallelCommandGroup(
 						m_rollerSubsystem.startEnd(() -> {
 							m_rollerSubsystem.roller.set(.5);
@@ -223,7 +223,7 @@ public class RobotContainer {
 		new JoystickButton(Constants.primaryStick, 12).whileTrue(new SequentialCommandGroup(
 				// new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ArmTo(Units.Degrees.of(120), m_armSubsystem),
-				new ElevatorTo(Units.Inches.of(26), m_elevatorSubsytem),
+				new ElevatorToPID(Units.Inches.of(26), m_elevatorSubsytem),
 				new ParallelCommandGroup(
 						m_rollerSubsystem.startEnd(() -> {
 							m_rollerSubsystem.roller.set(.5);
