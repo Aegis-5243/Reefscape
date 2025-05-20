@@ -22,6 +22,7 @@ import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.Turn;
 import frc.robot.commands.ArmTo.ArmLocation;
+import frc.robot.commands.ArmToWPI;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.commands.ElevatorToPID.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
@@ -167,15 +168,15 @@ public class RobotContainer {
 
 		// Arm to intake pos
 		new JoystickButton(Constants.secondaryStick, 6).onTrue(new SequentialCommandGroup(
-				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ArmToWPI(frc.robot.commands.ArmToWPI.ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem)/*,
 				new ElevatorToPID(ElevatorLocation.INTAKE, m_elevatorSubsytem),
-				new ArmTo(ArmLocation.INTAKE, m_armSubsystem)));
+				new ArmTo(ArmLocation.INTAKE, m_armSubsystem) */));
 
 		// Arm to L4
 		new JoystickButton(Constants.primaryStick, 4).onTrue(new SequentialCommandGroup(
-				new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
+				new ArmToWPI(frc.robot.commands.ArmToWPI.ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem)/*,
 				new ElevatorToPID(ElevatorLocation.HIGH_CORAL, m_elevatorSubsytem),
-				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)));
+				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem)*/));
 
 		// Intake coral
 		new JoystickButton(Constants.secondaryStick, 2).onTrue(new Intake(m_rollerSubsystem));
@@ -293,6 +294,9 @@ public class RobotContainer {
 		// // )
 
 		// ));
+
+		SmartDashboard.putData("Out", new ArmTo(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem));
+		SmartDashboard.putData("Int: ", new ArmTo(ArmLocation.INTAKE, m_armSubsystem));
 	}
 
 	/**

@@ -13,13 +13,17 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -35,7 +39,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public RelativeEncoder armEncoder;
 
+    public RelativeEncoder armAltEncoder;
+
     public SparkClosedLoopController armPIDController;
+    public PIDController armWPIPIDcontroller;
 
     public double setpoint;
 
@@ -51,7 +58,7 @@ public class ArmSubsystem extends SubsystemBase {
                 new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
                         .apply(new SoftLimitConfig().reverseSoftLimit(0))
                         .apply(new ClosedLoopConfig().p(Constants.ARM_kP).i(Constants.ARM_kI)
-                                .d(Constants.ARM_kD)
+                                .d(Constants.ARM_kD).feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
                                 .apply(new MAXMotionConfig().maxVelocity(Constants.ARM_MAX_VELOCITY.in(Units.RPM))
                                         .maxAcceleration(
                                                 Constants.ARM_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
@@ -66,6 +73,12 @@ public class ArmSubsystem extends SubsystemBase {
         this.limitSwitch = new DigitalInput(Constants.ARM_LIMIT_SWITCH);
 
         this.setpoint = 0;
+
+        this.armWPIPIDcontroller = new PIDController(Constants.ARM_kP, Constants.ARM_kI, Constants.ARM_kD);
+
+        this.armAltEncoder = arm.getAlternateEncoder();
+
+        Shuffleboard.getTab("PID test").add("ARM PID", armWPIPIDcontroller);
 
         instance = this;
     }

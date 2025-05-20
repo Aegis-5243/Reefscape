@@ -15,7 +15,7 @@ public class ElevatorToPID extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final ElevatorSubsytem m_subsystem;
 	private double target;
-    private final double tolerance = 0.4;
+    private final double tolerance = 0.5;
 
 	/**
 	 * Creates a new ElevatorTo command.

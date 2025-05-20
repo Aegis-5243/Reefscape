@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,7 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class ArmTo extends Command {
+public class ArmToWPI extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final ArmSubsystem m_subsystem;
 	private double target;
@@ -23,7 +24,7 @@ public class ArmTo extends Command {
 	 * @param loc Position to turn arm to.
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public ArmTo(ArmLocation loc, ArmSubsystem subsystem) {
+	public ArmToWPI(ArmLocation loc, ArmSubsystem subsystem) {
 		// this.m_subsystem = subsystem;
 		// this.target = loc.loc.minus(Units.Degrees.of(17)).in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
 
@@ -32,9 +33,9 @@ public class ArmTo extends Command {
 		this(loc.loc, subsystem);
 	}
 	
-	public ArmTo(Angle loc, ArmSubsystem subsystem) {
+	public ArmToWPI(Angle loc, ArmSubsystem subsystem) {
 		this.m_subsystem = subsystem;
-		this.target = loc.minus(Units.Degrees.of(17)).in(Units.Rotations) * Constants.ARM_GEAR_RATIO;
+		this.target = loc.minus(Units.Degrees.of(17)).in(Units.Rotations);
 	
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
@@ -58,14 +59,15 @@ public class ArmTo extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_subsystem.setTargetPosition(target);
+		m_subsystem.armWPIPIDcontroller.setSetpoint(target);
+		m_subsystem.armWPIPIDcontroller.setTolerance(.025);
 		System.out.println("aRMtO START");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_subsystem.checklimitSwitch();
+		m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armEncoder.getPosition());
 	}
 
 	// Called once the command ends or is interrupted.
@@ -78,6 +80,6 @@ public class ArmTo extends Command {
 	@Override
 	public boolean isFinished() {
 		
-		return Math.abs(m_subsystem.armEncoder.getPosition() - target) < .025;
+		return m_subsystem.armWPIPIDcontroller.atSetpoint();
 	}
 }
