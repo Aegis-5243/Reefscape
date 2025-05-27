@@ -100,7 +100,7 @@ public final class Constants {
 
 	public static final int ARM = 31;
 
-	public static final double ARM_GEAR_RATIO = 1;
+	public static final double ARM_GEAR_RATIO = 25;
 
 	public static final Angle ARM_MAX_POS = Units.Degrees.of(360);
 	public static final Angle ARM_MIN_POS = Units.Degrees.of(17);
