@@ -67,7 +67,7 @@ public class ArmToWPI extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armEncoder.getPosition());
+		m_subsystem.arm.setVoltage(m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armEncoder.getPosition()));
 	}
 
 	// Called once the command ends or is interrupted.
