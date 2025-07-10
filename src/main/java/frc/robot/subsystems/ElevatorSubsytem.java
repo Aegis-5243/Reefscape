@@ -99,7 +99,7 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public void elevator(double speed) {
 		// replace with applySpeed after proper testing and wiring.
 		applySpeed(speed, elevator);
-		// applySpeed(speed, elevatorMinion);
+		applySpeed(speed, elevatorMinion);
 	}
 
 	/**
@@ -125,6 +125,8 @@ public class ElevatorSubsytem extends SubsystemBase {
 
 	public void setTargetPositionPID(double rotations) {
 		elevatorPIDController.setReference(rotations, ControlType.kPosition);
+		elevatorMinionPIDController.setReference(rotations, ControlType.kPosition);
+		done = false;
 	}
 
 	/**
@@ -147,8 +149,11 @@ public class ElevatorSubsytem extends SubsystemBase {
 			diff = diff < -1 ? -1 : diff;
 			diff = Math.abs(diff) < .3 ? Math.signum(diff) * .3 : diff;
 			applySpeed(diff, elevator);
+			applySpeed(diff, elevatorMinion);
 		} else {
 			done = true;
+			applySpeed(0, elevator);
+			applySpeed(0, elevatorMinion);
 		}
 		// if (elevatorMinionEncoder.getPosition() < manualSetpoint - Constants.ELEVATOR_MAN_TOLERANCE || elevatorMinionEncoder.getPosition() > manualSetpoint + Constants.ELEVATOR_MAN_TOLERANCE) {
 		// 	double diff = (manualSetpoint - elevatorMinionEncoder.getPosition()) / (40);
@@ -200,10 +205,25 @@ public class ElevatorSubsytem extends SubsystemBase {
 		return false;
 	}
 
+	
+	public boolean isStalled() {
+
+		return elevator.getOutputCurrent() > Constants.ELEVATOR_STALL_CURRENT
+				|| elevatorMinion.getOutputCurrent() > Constants.ELEVATOR_STALL_CURRENT;
+	}
+
+
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
 
+		if (isStalled()) {
+			System.out.println("Elevator stalled! Currents: " + elevator.getOutputCurrent() + ", " + elevatorMinion.getOutputCurrent());
+			
+			elevator(0);
+			
+			done = true;
+		}
 	}
 
 	@Override
