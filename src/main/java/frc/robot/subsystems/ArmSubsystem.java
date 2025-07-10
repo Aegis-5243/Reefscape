@@ -108,7 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
         speed = (armEncoder.getPosition() <= Constants.ARM_MIN_POS.in(Units.Rotations) && speed < 0)
                 || (armEncoder.getPosition()
                         * Constants.ARM_GEAR_RATIO >= Constants.ARM_MAX_POS.in(Units.Rotations)
-                        && speed > 0) ? 0 : speed;
+                        && speed > 0) ? 0 : speed; // genuinely what the fuck is this for readability
 
         arm.set(speed);
     }
@@ -165,9 +165,19 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
     }
 
+    public boolean isStalled() {
+        return arm.getOutputCurrent() > Constants.ARM_STALL_CURRENT;
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+
+        if isStalled() {
+            System.out.println("Arm is stalled! Current: " + arm.getOutputCurrent());
+            
+            arm.set(0);
+        }
     }
 
     @Override

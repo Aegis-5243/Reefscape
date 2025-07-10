@@ -111,6 +111,8 @@ public final class Constants {
 	public static final double ARM_kI = 0;
 	public static final double ARM_kD = 0;
 
+	public static final double ARM_STALL_CURRENT = 30.0;
+
 	public static final int[] ARM_ENCODER = { 10, 12 };
 
 	public static final int ARM_LIMIT_SWITCH = 9;
