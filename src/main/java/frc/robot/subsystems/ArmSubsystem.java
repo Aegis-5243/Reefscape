@@ -178,11 +178,11 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        if isStalled() {
-            System.out.println("Arm is stalled! Current: " + arm.getOutputCurrent());
+        // if (isStalled()) {
+        //     System.out.println("Arm is stalled! Current: " + arm.getOutputCurrent());
             
-            arm.set(0);
-        }
+        //     arm.set(0);
+        // }
     }
 
     @Override

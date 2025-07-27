@@ -41,19 +41,19 @@ public final class Constants {
 
 	public static final double FR_kA = 0.32;
 	public static final double FR_kS = 0.13;
-	public static  double FR_kV = (2.8);
+	public static  double FR_kV = (2.9);
 
 	public static final double FL_kA = 0.32;
 	public static final double FL_kS = 0.13;
-	public static  double FL_kV = (2.8);
+	public static  double FL_kV = (2.9);
 
 	public static final double BR_kA = 0.32;
 	public static final double BR_kS = 0.13;
-	public static  double BR_kV = (2.8);
+	public static  double BR_kV = (2.9);
 
 	public static final double BL_kA = 0.32;
 	public static final double BL_kS = 0.13;
-	public static  double BL_kV = (2.8);
+	public static  double BL_kV = (2.9);
 
 	public static final double FL_kP = 0.017002;
 	public static final double FL_kI = 0.0;

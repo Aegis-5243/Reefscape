@@ -134,6 +134,9 @@ public class RobotContainer {
 		SmartDashboard.putNumber("fl - kV", Constants.FL_kV);
 		SmartDashboard.putNumber("fr - kV", Constants.FR_kV);
 
+		SmartDashboard.putNumber("chassisSpeed", 0);
+		SmartDashboard.putNumber("theta", 0);
+
 		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
 				new ArmToWPI(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
 				new ElevatorTo(ElevatorLocation.INTAKE, m_elevatorSubsytem),
@@ -331,10 +334,10 @@ public class RobotContainer {
 				double theta = SmartDashboard.getNumber("theta", 0);
 
 				double thetaRads = theta * Math.PI / 180;
-
-				m_driveSubsystem.driveRobotSpeed(new ChassisSpeeds(Units.MetersPerSecond.of(speed * Math.cos(thetaRads)), Units.MetersPerSecond.of(speed * Math.sin(thetaRads)), Units.DegreesPerSecond.of(0)));
+				double strafeSpeedAccount = 0.82;
+				m_driveSubsystem.driveRobotSpeed(new ChassisSpeeds(Units.MetersPerSecond.of(speed * Math.cos(thetaRads)), Units.MetersPerSecond.of(speed * Math.sin(thetaRads) / strafeSpeedAccount), Units.DegreesPerSecond.of(0)));
 			}, () -> {
-
+				m_driveSubsystem.setChassisVoltage(0);
 			}
 		));
 		// new JoystickButton(Constants.primaryStick, 12).whileTrue(new

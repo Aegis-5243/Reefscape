@@ -201,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
 				},
 				this);
 
-		odoUseLimelight = true;
+		odoUseLimelight = false;
 
 		field = new Field2d();
 
@@ -212,6 +212,7 @@ public class DriveSubsystem extends SubsystemBase {
 		Shuffleboard.getTab("Drive").addDouble("Velocity y m/s", () -> this.getChassisSpeeds().vyMetersPerSecond);
 		Shuffleboard.getTab("Drive").addDouble("Velocity ohm deg/s", () -> Units.Radians.of(this.getChassisSpeeds().omegaRadiansPerSecond).in(Units.Degrees));
 		
+		Shuffleboard.getTab("Drive").add("field", field);
 		
 	}
 
@@ -343,7 +344,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void updatePoseEstimate() {
 		poseEstimator.update(gyro.getRotation2d(),
-				new MecanumDriveWheelPositions(Utilities.rotationsToDistance(flEncoder.getPosition()),
+				new MecanumDriveWheelPositions(Utilities.rotationsToDistance(fl.getEncoder().getPosition() / 12.75),
 						Utilities.rotationsToDistance(frEncoder.getPosition()),
 						Utilities.rotationsToDistance(blEncoder.getPosition()),
 						Utilities.rotationsToDistance(brEncoder.getPosition())));
@@ -502,7 +503,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public ChassisSpeeds getChassisSpeeds() {
 		return kinematics.toChassisSpeeds(
 				new MecanumDriveWheelSpeeds(
-						Units.MetersPerSecond.of(Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond)
+						Units.MetersPerSecond.of(Units.RPM.of(fl.getEncoder().getVelocity() / 12.75).in(Units.RadiansPerSecond)
 								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2),
 						Units.MetersPerSecond.of(Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond)
 								* Constants.WHEEL_DIAMETER.in(Units.Meters) / 2),
@@ -515,15 +516,30 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Drives the robot at a certain chassis speed. Uses FeedForward.
 	 * 
-	 * @param speeds Target speed of the chassis.
+	 * @param speeds Target speed of the chassis.  
 	 */
 	public void driveRobotSpeed(ChassisSpeeds speeds) {
 		MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
 		
-		fl.setVoltage(flFeedForward.calculate(Units.RPM.of(flEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.frontLeftMetersPerSecond));
-		fr.setVoltage(frFeedForward.calculate(Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.frontRightMetersPerSecond));
-		bl.setVoltage(blFeedForward.calculate(Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.rearLeftMetersPerSecond));
-		br.setVoltage(brFeedForward.calculate(Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters), wheelSpeeds.rearRightMetersPerSecond));
+		System.out.println("frontLeft");
+		System.out.println(wheelSpeeds.frontLeftMetersPerSecond);
+		System.out.println("frontRight");
+		System.out.println(wheelSpeeds.frontRightMetersPerSecond);
+		System.out.println("rearLeft");
+		System.out.println(wheelSpeeds.rearLeftMetersPerSecond);
+		System.out.println("rearRight");
+		System.out.println(wheelSpeeds.rearRightMetersPerSecond);
+
+		// fl.setVoltage(flFeedForward.calculate(Units.RPM.of(fl.getEncoder().getVelocity() / 12.75).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters) / 2, wheelSpeeds.frontLeftMetersPerSecond));
+		// fr.setVoltage(frFeedForward.calculate(Units.RPM.of(frEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters) / 2, wheelSpeeds.frontRightMetersPerSecond));
+		// bl.setVoltage(blFeedForward.calculate(Units.RPM.of(blEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters) / 2, wheelSpeeds.rearLeftMetersPerSecond));
+		// br.setVoltage(brFeedForward.calculate(Units.RPM.of(brEncoder.getVelocity()).in(Units.RadiansPerSecond) * Constants.WHEEL_DIAMETER.in(Units.Meters) / 2, wheelSpeeds.rearRightMetersPerSecond));
+
+		
+		fl.setVoltage(flFeedForward.calculate(wheelSpeeds.frontLeftMetersPerSecond));
+		fr.setVoltage(frFeedForward.calculate(wheelSpeeds.frontRightMetersPerSecond));
+		bl.setVoltage(blFeedForward.calculate(wheelSpeeds.rearLeftMetersPerSecond));
+		br.setVoltage(brFeedForward.calculate(wheelSpeeds.rearRightMetersPerSecond));
 
 		// flZPID.setReference(Units.RadiansPerSecond
 		// 		.of(wheelSpeeds.frontLeftMetersPerSecond / (Constants.WHEEL_DIAMETER.in(Units.Meters) / 2))

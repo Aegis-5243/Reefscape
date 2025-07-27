@@ -230,13 +230,13 @@ public class ElevatorSubsytem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 
-		if (isStalled()) {
-			System.out.println("Elevator stalled! Currents: " + elevator.getOutputCurrent() + ", " + elevatorMinion.getOutputCurrent());
+	// 	if (isStalled()) {
+	// 		System.out.println("Elevator stalled! Currents: " + elevator.getOutputCurrent() + ", " + elevatorMinion.getOutputCurrent());
 			
-			elevator(0);
+	// 		elevator(0);
 			
-			done = true;
-		}
+	// 		done = true;
+	// 	}
 	}
 
 	@Override
