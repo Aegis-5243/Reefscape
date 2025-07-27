@@ -92,6 +92,8 @@ public final class Constants {
 
 	public static final double ELEVATOR_STILL_PERCENT = 0.02734375;
 
+	public static final double ELEVATOR_STALL_CURRENT = 30.0;
+
 	// TODO: Replace with proper value
 	public static final AngularVelocity ELEVATOR_MAX_VELOCITY = Units.RPM.of(1);
 	public static final AngularAcceleration ELEVATOR_MAX_ACCELERATION = Units.RPM.per(Units.Second).of(1);
@@ -108,6 +110,8 @@ public final class Constants {
 	public static final double ARM_kP = 15;
 	public static final double ARM_kI = 0;
 	public static final double ARM_kD = 0;
+
+	public static final double ARM_STALL_CURRENT = 30.0;
 
 	public static final int[] ARM_ENCODER = { 10, 12 };
 
