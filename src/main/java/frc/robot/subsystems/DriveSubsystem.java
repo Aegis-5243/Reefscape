@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -207,6 +208,11 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putData("field", field);
 
 		instance = this;
+		Shuffleboard.getTab("Drive").addDouble("Velocity x m/s", () -> this.getChassisSpeeds().vxMetersPerSecond);
+		Shuffleboard.getTab("Drive").addDouble("Velocity y m/s", () -> this.getChassisSpeeds().vyMetersPerSecond);
+		Shuffleboard.getTab("Drive").addDouble("Velocity ohm deg/s", () -> Units.Radians.of(this.getChassisSpeeds().omegaRadiansPerSecond).in(Units.Degrees));
+		
+		
 	}
 
 	/**
@@ -479,6 +485,13 @@ public class DriveSubsystem extends SubsystemBase {
 		fr.setVoltage(voltage);
 		bl.setVoltage(voltage);
 		br.setVoltage(voltage);
+	}
+
+	public void setChassisFeedForward(double speed) {
+		fr.setVoltage(frFeedForward.calculate(speed));
+		fl.setVoltage(flFeedForward.calculate(speed));
+		br.setVoltage(brFeedForward.calculate(speed));
+		bl.setVoltage(blFeedForward.calculate(speed));
 	}
 
 	/**

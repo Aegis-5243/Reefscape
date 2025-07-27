@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -72,6 +73,18 @@ public class ElevatorSubsytem extends SubsystemBase {
 		this.manualSetpoint = 0;
 
 		instance = this;
+
+		Shuffleboard.getTab("Elevator").addDouble("Current Position", elevatorEncoder::getPosition);
+		Shuffleboard.getTab("Elevator").addDouble("Target Position", () -> this.manualSetpoint);
+		
+		Shuffleboard.getTab("Elevator").addDouble("Motor 1 Velocity", elevatorEncoder::getVelocity);
+		Shuffleboard.getTab("Elevator").addDouble("Motor 2 Velocity", elevatorMinionEncoder::getVelocity);
+
+		Shuffleboard.getTab("Elevator").addDouble("Motor 1 Current", elevator::getOutputCurrent);
+		Shuffleboard.getTab("Elevator").addDouble("Motor 2 Current", elevatorMinion::getOutputCurrent);
+
+		Shuffleboard.getTab("Elevator").addBoolean("Limit Switch", limitSwitch::get);
+		
 	}
 
 	public static ElevatorSubsytem getInstance() {

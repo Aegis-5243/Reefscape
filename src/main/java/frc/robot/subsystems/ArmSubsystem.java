@@ -81,6 +81,11 @@ public class ArmSubsystem extends SubsystemBase {
         Shuffleboard.getTab("PID test").add("ARM PID", armWPIPIDcontroller);
 
         instance = this;
+
+        Shuffleboard.getTab("Arm").addDouble("Arm Current Position", () -> armEncoder.getPosition());
+        Shuffleboard.getTab("Arm").addDouble("Arm Target Position", () -> this.setpoint);
+        Shuffleboard.getTab("Arm").addDouble("Arm Velocity", () -> armEncoder.getVelocity());
+        Shuffleboard.getTab("Arm").addDouble("Arm Current", () -> arm.getOutputCurrent());
     }
 
     public static ArmSubsystem getInstance() {

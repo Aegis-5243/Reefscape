@@ -129,7 +129,10 @@ public class RobotContainer {
 		// cancelling on release.
 		// m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-		SmartDashboard.putNumber("kV", Constants.BL_kV);
+		SmartDashboard.putNumber("bl - kV", Constants.BL_kV);
+		SmartDashboard.putNumber("br - kV", Constants.BR_kV);
+		SmartDashboard.putNumber("fl - kV", Constants.FL_kV);
+		SmartDashboard.putNumber("fr - kV", Constants.FR_kV);
 
 		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
 				new ArmToWPI(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
@@ -296,13 +299,30 @@ public class RobotContainer {
 
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kB.value)
 					.whileTrue(m_driveSubsystem.runEnd(() -> {
-						m_driveSubsystem.blFeedForward.setKv(SmartDashboard.getNumber("kV", Constants.BL_kV));
-						m_driveSubsystem.setChassisVoltage(m_driveSubsystem.blFeedForward.calculate(1));
+						m_driveSubsystem.blFeedForward.setKv(SmartDashboard.getNumber("bl - kV", Constants.BL_kV));
+						m_driveSubsystem.brFeedForward.setKv(SmartDashboard.getNumber("br - kV", Constants.BR_kV));
+						m_driveSubsystem.flFeedForward.setKv(SmartDashboard.getNumber("fl - kV", Constants.FL_kV));
+						m_driveSubsystem.frFeedForward.setKv(SmartDashboard.getNumber("fr - kV", Constants.FR_kV));
 
-						System.out.println("kV: " + m_driveSubsystem.blFeedForward.getKv());
-						System.out.println("post - rpm: " + m_driveSubsystem.blEncoder.getVelocity());
-						System.out.println("post - m/s: " + m_driveSubsystem.blEncoder.getVelocity() / 60 * Constants.WHEEL_DIAMETER.in(Units.Meters) * Math.PI);
-						System.out.println("pre: " + m_driveSubsystem.bl.getEncoder().getVelocity());
+						m_driveSubsystem.setChassisFeedForward(1.5);
+
+						// System.out.println("bl - kV: " + m_driveSubsystem.blFeedForward.getKv());
+						// System.out.println("bl - rpm: " + m_driveSubsystem.blEncoder.getVelocity());
+						// System.out.println("bl - m/s: " + m_driveSubsystem.blEncoder.getVelocity() / 60 * Constants.WHEEL_DIAMETER.in(Units.Meters) * Math.PI);
+						// System.out.println();
+						// System.out.println("br - kV: " + m_driveSubsystem.brFeedForward.getKv());
+						// System.out.println("br - rpm: " + m_driveSubsystem.brEncoder.getVelocity());
+						// System.out.println("br - m/s: " + m_driveSubsystem.brEncoder.getVelocity() / 60 * Constants.WHEEL_DIAMETER.in(Units.Meters) * Math.PI);
+						// System.out.println();
+						// System.out.println("fl - kV: " + m_driveSubsystem.flFeedForward.getKv());
+						// System.out.println("fl - rpm: " + m_driveSubsystem.flEncoder.getVelocity());
+						// System.out.println("fl - m/s: " + m_driveSubsystem.flEncoder.getVelocity() / 60 * Constants.WHEEL_DIAMETER.in(Units.Meters) * Math.PI);
+						// System.out.println();
+						// System.out.println("fr - kV: " + m_driveSubsystem.frFeedForward.getKv());
+						// System.out.println("fr - rpm: " + m_driveSubsystem.frEncoder.getVelocity());
+						// System.out.println("fr - m/s: " + m_driveSubsystem.frEncoder.getVelocity() / 60 * Constants.WHEEL_DIAMETER.in(Units.Meters) * Math.PI);
+						// System.out.println();
+						// System.out.println();
 					}, () -> {m_driveSubsystem.setChassisVoltage(0);}));
 
 		new JoystickButton(Constants.emergencyController, XboxController.Button.kA.value).whileTrue(m_driveSubsystem.runEnd(
