@@ -136,6 +136,7 @@ public class RobotContainer {
 
 		SmartDashboard.putNumber("chassisSpeed", 0);
 		SmartDashboard.putNumber("theta", 0);
+		SmartDashboard.putNumber("rotSpeed", 0);
 
 		NamedCommands.registerCommand("Mechanism to Intake", new SequentialCommandGroup(
 				new ArmToWPI(ArmLocation.DURING_ELEVATOR_MOVEMENT, m_armSubsystem),
@@ -332,10 +333,12 @@ public class RobotContainer {
 			() -> {
 				double speed = SmartDashboard.getNumber("chassisSpeed", 0);
 				double theta = SmartDashboard.getNumber("theta", 0);
+				double thetaPerSecond = SmartDashboard.getNumber("rotSpeed", 0);
 
 				double thetaRads = theta * Math.PI / 180;
 				double strafeSpeedAccount = 0.82;
-				m_driveSubsystem.driveRobotSpeed(new ChassisSpeeds(Units.MetersPerSecond.of(speed * Math.cos(thetaRads)), Units.MetersPerSecond.of(speed * Math.sin(thetaRads) / strafeSpeedAccount), Units.DegreesPerSecond.of(0)));
+				double rotSpeedAccount = 1.08;
+				m_driveSubsystem.driveRobotSpeed(new ChassisSpeeds(Units.MetersPerSecond.of(speed * Math.cos(thetaRads)), Units.MetersPerSecond.of(speed * Math.sin(thetaRads) / strafeSpeedAccount), Units.DegreesPerSecond.of(rotSpeedAccount * thetaPerSecond)));
 			}, () -> {
 				m_driveSubsystem.setChassisVoltage(0);
 			}
