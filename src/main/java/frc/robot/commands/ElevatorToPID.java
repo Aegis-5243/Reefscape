@@ -9,13 +9,14 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.util.Utilities.ElevatorLocation;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorToPID extends Command {
 	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final ElevatorSubsytem m_subsystem;
 	private double target;
-    private final double tolerance = 0.5;
+    private final double tolerance = 1;
 
 	/**
 	 * Creates a new ElevatorTo command.
@@ -36,19 +37,7 @@ public class ElevatorToPID extends Command {
 		addRequirements(m_subsystem);
 	}
 
-    public static enum ElevatorLocation {
-        INTAKE(Units.Inches.of(0)),
-		THROUGH(Units.Inches.of(3.5)),
-        LOW_CORAL(Units.Inches.of(13)),
-        MID_CORAL(Units.Inches.of(30)),
-        HIGH_CORAL(Units.Inches.of(50));
-
-        private final Distance loc;
-
-        private ElevatorLocation(Distance loc) {
-            this.loc = loc;
-        }
-    }
+    
 
 	// Called when the command is initially scheduled.
 	@Override
@@ -61,6 +50,7 @@ public class ElevatorToPID extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
+		System.out.println("ur mom: " + m_subsystem.elevator.getAppliedOutput());
 	}
 
 	// Called once the command ends or is interrupted.

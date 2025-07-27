@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
+import org.littletonrobotics.urcl.URCL;
+
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -31,6 +36,17 @@ public class Robot extends TimedRobot {
 		// autonomous chooser on the dashboard.
 		m_robotContainer = new RobotContainer();
 		
+	}
+
+	@Override
+	public void robotInit() {
+		DataLogManager.start();
+		URCL.start(new HashMap<Integer, String>() {{
+			put(12, "FL");
+			put(11, "FR");
+			put(14, "BL");
+			put(13, "BR");
+		}});
 	}
 
 	/**

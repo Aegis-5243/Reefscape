@@ -122,7 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
 					br.setVoltage(voltage.magnitude());
 					System.out.println("setting: " + voltage.magnitude() + "; getteing " + fl.getBusVoltage());
 				},
-				log -> {
+				/*log -> {
 					log.motor("drive-front-right")
 							.voltage(Units.Volts.of(fr.getBusVoltage()))
 							.linearPosition(Utilities.rotationsToDistance(flEncoder.getPosition()))
@@ -146,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
 							.linearPosition(Utilities.rotationsToDistance(brEncoder.getPosition()))
 							.linearVelocity(Units.MetersPerSecond.of(brEncoder.getVelocity() * 60 * Math.PI
 									* Constants.WHEEL_DIAMETER.in(Units.Meters)));
-				},
+				} */ null,
 				this));
 
 		this.gyro = new AHRS(NavXComType.kUSB1);
@@ -472,6 +472,13 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void setPose(Pose2d pose) {
 		poseEstimator.resetPose(pose);
+	}
+
+	public void setChassisVoltage(double voltage) {
+		fl.setVoltage(voltage);
+		fr.setVoltage(voltage);
+		bl.setVoltage(voltage);
+		br.setVoltage(voltage);
 	}
 
 	/**

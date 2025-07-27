@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsytem;
+import frc.robot.util.Utilities.ElevatorLocation;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorTo extends Command {
@@ -35,19 +36,7 @@ public class ElevatorTo extends Command {
 		addRequirements(m_subsystem);
 	}
 
-    public static enum ElevatorLocation {
-        INTAKE(Units.Inches.of(0)),
-		THROUGH(Units.Inches.of(3.5)),
-        LOW_CORAL(Units.Inches.of(13)),
-        MID_CORAL(Units.Inches.of(30)),
-        HIGH_CORAL(Units.Inches.of(50));
-
-        private final Distance loc;
-
-        private ElevatorLocation(Distance loc) {
-            this.loc = loc;
-        }
-    }
+    
 
 	// Called when the command is initially scheduled.
 	@Override

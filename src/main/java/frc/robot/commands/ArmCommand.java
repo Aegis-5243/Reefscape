@@ -32,8 +32,7 @@ public class ArmCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_subsystem.setTargetPosition(m_subsystem.setpoint);
-        m_subsystem.checklimitSwitch();
+        m_subsystem.arm.setVoltage(m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armAltEncoder.getPosition(), m_subsystem.setpoint));
     }
 
     // Called once the command ends or is interrupted.

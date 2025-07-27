@@ -7,9 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.Utilities.ArmLocation;
 
 /** An example command that uses an example subsystem. */
 public class ArmToWPI extends Command {
@@ -35,39 +37,32 @@ public class ArmToWPI extends Command {
 	
 	public ArmToWPI(Angle loc, ArmSubsystem subsystem) {
 		this.m_subsystem = subsystem;
-		this.target = loc.minus(Units.Degrees.of(17)).in(Units.Rotations);
+		this.target = (loc.minus(Units.Degrees.of(17)).in(Units.Rotations));
 	
+		SmartDashboard.putData(m_subsystem.armWPIPIDcontroller);
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
 	}
-
-    public static enum ArmLocation {
-        INTAKE(Units.Degrees.of(17)),
-		THROUGH(Units.Degrees.of(45)),
-        LOW_CORAL(Units.Degrees.of(45)),
-        MID_CORAL(Units.Degrees.of(45)),
-        HIGH_CORAL(Units.Degrees.of(55)),
-        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(65));
-
-        private final Angle loc;
-
-        private ArmLocation(Angle loc) {
-            this.loc = loc;
-        }
-    }
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
 		m_subsystem.armWPIPIDcontroller.setSetpoint(target);
-		m_subsystem.armWPIPIDcontroller.setTolerance(.025);
-		System.out.println("aRMtO START");
+		m_subsystem.setpoint = target;
+		m_subsystem.armWPIPIDcontroller.setTolerance(.03);
+		System.out.println("aRMtO WPI START");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_subsystem.arm.setVoltage(m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armEncoder.getPosition()));
+		System.out.println(m_subsystem.armAltEncoder.getPosition());
+		System.out.println(m_subsystem.armWPIPIDcontroller.getP());
+		// m_subsystem.armWPIPIDcontroller.setPID(p, i, d);
+		SmartDashboard.putNumber("pid-p", m_subsystem.armWPIPIDcontroller.getP());
+		SmartDashboard.putNumber("pid-i", m_subsystem.armWPIPIDcontroller.getI());
+		SmartDashboard.putNumber("pid-d", m_subsystem.armWPIPIDcontroller.getD());
+		m_subsystem.arm.setVoltage(m_subsystem.armWPIPIDcontroller.calculate(m_subsystem.armAltEncoder.getPosition()));
 	}
 
 	// Called once the command ends or is interrupted.
@@ -79,7 +74,7 @@ public class ArmToWPI extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		
+		// return false;
 		return m_subsystem.armWPIPIDcontroller.atSetpoint();
 	}
 }

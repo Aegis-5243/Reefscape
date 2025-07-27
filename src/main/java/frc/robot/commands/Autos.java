@@ -5,14 +5,14 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.commands.ArmTo.ArmLocation;
-import frc.robot.commands.ElevatorTo.ElevatorLocation;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CameraSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Utilities.ArmLocation;
+import frc.robot.util.Utilities.ElevatorLocation;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Encoder;

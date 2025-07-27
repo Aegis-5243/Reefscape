@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Constants;
@@ -64,6 +65,35 @@ public class Utilities {
 
     public static boolean isTagOnReef(double tagId) {
         return (17 <= tagId && tagId <= 22) || (6 <= tagId && tagId <= 11);
+    }
+
+    public static enum ElevatorLocation {
+        INTAKE(Units.Inches.of(0)),
+		THROUGH(Units.Inches.of(3.5)),
+        LOW_CORAL(Units.Inches.of(13)),
+        MID_CORAL(Units.Inches.of(30)),
+        HIGH_CORAL(Units.Inches.of(50));
+
+        public final Distance loc;
+
+        private ElevatorLocation(Distance loc) {
+            this.loc = loc;
+        }
+    }
+
+    public static enum ArmLocation {
+        INTAKE(Units.Degrees.of(17)),
+		THROUGH(Units.Degrees.of(45)),
+        LOW_CORAL(Units.Degrees.of(45)),
+        MID_CORAL(Units.Degrees.of(45)),
+        HIGH_CORAL(Units.Degrees.of(55)),
+        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(65));
+
+        public final Angle loc;
+
+        private ArmLocation(Angle loc) {
+            this.loc = loc;
+        }
     }
 
     private Utilities() {

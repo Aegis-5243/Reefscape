@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.Utilities.ArmLocation;
 
 /** An example command that uses an example subsystem. */
 public class ArmTo extends Command {
@@ -39,21 +40,6 @@ public class ArmTo extends Command {
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_subsystem);
 	}
-
-    public static enum ArmLocation {
-        INTAKE(Units.Degrees.of(17)),
-		THROUGH(Units.Degrees.of(45)),
-        LOW_CORAL(Units.Degrees.of(45)),
-        MID_CORAL(Units.Degrees.of(45)),
-        HIGH_CORAL(Units.Degrees.of(55)),
-        DURING_ELEVATOR_MOVEMENT(Units.Degrees.of(65));
-
-        private final Angle loc;
-
-        private ArmLocation(Angle loc) {
-            this.loc = loc;
-        }
-    }
 
 	// Called when the command is initially scheduled.
 	@Override

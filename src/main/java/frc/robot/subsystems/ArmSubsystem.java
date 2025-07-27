@@ -54,15 +54,15 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmSubsystem() {
         this.arm = new SparkMax(Constants.ARM, MotorType.kBrushless);
 
-        arm.configure(
-                new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
-                        .apply(new SoftLimitConfig().reverseSoftLimit(0))
-                        .apply(new ClosedLoopConfig().p(Constants.ARM_kP).i(Constants.ARM_kI)
-                                .d(Constants.ARM_kD).feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-                                .apply(new MAXMotionConfig().maxVelocity(Constants.ARM_MAX_VELOCITY.in(Units.RPM))
-                                        .maxAcceleration(
-                                                Constants.ARM_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
-                ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // arm.configure(
+        //         new SparkMaxConfig().idleMode(IdleMode.kBrake).disableFollowerMode().inverted(false)
+        //                 .apply(new SoftLimitConfig().reverseSoftLimit(0))
+        //                 .apply(new ClosedLoopConfig().p(Constants.ARM_kP).i(Constants.ARM_kI)
+        //                         .d(Constants.ARM_kD).feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        //                         .apply(new MAXMotionConfig().maxVelocity(Constants.ARM_MAX_VELOCITY.in(Units.RPM))
+        //                                 .maxAcceleration(
+        //                                         Constants.ARM_MAX_ACCELERATION.in(Units.RPM.per(Units.Second))))),
+        //         ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.armEncoder = arm.getEncoder();
 
