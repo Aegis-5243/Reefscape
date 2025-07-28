@@ -6,22 +6,16 @@ package frc.robot;
 
 import frc.robot.commands.AlignAlgae;
 import frc.robot.commands.AlignCoral;
-import frc.robot.commands.AlignCoralAuto;
 import frc.robot.commands.ArmCommand;
-import frc.robot.commands.ArmTo;
 import frc.robot.commands.AutonBringCoralUp;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorTo;
-import frc.robot.commands.EncoderDrive;
-import frc.robot.commands.EncoderTurn;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.RollerCommand;
-import frc.robot.commands.Turn;
-import frc.robot.commands.Wait;
 import frc.robot.commands.ArmToWPI;
 import frc.robot.commands.Autos.RoutineType;
 import frc.robot.subsystems.ArmSubsystem;
@@ -31,8 +25,6 @@ import frc.robot.subsystems.ElevatorSubsytem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.util.Utilities.ArmLocation;
 import frc.robot.util.Utilities.ElevatorLocation;
-
-import org.opencv.core.Mat;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
