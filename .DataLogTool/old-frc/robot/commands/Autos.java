@@ -32,11 +32,6 @@ public final class Autos {
 
 	public static ComplexWidget tmp;
 
-	/** Example static factory for an autonomous command. */
-	public static Command exampleAuto(DriveSubsystem subsystem) {
-		return Commands.sequence(subsystem.exampleMethodCommand(), new DriveCommand(subsystem));
-	}
-
 	/**
 	 * Command to run SysID routine for drive.
 	 * 
@@ -220,7 +215,7 @@ public final class Autos {
 				// (new Turn(m_driveSubsystem, m_cameraSubsystem.fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID(Constants.FRONT_LIMELIGHT)).orElse())),
 				new ParallelRaceGroup(
 						new AlignCoralAuto(m_driveSubsystem, m_cameraSubsystem, Constants.LEFT_CORAL_PIPELINE),
-						new ElevatorCommand(m_elevatorSubsytem)),
+						new HoldElevator(m_elevatorSubsytem)),
 				new ArmTo(ArmLocation.HIGH_CORAL, m_armSubsystem),
 
 				new AutonBringCoralUp(m_rollerSubsystem),
@@ -232,7 +227,7 @@ public final class Autos {
 					new Wait(1)	
 				),
 				new ParallelCommandGroup(
-						new ElevatorCommand(m_elevatorSubsytem),
+						new HoldElevator(m_elevatorSubsytem),
 						new TimeDrive(m_driveSubsystem, 0.5, -0.4))
 
 		// new Wait(3)

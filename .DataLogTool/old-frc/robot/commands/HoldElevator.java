@@ -8,18 +8,17 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ElevatorSubsytem;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
-public class ElevatorCommand extends Command {
+public class HoldElevator extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final ElevatorSubsytem m_subsystem;
 
     /**
-     * Creates a new ElevatorCommand.
+     * Creates a new HoldElevator Command.
      * <p>To be used as a default command.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public ElevatorCommand(ElevatorSubsytem subsystem) {
+    public HoldElevator(ElevatorSubsytem subsystem) {
         m_subsystem = subsystem;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -33,9 +32,7 @@ public class ElevatorCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // System.out.println(Constants.primaryStick.getTop());
-        // if (Constants.primaryStick.getRawAxis(5) == -1)
-            m_subsystem.elevator(Constants.ELEVATOR_STILL_PERCENT);
+        m_subsystem.elevator(Constants.ELEVATOR_STILL_PERCENT);
     }
 
     // Called once the command ends or is interrupted.

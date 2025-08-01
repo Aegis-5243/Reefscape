@@ -517,6 +517,9 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param speeds Target speed of the chassis.  
 	 */
 	public void driveRobotSpeed(ChassisSpeeds speeds) {
+		speeds.vyMetersPerSecond /= Constants.MECANUM_STRAFE_SPEED_ACCOUNT;
+		speeds.omegaRadiansPerSecond *= Constants.MECANUM_ROTATION_SPEED_ACCOUNT;
+
 		MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
 		
 		System.out.println("frontLeft");
