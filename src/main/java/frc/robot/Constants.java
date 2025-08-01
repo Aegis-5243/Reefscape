@@ -25,7 +25,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  // Drivetrain
+  /* Mechanum Drive */
 
   public static final int FL = 12;
   public static final int FR = 11;
@@ -36,6 +36,27 @@ public final class Constants {
   public static final int[] FR_ENCODER_PORTS = { 1, 0 };
   public static final int[] BL_ENCODER_PORTS = { 5, 4 };
   public static final int[] BR_ENCODER_PORTS = { 3, 2 };
+
+  /*
+   * Mechanum conversions
+   * 
+   * Gear ratio of 12.75 creates a difference in alternate encoders vs motor
+   * encoders
+   * alternate = base / 12.75
+   * 
+   * 
+   */
+
+  public static final double MECHANUM_ALTERNATE_POSITION_CONVERSION_FACTOR = Units.Rotations.of(1).in(Units.Radians) *
+      Constants.WHEEL_DIAMETER.in(Units.Meters) / 2;
+  public static final double MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Units.RPM.of(1).in(Units.RadiansPerSecond)
+      *
+      Constants.WHEEL_DIAMETER.in(Units.Meters) / 2;;
+
+  public static final double MECHANUM_POSITION_CONVERSION_FACTOR = MECHANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
+      / 12.75;
+  public static final double MECHANUM_VELOCITY_CONVERSION_FACTOR = MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR
+  / 12.75;;
 
   public static final double FR_kA = 0.32;
   public static final double FR_kS = 0.13;
@@ -114,7 +135,6 @@ public final class Constants {
 
   public static final double ELEVATOR_STALL_CURRENT = 30.0;
 
-
   /* Arm */
   public static final int ARM_MOTOR_PORT = 31;
 
@@ -141,20 +161,21 @@ public final class Constants {
 
   /* Roller */
   public static final int ROLLER_PORT = 32;
-  
+
   public static final int ROLLER_TIME_OF_FLIGHT_PORT = 33;
-  
-  /* 
-  * Roller conversion factors
-  * Belt ratio: 12 / 48
-  * Roller diameter: 2 inches
-  * = (12 / 48) * (2 * PI) = 1.57079633
-  */
+
+  /*
+   * Roller conversion factors
+   * Belt ratio: 12 / 48
+   * Roller diameter: 2 inches
+   * = (12 / 48) * (2 * PI) = 1.57079633
+   */
   public static final double ROLLER_POSITION_CONVERSION_FACTOR = 1.57079633; // TODO: check belt ratio
   // RPM to inches per second
   public static final double ROLLER_VELOCITY_CONVERSION_FACTOR = ROLLER_POSITION_CONVERSION_FACTOR / 60;
-  
-    public static final double ROLLER_kP = 3.596;
-    public static final double ROLLER_kI = 0;
-    public static final double ROLLER_kD = 0;
+
+  public static final double ROLLER_kP = 3.596;
+  public static final double ROLLER_kI = 0;
+  public static final double ROLLER_kD = 0;
+
 }
