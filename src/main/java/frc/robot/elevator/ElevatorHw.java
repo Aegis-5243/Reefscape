@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -23,15 +24,15 @@ public class ElevatorHw extends Elevator {
 
     DigitalInput limitSwitch = new DigitalInput(Constants.ELEVATOR_HALL_EFFECT_PORT);
 
-    double kP = 0;
-    double kI = 0;
-    double kD = 0;
+    double kP = Constants.ELEVATOR_kP;
+    double kI = Constants.ELEVATOR_kI;
+    double kD = Constants.ELEVATOR_kD;
     double kF = 0;
-
+    
     public ElevatorHw() {
         super();
-        leftMotor = new SparkMax(Constants.ELEVATOR_LEFT_MOTOR, MotorType.kBrushless);
-        rightMotor = new SparkMax(Constants.ELEVATOR_RIGHT_MOTOR, MotorType.kBrushless);
+        leftMotor = new SparkMax(Constants.ELEVATOR_LEFT_MOTOR_PORT, MotorType.kBrushless);
+        rightMotor = new SparkMax(Constants.ELEVATOR_RIGHT_MOTOR_PORT, MotorType.kBrushless);
 
         SparkBaseConfig config = new SparkMaxConfig()
                 .idleMode(SparkBaseConfig.IdleMode.kBrake);
@@ -41,7 +42,9 @@ public class ElevatorHw extends Elevator {
                 .velocityConversionFactor(Constants.ELEVATOR_VELOCITY_CONVERSION_FACTOR);
 
         ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
-                .pidf(kP, kI, kD, kF);
+                .pidf(kP, kI, kD, kF)
+                .apply(new MAXMotionConfig()
+                        .maxVelocity(Constants.ELEVATOR_MAX_VELOCITY));
 
         leftMotor.configure(
                 new SparkMaxConfig()
@@ -51,7 +54,8 @@ public class ElevatorHw extends Elevator {
                         .inverted(false) // TODO: get proper inversions from REV hardware client
                         .disableFollowerMode()
                         .apply(new SoftLimitConfig()
-                                .reverseSoftLimit(0))
+                                .reverseSoftLimit(0)
+                                .forwardSoftLimit(Constants.ELEVATOR_MAX_HEIGHT))
                         .closedLoopRampRate(0.5),
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -69,15 +73,7 @@ public class ElevatorHw extends Elevator {
     @Override
     public void setPosition(double distance) {
         super.setPosition(distance);
-        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition, ClosedLoopSlot.kSlot0,
-                Constants.ELEVATOR_STILL_PERCENT);
-    }
-
-    @Override
-    public void setPower(double pct) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setPower'");
-
+        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition);
     }
 
     @Override
@@ -95,9 +91,8 @@ public class ElevatorHw extends Elevator {
         leftMotor.getEncoder().setPosition(position);
     }
 
-    @Override
-    public void setVoltage(double volts) {
-        leftMotor.setVoltage(volts);
+    public double getOutputCurrent() {
+        return leftMotor.getOutputCurrent();
     }
 
     @Override
@@ -111,5 +106,16 @@ public class ElevatorHw extends Elevator {
         if (getLimitSwitch()) {
 
         }
+    }
+
+    @Override
+    public void stopElevator() {
+        leftMotor.stopMotor();
+        rightMotor.stopMotor();
+    }
+
+    @Override
+    public void setVelocity(double velocity) {
+        leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity);
     }
 }
