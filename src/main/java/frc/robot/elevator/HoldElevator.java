@@ -26,6 +26,12 @@ public class HoldElevator extends Command {
     public void initialize() {
         startPos = elevator.getPosition();
         foundSetpoint = false;
+
+        double targetPos = elevator.getTargetPosition();
+        if (Math.abs(startPos - targetPos) <= 1.5) {
+            startPos = targetPos;
+        }
+        
     }
 
     @Override

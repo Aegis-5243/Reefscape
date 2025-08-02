@@ -90,6 +90,7 @@ public class ElevatorHw extends Elevator {
     @Override
     public void setEncoderPosition(double position) {
         leftMotor.getEncoder().setPosition(position);
+        rightMotor.getEncoder().setPosition(position);
     }
 
     public double getOutputCurrent() {

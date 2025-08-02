@@ -4,6 +4,8 @@
 
 package frc.robot.intake;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +43,13 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command setPositionCmd(double position) {
-        return run(() -> setPosition(position));
+        return run(() -> setPosition(position))
+                .until(() -> Math.abs(getPosition() - position) < 0.2);
+    }
+
+    public Command setPositionCmd(DoubleSupplier position) {
+        return run(() -> setPosition(position.getAsDouble()))
+                .until(() -> Math.abs(getPosition() - position.getAsDouble()) < 0.2);
     }
 
     public void setPosition(double position) {
@@ -55,7 +63,7 @@ public abstract class Intake extends SubsystemBase {
     public Command setVelocityCmd(double speed) {
         return run(() -> setVelocity(speed));
     }
-    
+
     public void setVelocity(double speed) {
         targetSpeed = speed;
     }
