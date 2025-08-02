@@ -18,6 +18,8 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract void updateSensors();
 
+    public abstract boolean detectingCoral();
+
     private double targetSpeed = 0;
 
     private double targetPosition = 0;
@@ -38,6 +40,10 @@ public abstract class Intake extends SubsystemBase {
         updateSensors();
     }
 
+    public Command setPositionCmd(double position) {
+        return run(() -> setPosition(position));
+    }
+
     public void setPosition(double position) {
         targetPosition = position;
     };
@@ -45,8 +51,12 @@ public abstract class Intake extends SubsystemBase {
     public double getTargetPosition() {
         return targetPosition;
     }
+
+    public Command setVelocityCmd(double speed) {
+        return run(() -> setVelocity(speed));
+    }
     
-    public void setSpeed(double speed) {
+    public void setVelocity(double speed) {
         targetSpeed = speed;
     }
 

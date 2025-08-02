@@ -40,6 +40,7 @@ public class ArmHw extends Arm {
                 SparkMax.ResetMode.kResetSafeParameters,
                 SparkMax.PersistMode.kPersistParameters);
 
+        // setEncoderPosition(17);
     }
 
     @Override
@@ -75,6 +76,11 @@ public class ArmHw extends Arm {
     }
 
     @Override
+    public double getOutputVoltage() {
+        return armMotor.getAppliedOutput() * armMotor.getBusVoltage();
+    }
+
+    @Override
     public void stopArm() {
         armMotor.stopMotor();
     }
@@ -86,6 +92,6 @@ public class ArmHw extends Arm {
 
     @Override
     public void setVelocity(double velocity) {
-        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity);
+        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity); // TODO: find and use arbitrary feedforward
     }
 }

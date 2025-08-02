@@ -12,8 +12,8 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
 
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 
 import frc.robot.Constants;
@@ -68,6 +68,7 @@ public class ElevatorHw extends Elevator {
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
+        setEncoderPosition(0);
     }
 
     @Override
@@ -112,6 +113,10 @@ public class ElevatorHw extends Elevator {
     public void stopElevator() {
         leftMotor.stopMotor();
         rightMotor.stopMotor();
+    }
+
+    public Command setPositionCmd(double position) {
+        return run(() -> setPosition(position)).until(() -> Math.abs(getPosition() - position) < 1);
     }
 
     @Override

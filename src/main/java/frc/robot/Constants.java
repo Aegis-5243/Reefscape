@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 /**
@@ -47,16 +46,18 @@ public final class Constants {
    * 
    */
 
+  public static final Distance MECHANUM_WHEEL_DIAMETER = Units.Inches.of(6);
+
   public static final double MECHANUM_ALTERNATE_POSITION_CONVERSION_FACTOR = Units.Rotations.of(1).in(Units.Radians) *
-      Constants.WHEEL_DIAMETER.in(Units.Meters) / 2;
+      Constants.MECHANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;
   public static final double MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Units.RPM.of(1).in(Units.RadiansPerSecond)
       *
-      Constants.WHEEL_DIAMETER.in(Units.Meters) / 2;;
+      Constants.MECHANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;;
 
   public static final double MECHANUM_POSITION_CONVERSION_FACTOR = MECHANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
       / 12.75;
   public static final double MECHANUM_VELOCITY_CONVERSION_FACTOR = MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR
-  / 12.75;;
+      / 12.75;;
 
   public static final double FR_kA = 0.32;
   public static final double FR_kS = 0.13;
@@ -90,8 +91,6 @@ public final class Constants {
   public static final double BL_KI = 0;
   public static final double BR_kD = 0;
 
-  public static final Distance WHEEL_DIAMETER = Units.Inches.of(6);
-
   public static final Distance TRACK_WIDTH = Units.Inches.of(22.25);
   public static final Distance TRACK_HEIGHT = Units.Inches.of(20.3599);
 
@@ -122,7 +121,7 @@ public final class Constants {
   public static final double ELEVATOR_kI = 0;
   public static final double ELEVATOR_kD = 0;
 
-  public static final double ELEVATOR_MAX_HEIGHT = 50; // inches
+  public static final double ELEVATOR_MAX_HEIGHT = 51; // inches
 
   public static final int ELEVATOR_LEFT_MOTOR_PORT = 21;
   public static final int ELEVATOR_RIGHT_MOTOR_PORT = 22;
@@ -177,5 +176,7 @@ public final class Constants {
   public static final double ROLLER_kP = 3.596;
   public static final double ROLLER_kI = 0;
   public static final double ROLLER_kD = 0;
+
+  public static final double ROLLER_CORAL_DETECTION_THRESHOLD = 40; // mm
 
 }

@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,12 +26,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -68,24 +67,33 @@ public class DriveSubsystem extends SubsystemBase {
         SparkBaseConfig motorConfig = new SparkMaxConfig()
                 .apply(new AlternateEncoderConfig()
                         .positionConversionFactor(Constants.MECHANUM_ALTERNATE_POSITION_CONVERSION_FACTOR)
-                        .velocityConversionFactor(Constants.MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR))
+                        .velocityConversionFactor(Constants.MECHANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR)
+                        .setSparkMaxDataPortConfig())
                 .apply(
                         new EncoderConfig()
                                 .positionConversionFactor(Constants.MECHANUM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(Constants.MECHANUM_VELOCITY_CONVERSION_FACTOR))
                 .idleMode(IdleMode.kCoast);
 
-        // Match inversions and apply global config
+        // Match inversions on motor and alternate encoder and apply global config
         fl.configure(new SparkMaxConfig()
+                .apply(new AlternateEncoderConfig()
+                        .inverted(false))
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         fr.configure(new SparkMaxConfig()
+                .apply(new AlternateEncoderConfig()
+                        .inverted(false))
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         bl.configure(new SparkMaxConfig()
+                .apply(new AlternateEncoderConfig()
+                        .inverted(false))
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         br.configure(new SparkMaxConfig()
+                .apply(new AlternateEncoderConfig()
+                        .inverted(false))
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -94,6 +102,10 @@ public class DriveSubsystem extends SubsystemBase {
         frEncoder = fr.getAlternateEncoder();
         blEncoder = bl.getAlternateEncoder();
         brEncoder = br.getAlternateEncoder();
+
+        gyro = new AHRS(NavXComType.kUSB1);
+
+        gyro.reset();
 
         mechanum = new MecanumDrive(fl, fr, bl, br);
 
@@ -107,6 +119,49 @@ public class DriveSubsystem extends SubsystemBase {
 
         SmartDashboard.putData("field", field);
 
+        ShuffleboardTab tab = Shuffleboard.getTab("Drive");
+        tab.addFloatArray("Encoder Velocities", () -> {
+            return new float[] {
+                    (float) fl.getEncoder().getVelocity(),
+                    (float) fr.getEncoder().getVelocity(),
+                    (float) bl.getEncoder().getVelocity(),
+                    (float) br.getEncoder().getVelocity()
+            };
+        });
+        tab.addFloatArray("Alternate Encoder Velocities", () -> {
+            return new float[] {
+                    (float) fl.getAlternateEncoder().getVelocity(),
+                    (float) fr.getAlternateEncoder().getVelocity(),
+                    (float) bl.getAlternateEncoder().getVelocity(),
+                    (float) br.getAlternateEncoder().getVelocity()
+            };
+        });
+        tab.addFloatArray("Encoder Positions", () -> {
+            return new float[] {
+                    (float) fl.getEncoder().getPosition(),
+                    (float) fr.getEncoder().getPosition(),
+                    (float) bl.getEncoder().getPosition(),
+                    (float) br.getEncoder().getPosition()
+            };
+        });
+        tab.addFloatArray("Alternate Encoder Positions", () -> {
+            return new float[] {
+                    (float) fl.getAlternateEncoder().getPosition(),
+                    (float) fr.getAlternateEncoder().getPosition(),
+                    (float) bl.getAlternateEncoder().getPosition(),
+                    (float) br.getAlternateEncoder().getPosition()
+            };
+        });
+
+        setUpPathPlanner();
+    }
+
+    @Override
+    public void periodic() {
+        updateFieldPoseEstimate();
+    }
+
+    public void setUpPathPlanner() {
         RobotConfig config;
         try {
             config = RobotConfig.fromGUISettings();
@@ -133,37 +188,10 @@ public class DriveSubsystem extends SubsystemBase {
                     return false;
                 },
                 this);
-
-        ShuffleboardTab tab = Shuffleboard.getTab("Drive");
-        tab.addFloatArray("Encoder Velocities", () -> {
-            return new float[] {
-                    (float) fl.getEncoder().getVelocity(),
-                    (float) fr.getEncoder().getVelocity(),
-                    (float) bl.getEncoder().getVelocity(),
-                    (float) br.getEncoder().getVelocity()
-            };
-        });
-        tab.addFloatArray("Alternate Encoder Velocities", () -> {
-            return new float[] {
-                    (float) fl.getAlternateEncoder().getVelocity(),
-                    (float) fr.getAlternateEncoder().getVelocity(),
-                    (float) bl.getAlternateEncoder().getVelocity(),
-                    (float) br.getAlternateEncoder().getVelocity()
-            };
-        });
-    }
-
-    @Override
-    public void periodic() {
-        updatePoseEstimate();
-    }
-
-    public void setUpPathPlanner() {
-
     }
 
     public void drive(ChassisSpeeds speeds) {
-
+        mechanum.driveCartesian(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -182,7 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
         poseEstimator.resetPose(pose);
     }
 
-    public void updatePoseEstimate() {
-
+    public void updateFieldPoseEstimate() {
+        field.setRobotPose(poseEstimator.getEstimatedPosition());
     }
 }

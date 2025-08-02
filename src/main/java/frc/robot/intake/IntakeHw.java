@@ -47,7 +47,6 @@ public class IntakeHw extends Intake {
         
         laser.setRangingMode(RangingMode.Short, 24);
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Intake");
         
     }
 
@@ -57,8 +56,8 @@ public class IntakeHw extends Intake {
     }
 
     @Override
-    public void setSpeed(double speed) {
-        super.setSpeed(speed);
+    public void setVelocity(double speed) {
+        super.setVelocity(speed);
         roller.getClosedLoopController().setReference(speed, SparkMax.ControlType.kVelocity);
     }
 
@@ -81,5 +80,10 @@ public class IntakeHw extends Intake {
     public void setPosition(double position) {
         super.setPosition(position);
         roller.getClosedLoopController().setReference(position, SparkMax.ControlType.kPosition);
+    }
+
+    @Override
+    public boolean detectingCoral() {
+        return laser.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD;
     }
 }
