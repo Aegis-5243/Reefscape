@@ -2,6 +2,8 @@ package frc.robot.controllers;
 
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.utils.UtilFunctions;
 
 public class DriverControls {
@@ -64,10 +66,14 @@ public class DriverControls {
     }
 
     public boolean getIntake() {
-        return driverLeft.getRawButton(1);
+        return driverRight.getRawButton(2);
     }
 
     public boolean getOuttake() {
-        return driverLeft.getRawButton(2);
+        return driverRight.getRawButton(1);
+    }
+
+    public Trigger driveToPole() {
+        return new JoystickButton(driverLeft, 1);
     }
 }

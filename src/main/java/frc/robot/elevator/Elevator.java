@@ -33,12 +33,18 @@ public abstract class Elevator extends SubsystemBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
-        tab.addDouble("Current Position", this::getPosition);
-        tab.addDouble("Target Position", this::getTargetPosition);
-        tab.addDouble("Velocity", this::getVelocity);
-        tab.addBoolean("Limit Switch", this::getLimitSwitch);
-        tab.add("Set Position Command 0 inches", setPositionCmd(0));
-        tab.add("Set Position Command 10 inches", setPositionCmd(10));
+        tab.addDouble("Current Position", this::getPosition)
+                .withPosition(3, 0);
+        tab.addDouble("Target Position", this::getTargetPosition)
+                .withPosition(3, 1);
+        tab.addDouble("Velocity", this::getVelocity)
+                .withPosition(4, 0);
+        tab.addBoolean("Limit Switch", this::getLimitSwitch)
+                .withPosition(5, 0);
+        tab.add("Set Position Command 0 inches", setPositionCmd(0))
+                .withPosition(3, 2);
+        tab.add("Set Position Command 10 inches", setPositionCmd(10))
+                .withPosition(4, 2);
 
         positions = new HashMap<>();
 
@@ -83,6 +89,6 @@ public abstract class Elevator extends SubsystemBase {
     public Command holdElevator() {
         return new HoldElevator(this);
     }
-
+    
     protected abstract double getVelocity();
 }

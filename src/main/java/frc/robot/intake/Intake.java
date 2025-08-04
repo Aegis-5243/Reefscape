@@ -18,6 +18,8 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract double getOutputCurrent();
 
+    public abstract double getOutputVoltage();
+
     public abstract void updateSensors();
 
     public abstract boolean detectingCoral();
@@ -30,10 +32,18 @@ public abstract class Intake extends SubsystemBase {
         super();
 
         ShuffleboardTab tab = Shuffleboard.getTab("Intake");
-        tab.addDouble("Current Speed", this::getVelocity);
-        tab.addDouble("Target Speed", this::getTargetSpeed);
-        tab.addDouble("Current Position", this::getPosition);
-        tab.addDouble("Target Position", () -> targetPosition);
+        tab.addDouble("Current Position", this::getPosition)
+                .withPosition(3, 0);
+        tab.addDouble("Target Position", () -> targetPosition)
+                .withPosition(5, 0);
+        tab.addDouble("Current Speed", this::getVelocity)
+                .withPosition(3, 1);
+        tab.addDouble("Target Speed", this::getTargetSpeed)
+                .withPosition(4, 1);
+        tab.addDouble("Output voltage", this::getOutputVoltage)
+                .withPosition(0, 0);
+        tab.addDouble("Output current", this::getOutputCurrent)
+                .withPosition(0, 1);
     }
 
     @Override

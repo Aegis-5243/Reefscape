@@ -65,6 +65,11 @@ public class IntakeHw extends Intake {
     }
 
     @Override
+    public double getOutputVoltage() {
+        return roller.getAppliedOutput() * roller.getBusVoltage();
+    }
+
+    @Override
     public void updateSensors() {
         laser.getRange();
     }
