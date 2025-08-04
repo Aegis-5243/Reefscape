@@ -10,7 +10,9 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +21,7 @@ import frc.robot.mecanumdrive.DriveSubsystem;
 import frc.robot.utils.LimelightHelpers;
 import frc.robot.utils.UtilFunctions;
 
+/** Covers vision and odometry positioning */
 public class Vision extends SubsystemBase {
     public static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout
             .loadField(AprilTagFields.k2025ReefscapeAndyMark);
@@ -26,7 +29,6 @@ public class Vision extends SubsystemBase {
     DriveSubsystem driveSubsystem;
 
     private HashMap<Poles, Pose2d> bluePoses = new HashMap<Vision.Poles, Pose2d>();
-    private HashMap<Poles, Pose2d> redPoses = new HashMap<Vision.Poles, Pose2d>();
 
     private HashMap<Algae, Pose2d> blueAlgae = new HashMap<Vision.Algae, Pose2d>();
 
@@ -38,33 +40,32 @@ public class Vision extends SubsystemBase {
 
         this.driveSubsystem = driveSubsystem;
 
-        // TODO: change coordinates to match different bot
         // get blue poles
-        bluePoses.put(Poles.PoleA, new Pose2d(3.130, 4.190, Rotation2d.fromDegrees(0)));
-        bluePoses.put(Poles.PoleB, new Pose2d(3.130, 3.862, Rotation2d.fromDegrees(0)));
-        bluePoses.put(Poles.PoleC, new Pose2d(3.714, 3.004, Rotation2d.fromDegrees(60)));
-        bluePoses.put(Poles.PoleD, new Pose2d(3.998, 2.839, Rotation2d.fromDegrees(60)));
-        bluePoses.put(Poles.PoleE, new Pose2d(4.990, 2.839, Rotation2d.fromDegrees(120)));
-        bluePoses.put(Poles.PoleF, new Pose2d(5.275, 3.003, Rotation2d.fromDegrees(120)));
-        bluePoses.put(Poles.PoleG, new Pose2d(5.850, 3.849, Rotation2d.fromDegrees(180)));
-        bluePoses.put(Poles.PoleH, new Pose2d(5.850, 4.177, Rotation2d.fromDegrees(180)));
-        bluePoses.put(Poles.PoleI, new Pose2d(5.274, 5.048, Rotation2d.fromDegrees(-120)));
-        bluePoses.put(Poles.PoleJ, new Pose2d(4.990, 5.213, Rotation2d.fromDegrees(-120)));
-        bluePoses.put(Poles.PoleK, new Pose2d(3.999, 5.212, Rotation2d.fromDegrees(-60)));
-        bluePoses.put(Poles.PoleL, new Pose2d(3.713, 5.049, Rotation2d.fromDegrees(-60)));
+        Transform2d reefCenter = new Transform2d(4.5, 4, Rotation2d.fromDegrees(0));
+        double distFromCenter = 1.370;
+        Pose2d offsetLeft = new Pose2d(-distFromCenter, Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
+        Pose2d offsetMiddle = new Pose2d(-distFromCenter, 0, Rotation2d.fromDegrees(0));
+        Pose2d offsetRight = new Pose2d(-distFromCenter, -Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
 
-        blueAlgae.put(Algae.AlgaeAB, new Pose2d(3.104, 4.026, Rotation2d.fromDegrees(0)));
-        blueAlgae.put(Algae.AlgaeCD, new Pose2d(3.799, 2.823, Rotation2d.fromDegrees(60)));
-        blueAlgae.put(Algae.AlgaeEF, new Pose2d(5.190, 2.822, Rotation2d.fromDegrees(120)));
-        blueAlgae.put(Algae.AlgaeGH, new Pose2d(5.883, 4.011, Rotation2d.fromDegrees(180)));
-        blueAlgae.put(Algae.AlgaeIJ, new Pose2d(5.190, 5.230, Rotation2d.fromDegrees(-120)));
-        blueAlgae.put(Algae.AlgaeKL, new Pose2d(3.799, 5.230, Rotation2d.fromDegrees(-60)));
+        bluePoses.put(Poles.PoleA, offsetLeft.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
+        bluePoses.put(Poles.PoleB, offsetRight.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
+        bluePoses.put(Poles.PoleC, offsetLeft.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
+        bluePoses.put(Poles.PoleD, offsetRight.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
+        bluePoses.put(Poles.PoleE, offsetLeft.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
+        bluePoses.put(Poles.PoleF, offsetRight.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
+        bluePoses.put(Poles.PoleG, offsetLeft.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
+        bluePoses.put(Poles.PoleH, offsetRight.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
+        bluePoses.put(Poles.PoleI, offsetLeft.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
+        bluePoses.put(Poles.PoleJ, offsetRight.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
+        bluePoses.put(Poles.PoleK, offsetLeft.rotateBy(Rotation2d.fromDegrees(300)).plus(reefCenter));
+        bluePoses.put(Poles.PoleL, offsetRight.rotateBy(Rotation2d.fromDegrees(300)).plus(reefCenter));
 
-        // get red poles
-        for (var pole : bluePoses.keySet()) {
-            var test = flipFieldAlways(bluePoses.get(pole));
-            redPoses.put(pole, test);
-        }
+        blueAlgae.put(Algae.AlgaeAB, offsetMiddle.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeCD, offsetMiddle.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeEF, offsetMiddle.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeGH, offsetMiddle.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeIJ, offsetMiddle.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeKL, offsetMiddle.rotateBy(Rotation2d.fromDegrees(360)).plus(reefCenter));
 
     }
 
@@ -91,63 +92,63 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateOdometry() {
-        MecanumDrivePoseEstimator estimator = driveSubsystem.poseEstimator;
-
-        LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
-                driveSubsystem.getHeading().getDegrees(),
-                0, 0, 0, 0, 0);
-
         boolean useMegaTag2 = true; // set to false to use MegaTag1
         boolean doRejectUpdate = false;
-        if (useMegaTag2 == false) {
-            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
-            if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-                if (mt1.rawFiducials[0].ambiguity > .7) {
+        if (aprilTagAllowed) {
+            if (useMegaTag2 == false) {
+                LimelightHelpers.PoseEstimate mt1 = LimelightHelpers
+                        .getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
+
+                if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+                    if (mt1.rawFiducials[0].ambiguity > .7) {
+                        doRejectUpdate = true;
+                    }
+                    if (mt1.rawFiducials[0].distToCamera > 3) {
+                        doRejectUpdate = true;
+                    }
+                }
+                if (mt1.tagCount == 0) {
                     doRejectUpdate = true;
                 }
-                if (mt1.rawFiducials[0].distToCamera > 3) {
+
+                if (!doRejectUpdate) {
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+                    driveSubsystem.poseEstimator.addVisionMeasurement(
+                            mt1.pose,
+                            mt1.timestampSeconds);
+                }
+            } else if (useMegaTag2 == true) {
+                LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
+                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+                LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
+                        .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+                if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
+                                                                   // degrees
+                                                                   // per second,
+                // ignore vision updates
+                {
                     doRejectUpdate = true;
                 }
-            }
-            if (mt1.tagCount == 0) {
-                doRejectUpdate = true;
-            }
-
-            if (!doRejectUpdate) {
-                driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-                driveSubsystem.poseEstimator.addVisionMeasurement(
-                        mt1.pose,
-                        mt1.timestampSeconds);
-            }
-        } else if (useMegaTag2 == true) {
-            LimelightHelpers.SetRobotOrientation("limelight",
-                    driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-            if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees
-                                                               // per second,
-            // ignore vision updates
-            {
-                doRejectUpdate = true;
-            }
-            if (mt2.tagCount == 0) {
-                doRejectUpdate = true;
-            }
-            if (!doRejectUpdate) {
-                driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                driveSubsystem.poseEstimator.addVisionMeasurement(
-                        mt2.pose,
-                        mt2.timestampSeconds);
+                if (mt2.tagCount == 0) {
+                    doRejectUpdate = true;
+                }
+                if (!doRejectUpdate) {
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                    driveSubsystem.poseEstimator.addVisionMeasurement(
+                            mt2.pose,
+                            mt2.timestampSeconds);
+                }
             }
         }
     };
 
+    public void addCoralModeSupplier(BooleanSupplier coralMode) {
+        isCoralSupplier = coralMode;
+    }
+
     public HashMap<Poles, Pose2d> getPoles(boolean red) {
-        if (red) {
-            return redPoses;
-        } else {
-            return bluePoses;
-        }
+        return bluePoses;
     }
 
     private Pose2d closestPole = new Pose2d();
@@ -211,6 +212,10 @@ public class Vision extends SubsystemBase {
                 () -> {
                     aprilTagAllowed = true;
                 });
+    }
+
+    public Pose2d getPoleLocation(Poles pole) {
+        return bluePoses.get(pole);
     }
 
 }

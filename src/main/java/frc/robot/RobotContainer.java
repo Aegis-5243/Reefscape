@@ -6,7 +6,9 @@ package frc.robot;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +23,10 @@ import frc.robot.controllers.DriverControls;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
 import frc.robot.mecanumdrive.DriveSubsystem;
+import frc.robot.utils.LimelightHelpers;
 import frc.robot.utils.ScoringPositions;
+import frc.robot.vision.Vision;
+import frc.robot.vision.Vision.Poles;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.ElevatorHw;
 
@@ -36,7 +41,8 @@ import frc.robot.elevator.ElevatorHw;
  */
 public class RobotContainer {
     DriveSubsystem driveSubsystem = new DriveSubsystem();
-
+    
+    Vision vision;
     Elevator elevator;
     Arm arm;
     Intake intake;
@@ -51,8 +57,36 @@ public class RobotContainer {
         arm = new ArmHw();
         intake = new IntakeHw();
 
+        vision = new Vision(driveSubsystem);
+        driveSubsystem.setVisionSubsystem(vision);
+
+        /* The bot will align with the center of the reef (to take off algae) instead of to the sides (to place coral)
+         * whenever it is in zone D */
+        vision.addCoralModeSupplier(() -> getZone(elevator.getPosition(), arm.getAngle()) != Zones.ZoneD);
+
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        NamedCommands.registerCommand("FineDriveA", driveSubsystem.alignToPoleDeferred(Poles.PoleA));
+        NamedCommands.registerCommand("FineDriveB", driveSubsystem.alignToPoleDeferred(Poles.PoleB));
+        NamedCommands.registerCommand("FineDriveC", driveSubsystem.alignToPoleDeferred(Poles.PoleC));
+        NamedCommands.registerCommand("FineDriveD", driveSubsystem.alignToPoleDeferred(Poles.PoleD));
+        NamedCommands.registerCommand("FineDriveE", driveSubsystem.alignToPoleDeferred(Poles.PoleE));
+        NamedCommands.registerCommand("FineDriveF", driveSubsystem.alignToPoleDeferred(Poles.PoleF));
+        NamedCommands.registerCommand("FineDriveG", driveSubsystem.alignToPoleDeferred(Poles.PoleG));
+        NamedCommands.registerCommand("FineDriveH", driveSubsystem.alignToPoleDeferred(Poles.PoleH));
+        NamedCommands.registerCommand("FineDriveI", driveSubsystem.alignToPoleDeferred(Poles.PoleI));
+        NamedCommands.registerCommand("FineDriveJ", driveSubsystem.alignToPoleDeferred(Poles.PoleJ));
+        NamedCommands.registerCommand("FineDriveK", driveSubsystem.alignToPoleDeferred(Poles.PoleK));
+        NamedCommands.registerCommand("FineDriveL", driveSubsystem.alignToPoleDeferred(Poles.PoleL));
+        NamedCommands.registerCommand("ElevatorL1Coral", setScoringPosition(ScoringPositions.L1Coral));
+        NamedCommands.registerCommand("ElevatorL2Coral", setScoringPosition(ScoringPositions.L2Coral));
+        NamedCommands.registerCommand("ElevatorL3Coral", setScoringPosition(ScoringPositions.L3Coral));
+        NamedCommands.registerCommand("ElevatorL4Coral", setScoringPosition(ScoringPositions.L4Coral));
+        NamedCommands.registerCommand("ElevatorL2Algae", setScoringPosition(ScoringPositions.L2Algae));
+        NamedCommands.registerCommand("ElevatorL3Algae", setScoringPosition(ScoringPositions.L3Algae));
+        NamedCommands.registerCommand("ElevatorLoading", setScoringPosition(ScoringPositions.LoadingPosition));
+        NamedCommands.registerCommand("HomeCoral", homeCoral());
 
         // Configure the trigger bindings
         configureBindings();

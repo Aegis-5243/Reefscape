@@ -100,13 +100,13 @@ public final class Constants {
 
     // TODO: tune
     /** Maximum drive speed in meters per second. */
-    public static final double DRIVE_MAX_SPEED = 3;
+    public static final double DRIVE_MAX_SPEED = 5;
     /** Maximum drive acceleration in meters per second squared. */
     public static final double DRIVE_MAX_ACCELERATION = 2;
     /** Maximum drive angular speed in radians per second. */
-    public static final double DRIVE_MAX_ANGULAR_SPEED = 3;
+    public static final double DRIVE_MAX_ANGULAR_SPEED = 6;
     /** Maximum drive angular acceleration in radians per second squared. */
-    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 2;
+    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 4;
     public static final double RIO_CONTROL_LOOP = 0.1;
 
     /* Vision */

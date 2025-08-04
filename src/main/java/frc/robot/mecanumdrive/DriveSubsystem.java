@@ -26,11 +26,14 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -38,6 +41,7 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,6 +50,8 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.UtilFunctions;
+import frc.robot.vision.Vision;
+import frc.robot.vision.Vision.Poles;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -74,8 +80,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     public Field2d field;
 
+    public FieldObject2d robotObject;
+
     private DoubleSubscriber strafeSpeedScale;
     private DoubleSubscriber turnSpeedScale;
+
+    private Vision vision;
 
     public DriveSubsystem() {
 
@@ -148,6 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
         setUpPathPlanner();
 
         field = new Field2d();
+        robotObject = field.getRobotObject();
 
         SmartDashboard.putData("field", field);
 
@@ -221,6 +232,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     }
 
+    public void setVisionSubsystem(Vision visionSubsystem) {
+        vision = visionSubsystem;
+    }
+
     @Override
     public void periodic() {
         poseEstimator.update(getHeading(), new MecanumDriveWheelPositions(
@@ -244,7 +259,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         AutoBuilder.configure(
                 this::getPose,
-                this::setPose,
+                this::resetPose,
                 this::getChassisSpeeds,
                 this::drive,
                 new PPHolonomicDriveController(
@@ -291,7 +306,7 @@ public class DriveSubsystem extends SubsystemBase {
         return poseEstimator.getEstimatedPosition();
     }
 
-    public void setPose(Pose2d pose) {
+    public void resetPose(Pose2d pose) {
         poseEstimator.resetPose(pose);
     }
 
@@ -309,6 +324,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void drive(ChassisSpeeds speeds) {
+        double absSpeed = Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond
+                + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond);
+
+        if (absSpeed > Constants.DRIVE_MAX_SPEED * Constants.DRIVE_MAX_SPEED) {
+            speeds.vxMetersPerSecond *= Constants.DRIVE_MAX_SPEED / Math.sqrt(absSpeed);
+            speeds.vyMetersPerSecond *= Constants.DRIVE_MAX_SPEED / Math.sqrt(absSpeed);
+        }
+        if (Math.abs(speeds.omegaRadiansPerSecond) > Constants.DRIVE_MAX_ANGULAR_SPEED) {
+            speeds.omegaRadiansPerSecond = Constants.DRIVE_MAX_ANGULAR_SPEED;
+        }
 
         speeds.vyMetersPerSecond *= strafeSpeedScale.getAsDouble();
         speeds.omegaRadiansPerSecond *= turnSpeedScale.getAsDouble();
@@ -319,6 +344,19 @@ public class DriveSubsystem extends SubsystemBase {
         fr.setVoltage(frFeedForward.calculate(wheelSpeeds.frontRightMetersPerSecond));
         bl.setVoltage(blFeedForward.calculate(wheelSpeeds.rearLeftMetersPerSecond));
         br.setVoltage(brFeedForward.calculate(wheelSpeeds.rearRightMetersPerSecond));
+    }
+
+    public void driveFieldOriented(ChassisSpeeds speeds) {
+        double rotation = -getHeading().getRadians();
+        double sin = Math.sin(rotation);
+        double cos = Math.cos(rotation);
+
+        double x = speeds.vxMetersPerSecond * cos - speeds.vyMetersPerSecond * sin;
+        double y = speeds.vxMetersPerSecond * sin + speeds.vyMetersPerSecond * cos;
+
+        speeds = new ChassisSpeeds(x, y, speeds.omegaRadiansPerSecond);
+
+        drive(speeds);
     }
 
     public Command driveToPose(Pose2d pose) {
@@ -334,11 +372,32 @@ public class DriveSubsystem extends SubsystemBase {
                 0);
     }
 
-    public Command alignToClosestPole() {
-        return new DeferredCommand(() -> alignToClosePole(), Set.of(this));
+    public Command alignToPoseFast(Pose2d pose) {
+        return new AlignToPose(this, pose, 1);
     }
 
-    private Command alignToClosePole() {
-        return null;
+    public Command alignToPose(Pose2d pose) {
+        return new AlignToPose(this, pose);
     }
+
+    public Command alignToPose(Pose2d pose, int endCounts, double errorDist) {
+        return new AlignToPose(this, pose, endCounts, errorDist);
+    }
+
+    public Command alignToPoleDeferred(Poles pole) {
+        return new DeferredCommand(() -> alignToPose(vision.getPoleLocation(pole)), Set.of(this));
+
+        // return new DeferredCommand(
+        // () -> this.driveToPose(vision.getPoleLocation(pole)), Set.of(this));
+    }
+
+    public Command alignToClosestPole() {
+        return new DeferredCommand(() -> alignToClosestPoleDeferred(), Set.of(this));
+    }
+
+    private Command alignToClosestPoleDeferred() {
+        Pose2d polePosition = vision.getClosestPole();
+        return alignToPose(polePosition);
+    }
+
 }
