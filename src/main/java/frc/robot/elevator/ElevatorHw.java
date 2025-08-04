@@ -51,7 +51,7 @@ public class ElevatorHw extends Elevator {
                         .apply(config)
                         .apply(encoderConfig)
                         .apply(closedLoopConfig)
-                        .inverted(false) // TODO: get proper inversions from REV hardware client
+                        .inverted(true)
                         .disableFollowerMode()
                         .apply(new SoftLimitConfig()
                                 .reverseSoftLimit(0)
@@ -64,7 +64,7 @@ public class ElevatorHw extends Elevator {
                 new SparkMaxConfig()
                         .apply(config)
                         .apply(encoderConfig)
-                        .follow(leftMotor, true), // TODO: get proper inversions from REV hardware client
+                        .follow(leftMotor, false), // TODO: get proper inversions from REV hardware client
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 

@@ -26,7 +26,7 @@ public class ArmHw extends Arm {
         armMotor.configure(
                 new SparkMaxConfig()
                         .idleMode(SparkMaxConfig.IdleMode.kBrake)
-                        .inverted(false) // TODO: get proper inversions from REV hardware client
+                        .inverted(false)
                         .apply(new EncoderConfig()
                                 .positionConversionFactor(Constants.ARM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(Constants.ARM_VELOCITY_CONVERSION_FACTOR))

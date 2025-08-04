@@ -118,16 +118,16 @@ public class DriveSubsystem extends SubsystemBase {
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         fr.configure(new SparkMaxConfig()
-                .apply(new AlternateEncoderConfig().inverted(false))
-                .inverted(false)
+                .apply(new AlternateEncoderConfig().inverted(true))
+                .inverted(true)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         bl.configure(new SparkMaxConfig()
                 .apply(new AlternateEncoderConfig().inverted(false))
                 .inverted(false)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         br.configure(new SparkMaxConfig()
-                .apply(new AlternateEncoderConfig().inverted(false))
-                .inverted(false)
+                .apply(new AlternateEncoderConfig().inverted(true))
+                .inverted(true)
                 .apply(motorConfig), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Able to substitute since conversion factors match gearbox ratio of 12.75

@@ -54,7 +54,7 @@ public final class Constants {
     /** RPM to meters per second of mecanum alternate encoders */
     public static final double MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Units.RPM.of(1).in(Units.RadiansPerSecond)
             *
-            Constants.MECANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;;
+            Constants.MECANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;
 
     /** Rotations to meters of mecanum encoders */
     public static final double MECANUM_POSITION_CONVERSION_FACTOR = MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
