@@ -44,6 +44,9 @@ public abstract class Arm extends SubsystemBase {
         tab.addDouble("Output Current", this::getOutputCurrent);
         tab.addDouble("Output Voltage", this::getOutputVoltage);
 
+        tab.add("Reset arm home position", runOnce(() -> setEncoderPosition(17)))
+                .withPosition(0, 0)
+                .withSize(2, 1);
         tab.add("Arm to 17deg", setAngleCmd(17))
                 .withPosition(0, 0)
                 .withSize(2, 1);

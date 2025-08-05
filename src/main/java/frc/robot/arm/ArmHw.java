@@ -37,11 +37,12 @@ public class ArmHw extends Arm {
                         .apply(new ClosedLoopConfig()
                                 .pid(kP, kI, kD)
                                 .apply(new MAXMotionConfig()
-                                        .maxVelocity(Constants.ARM_MAX_VELOCITY))),
+                                        .maxVelocity(Constants.ARM_MAX_VELOCITY)))
+                        .closedLoopRampRate(0.1),
                 SparkMax.ResetMode.kResetSafeParameters,
                 SparkMax.PersistMode.kPersistParameters);
 
-        // setEncoderPosition(17);
+        setEncoderPosition(17);
     }
 
     @Override
@@ -93,6 +94,8 @@ public class ArmHw extends Arm {
 
     @Override
     public void setVelocity(double velocity) {
-        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity); // TODO: find and use arbitrary feedforward
+        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity); // TODO: find and use
+                                                                                                   // arbitrary
+                                                                                                   // feedforward
     }
 }

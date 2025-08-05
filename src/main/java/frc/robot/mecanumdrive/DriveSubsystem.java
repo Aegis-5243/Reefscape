@@ -110,7 +110,9 @@ public class DriveSubsystem extends SubsystemBase {
                                         Constants.MECANUM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(
                                         Constants.MECANUM_VELOCITY_CONVERSION_FACTOR))
-                .idleMode(IdleMode.kCoast);
+                .idleMode(IdleMode.kCoast)
+                .closedLoopRampRate(.5)
+                .openLoopRampRate(.5);
 
         // Match inversions on motor and alternate encoder and apply global config
         fl.configure(new SparkMaxConfig()
@@ -145,7 +147,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         gyro.reset();
 
-        mecanum = new MecanumDrive(fl, fr, bl, br);
+        mecanum = new MecanumDrive(fl, bl, fr, br);
 
         kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283),
                 new Translation2d(0.259, -0.283),
@@ -156,7 +158,6 @@ public class DriveSubsystem extends SubsystemBase {
                 Pose2d.kZero);
 
         setUpPathPlanner();
-
         field = new Field2d();
         robotObject = field.getRobotObject();
 
@@ -310,6 +311,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPose(pose);
+    }
+
+    public Command resetPoseCommand(Pose2d pose) {
+        return runOnce(() -> resetPose(pose));
     }
 
     public void updateFieldPoseEstimate() {

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
@@ -104,10 +107,14 @@ public class RobotContainer {
 
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
-        // elevator.setDefaultCommand(elevator.holdElevator());
-        // arm.setDefaultCommand(arm.holdArm());
+        elevator.setDefaultCommand(elevator.holdElevator());
+        arm.setDefaultCommand(arm.holdArm());
 
         driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
+        // new Trigger(driver::getIntake).whileTrue(intake.homeCoral());
+        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(2, 4, new Rotation2d(0))));
+
+        new Trigger(driver::getL1Command).onTrue(setScoringPosition(ScoringPositions.L1Coral));
     }
 
     enum Zones {

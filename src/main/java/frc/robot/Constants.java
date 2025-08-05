@@ -171,9 +171,9 @@ public final class Constants {
     /** Maximum velocity of arm in degrees per second */
     public static final double ARM_MAX_VELOCITY = 12; // degrees per second
 
-    public static final double ARM_kP = 0.25;
+    public static final double ARM_kP = 0.03;
     public static final double ARM_kI = 0;
-    public static final double ARM_kD = 0;
+    public static final double ARM_kD = 0.01;
 
     public static final int ARM_LIMIT_SWITCH_PORT = 9;
 

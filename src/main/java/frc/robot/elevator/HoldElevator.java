@@ -24,7 +24,8 @@ public class HoldElevator extends Command {
     // https://github.com/FRC2832/Robot2832-2025Njord/blob/main/src/main/java/frc/robot/elevator/HoldElevator.java
     @Override
     public void initialize() {
-        startPos = elevator.getPosition();
+        // startPos = elevator.getPosition();
+        startPos = elevator.getTargetPosition();
         foundSetpoint = false;
 
         double targetPos = elevator.getTargetPosition();
@@ -38,10 +39,10 @@ public class HoldElevator extends Command {
     public void execute() {
         // at the beginning, we will command the elevator back to where we start
         // once the elevator decelerates, capture the new setpoint to stop the bounce
-        if ((foundSetpoint == false) && (Math.abs(elevator.getVelocity()) < 2)) {
-            startPos = elevator.getPosition();
-            foundSetpoint = true;
-        }
+        // if ((foundSetpoint == false) && (Math.abs(elevator.getVelocity()) < 2)) {
+        //     startPos = elevator.getPosition();
+        //     foundSetpoint = true;
+        // }
 
         // command the elevator to hold at the position we saved
         elevator.setPosition(startPos);

@@ -57,13 +57,13 @@ public class DriverControls {
         return driverLeft.getRawButton(6);
     }
 
-    public boolean getAlignLeft() {
-        return driverLeft.getRawButton(3);
-    }
+    // public boolean getAlignLeft() {
+    //     return driverLeft.getRawButton(3);
+    // }
 
-    public boolean getAlignRight() {
-        return driverLeft.getRawButton(4);
-    }
+    // public boolean getAlignRight() {
+    //     return driverLeft.getRawButton(4);
+    // }
 
     public boolean getIntake() {
         return driverRight.getRawButton(2);
