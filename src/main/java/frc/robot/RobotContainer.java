@@ -269,9 +269,13 @@ public class RobotContainer {
                 intake.setPositionCmd(() -> intake.getPosition() + 2.8));
     }
 
+    /** Spins intake and moves elevator up to remove algae
+     * Assumes the arm is in algae zone already */
     private Command removeAlgaeCommand() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAlgaeCommand'");
+        return new ParallelCommandGroup(
+            intake.setVelocityCmd(12),
+            elevator.setVelocityCmd(1)
+        );
     }
 
     public void resetMotors() {

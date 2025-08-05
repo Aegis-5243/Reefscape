@@ -111,8 +111,7 @@ public class DriveSubsystem extends SubsystemBase {
                                 .velocityConversionFactor(
                                         Constants.MECANUM_VELOCITY_CONVERSION_FACTOR))
                 .idleMode(IdleMode.kCoast)
-                .closedLoopRampRate(.5)
-                .openLoopRampRate(.5);
+                .closedLoopRampRate(.5);
 
         // Match inversions on motor and alternate encoder and apply global config
         fl.configure(new SparkMaxConfig()

@@ -20,9 +20,7 @@ public abstract class Elevator extends SubsystemBase {
 
     public abstract double getOutputVoltage();
 
-    public void setVelocity(double velocity) {
-        isPosition = false;
-    };
+    protected abstract double getVelocity();
 
     public abstract void setEncoderPosition(double position);
 
@@ -109,5 +107,16 @@ public abstract class Elevator extends SubsystemBase {
         return new HoldElevator(this);
     }
 
-    protected abstract double getVelocity();
+    public void setVelocity(double velocity) {
+        isPosition = false;
+    };
+
+    public Command setVelocityCmd(double velocity) {
+        return run(() -> setVelocity(velocity));
+    }
+
+    public boolean isInPositionMode() {
+        return isPosition;
+    }
+
 }

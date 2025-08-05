@@ -29,7 +29,7 @@ public class ElevatorHw extends Elevator {
     double kI = Constants.ELEVATOR_kI;
     double kD = Constants.ELEVATOR_kD;
     double kF = 0;
-    
+
     public ElevatorHw() {
         super();
         leftMotor = new SparkMax(Constants.ELEVATOR_LEFT_MOTOR_PORT, MotorType.kBrushless);
@@ -57,7 +57,7 @@ public class ElevatorHw extends Elevator {
                         .apply(new SoftLimitConfig()
                                 .reverseSoftLimit(0)
                                 .forwardSoftLimit(Constants.ELEVATOR_MAX_HEIGHT))
-                        .closedLoopRampRate(0.3),
+                        .closedLoopRampRate(0.3), /* <--- Absolute godsend right here */
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
@@ -75,7 +75,8 @@ public class ElevatorHw extends Elevator {
     @Override
     public void setPosition(double distance) {
         super.setPosition(distance);
-        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition, ClosedLoopSlot.kSlot0, Constants.ELEVATOR_FF_VOLTAGE);
+        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition, ClosedLoopSlot.kSlot0,
+                Constants.ELEVATOR_FF_VOLTAGE);
     }
 
     @Override
@@ -129,6 +130,7 @@ public class ElevatorHw extends Elevator {
     @Override
     public void setVelocity(double velocity) {
         super.setVelocity(velocity);
-        leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0, Constants.ELEVATOR_FF_VOLTAGE);
+        leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0,
+                Constants.ELEVATOR_FF_VOLTAGE);
     }
 }
