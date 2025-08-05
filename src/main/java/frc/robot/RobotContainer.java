@@ -120,7 +120,7 @@ public class RobotContainer {
                 .withPosition(6, 1)
                 .withSize(2, 1);
         
-        tab.add("Has Coral", intake.detectingCoral())
+        tab.addBoolean("Has Coral", intake::detectingCoral)
         .withPosition(8, 3);
 
         // Configure the trigger bindings
@@ -285,9 +285,9 @@ public class RobotContainer {
         return new SequentialCommandGroup(
                 intake.setPowerCmd(0.1)
                         .until(() -> intake.detectingCoral()),
-                intake.setVelocityCmd(-0.03)
+                intake.setPowerCmd(-0.03)
                         .until(() -> !intake.detectingCoral()),
-                intake.setPositionCmd(() -> intake.getPosition() + 1.7));
+                intake.setPositionCmd(() -> intake.getPosition() + 2.7));
     }
 
     /**

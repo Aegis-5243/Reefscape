@@ -12,6 +12,8 @@ import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
@@ -46,6 +48,10 @@ public class IntakeHw extends Intake {
         laser = new TimeOfFlight(Constants.ROLLER_TIME_OF_FLIGHT_PORT);
 
         laser.setRangingMode(RangingMode.Short, 24);
+
+        Shuffleboard.getTab("Intake").addDouble("Sensor dist", () -> laser.getRange())
+            .withPosition(1, 0)
+            .withSize(1, 1);
 
     }
 

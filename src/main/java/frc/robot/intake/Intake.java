@@ -4,11 +4,13 @@
 
 package frc.robot.intake;
 
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Intake extends SubsystemBase {
@@ -62,8 +64,8 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command setPositionCmd(DoubleSupplier position) {
-        return run(() -> setPosition(position.getAsDouble()))
-                .until(() -> Math.abs(getPosition() - position.getAsDouble()) < 0.2);
+
+        return new DeferredCommand(() -> setPositionCmd(position.getAsDouble()), Set.of(this)); 
     }
 
     public void setPosition(double position) {
@@ -98,7 +100,6 @@ public abstract class Intake extends SubsystemBase {
         return run(this::stopIntake);
     }
 
-    
     public boolean isInPositionMode() {
         return isPosition;
     }
