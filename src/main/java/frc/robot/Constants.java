@@ -133,10 +133,10 @@ public final class Constants {
 
     public static final double ELEVATOR_kP = 0.1;
     public static final double ELEVATOR_kI = 0;
-    public static final double ELEVATOR_kD = 0;
+    public static final double ELEVATOR_kD = 0.02;
 
     /** Maximum height of elevator in inches, used for soft limit */
-    public static final double ELEVATOR_MAX_HEIGHT = 51;
+    public static final double ELEVATOR_MAX_HEIGHT = 50.5;
 
     public static final int ELEVATOR_LEFT_MOTOR_PORT = 21;
     public static final int ELEVATOR_RIGHT_MOTOR_PORT = 22;
@@ -145,7 +145,7 @@ public final class Constants {
 
     public static final double ELEVATOR_MAN_TOLERANCE = .5;
 
-    public static final double ELEVATOR_STILL_PERCENT = 0.02734375;
+    public static final double ELEVATOR_FF_VOLTAGE = 0.385;
 
     public static final double ELEVATOR_STALL_CURRENT = 30.0;
 

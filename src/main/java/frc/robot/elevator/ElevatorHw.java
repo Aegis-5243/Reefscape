@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 
 import frc.robot.Constants;
@@ -42,7 +43,7 @@ public class ElevatorHw extends Elevator {
                 .velocityConversionFactor(Constants.ELEVATOR_VELOCITY_CONVERSION_FACTOR);
 
         ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
-                .pidf(kP, kI, kD, kF)
+                .pid(kP, kI, kD)
                 .apply(new MAXMotionConfig()
                         .maxVelocity(Constants.ELEVATOR_MAX_VELOCITY));
 
@@ -56,7 +57,7 @@ public class ElevatorHw extends Elevator {
                         .apply(new SoftLimitConfig()
                                 .reverseSoftLimit(0)
                                 .forwardSoftLimit(Constants.ELEVATOR_MAX_HEIGHT))
-                        .closedLoopRampRate(0.5),
+                        .closedLoopRampRate(0.3),
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
@@ -64,7 +65,7 @@ public class ElevatorHw extends Elevator {
                 new SparkMaxConfig()
                         .apply(config)
                         .apply(encoderConfig)
-                        .follow(leftMotor, false), // TODO: get proper inversions from REV hardware client
+                        .follow(leftMotor, true), // TODO: get proper inversions from REV hardware client
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
@@ -74,7 +75,7 @@ public class ElevatorHw extends Elevator {
     @Override
     public void setPosition(double distance) {
         super.setPosition(distance);
-        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition);
+        leftMotor.getClosedLoopController().setReference(distance, ControlType.kPosition, ClosedLoopSlot.kSlot0, Constants.ELEVATOR_FF_VOLTAGE);
     }
 
     @Override
@@ -95,6 +96,11 @@ public class ElevatorHw extends Elevator {
 
     public double getOutputCurrent() {
         return leftMotor.getOutputCurrent();
+    }
+
+    @Override
+    public double getOutputVoltage() {
+        return leftMotor.getAppliedOutput() * leftMotor.getBusVoltage();
     }
 
     @Override
@@ -122,6 +128,6 @@ public class ElevatorHw extends Elevator {
 
     @Override
     public void setVelocity(double velocity) {
-        leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity);
+        leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0, Constants.ELEVATOR_FF_VOLTAGE);
     }
 }

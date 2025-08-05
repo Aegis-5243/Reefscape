@@ -76,4 +76,8 @@ public class DriverControls {
     public Trigger driveToPole() {
         return new JoystickButton(driverLeft, 1);
     }
+
+    public Trigger resetOdo() {
+        return new JoystickButton(driverLeft, 2);
+    }
 }

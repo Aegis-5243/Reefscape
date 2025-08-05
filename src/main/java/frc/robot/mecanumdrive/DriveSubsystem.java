@@ -160,7 +160,9 @@ public class DriveSubsystem extends SubsystemBase {
         field = new Field2d();
         robotObject = field.getRobotObject();
 
-        SmartDashboard.putData("field", field);
+        Shuffleboard.getTab("Teleoperated").add(field)
+                .withPosition(0, 0)
+                .withSize(6, 3);
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drive");
         tab.addFloatArray("Encoder Velocities", () -> {

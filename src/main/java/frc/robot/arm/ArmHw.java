@@ -1,6 +1,7 @@
 package frc.robot.arm;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
@@ -61,12 +62,12 @@ public class ArmHw extends Arm {
     @Override
     public void setEncoderPosition(double degrees) {
         armMotor.getEncoder().setPosition(degrees);
-
     }
 
     @Override
     public void setAngle(double degrees) {
         super.setAngle(degrees);
+        armMotor.getClosedLoopController().setReference(degrees, ControlType.kPosition);
 
     }
 

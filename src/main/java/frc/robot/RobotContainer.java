@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,6 +91,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("ElevatorLoading", setScoringPosition(ScoringPositions.LoadingPosition));
         NamedCommands.registerCommand("HomeCoral", homeCoral());
 
+        ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
+        
+
+
         // Configure the trigger bindings
         configureBindings();
     }
@@ -100,7 +107,7 @@ public class RobotContainer {
         // elevator.setDefaultCommand(elevator.holdElevator());
         // arm.setDefaultCommand(arm.holdArm());
 
-        // driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
+        driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
     }
 
     enum Zones {
@@ -216,6 +223,11 @@ public class RobotContainer {
                 intake.setVelocityCmd(-1)
                         .until(() -> !intake.detectingCoral()),
                 intake.setPositionCmd(() -> intake.getPosition() + 2.8));
+    }
+
+    public void resetMotors() {
+        elevator.stopElevator();
+        arm.stopArm();
     }
 
 }

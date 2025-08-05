@@ -17,9 +17,9 @@ public abstract class Arm extends SubsystemBase {
     public abstract double getAngle();
 
     public abstract boolean getLimitSwitch();
-    
+
     public abstract void setEncoderPosition(double degrees);
-    
+
     public abstract double getOutputCurrent();
 
     public abstract double getOutputVoltage();
@@ -29,19 +29,36 @@ public abstract class Arm extends SubsystemBase {
     public abstract double getVelocity();
 
     public abstract void setVelocity(double velocity);
-    
+
     private double targetAngle = 0;
 
     private HashMap<ScoringPositions, DoubleSupplier> positions;
-    
+
     public Arm() {
         super();
-        
+
         ShuffleboardTab tab = Shuffleboard.getTab("Arm");
         tab.addDouble("Current Position", this::getAngle);
         tab.addDouble("Target Position", this::getTargetAngle);
         tab.addDouble("Velocity", this::getVelocity);
         tab.addDouble("Output Current", this::getOutputCurrent);
+        tab.addDouble("Output Voltage", this::getOutputVoltage);
+
+        tab.add("Arm to 17deg", setAngleCmd(17))
+                .withPosition(0, 0)
+                .withSize(2, 1);
+        tab.add("Arm to 45deg", setAngleCmd(45))
+                .withPosition(0, 1)
+                .withSize(2, 1);
+        tab.add("Arm to 60deg", setAngleCmd(60))
+                .withPosition(0, 2)
+                .withSize(2, 1);
+        tab.add("Arm to 90deg", setAngleCmd(90))
+                .withPosition(0, 3)
+                .withSize(2, 1);
+        tab.add("Arm to 120deg", setAngleCmd(120))
+                .withPosition(0, 4)
+                .withSize(2, 1);
 
         positions = new HashMap<>();
 
@@ -53,11 +70,11 @@ public abstract class Arm extends SubsystemBase {
         positions.put(ScoringPositions.L2Algae, UtilFunctions.getSettingSub("ArmPos/L2Algae,", 120));
         positions.put(ScoringPositions.L3Algae, UtilFunctions.getSettingSub("ArmPos/L3Algae", 120));
     }
-    
+
     public void setAngle(double degrees) {
         targetAngle = degrees;
     }
-    
+
     public double getTargetAngle() {
         return targetAngle;
     };
