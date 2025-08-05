@@ -28,9 +28,9 @@ public abstract class Arm extends SubsystemBase {
 
     public abstract double getVelocity();
 
-    public abstract void setVelocity(double velocity);
-
     private double targetAngle = 0;
+
+    public boolean isPosition = false;
 
     private HashMap<ScoringPositions, DoubleSupplier> positions;
 
@@ -75,7 +75,12 @@ public abstract class Arm extends SubsystemBase {
     }
 
     public void setAngle(double degrees) {
+        isPosition = true;
         targetAngle = degrees;
+    }
+
+    public void setVelocity(double degVelocity) {
+        isPosition = false;
     }
 
     public double getTargetAngle() {
@@ -98,4 +103,8 @@ public abstract class Arm extends SubsystemBase {
         return positions.get(position).getAsDouble();
     }
 
+    
+    public boolean isInPositionMode() {
+        return isPosition;
+    }
 }

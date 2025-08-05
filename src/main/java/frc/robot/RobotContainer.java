@@ -75,6 +75,8 @@ public class RobotContainer {
         vision = new Vision(driveSubsystem);
         driveSubsystem.setVisionSubsystem(vision);
 
+        vision.enableAprilTags();
+
         /*
          * The bot will align with the center of the reef (to take off algae) instead of
          * to the sides (to place coral)
@@ -142,10 +144,10 @@ public class RobotContainer {
          * or it outtakes when arm is not in intake zone
          */
 
-        new Trigger(driver::getOuttake).onTrue(
+        new Trigger(driver::getOuttake).whileTrue(
                 new ConditionalCommand(
                         new ConditionalCommand(
-                                intake.setVelocityCmd(6),
+                                intake.setPowerCmd(0.3),
                                 Commands.none(),
                                 () -> getCurrentZone() != Zones.ZoneA),
                         removeAlgaeCommand(),
@@ -281,11 +283,11 @@ public class RobotContainer {
 
     private Command homeCoral() {
         return new SequentialCommandGroup(
-                intake.setVelocityCmd(12)
+                intake.setPowerCmd(0.1)
                         .until(() -> intake.detectingCoral()),
-                intake.setVelocityCmd(-1)
+                intake.setVelocityCmd(-0.03)
                         .until(() -> !intake.detectingCoral()),
-                intake.setPositionCmd(() -> intake.getPosition() + 2.8));
+                intake.setPositionCmd(() -> intake.getPosition() + 1.7));
     }
 
     /**
@@ -296,9 +298,9 @@ public class RobotContainer {
         return new ParallelCommandGroup(
                 new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
                         Commands.none(),
-                        intake.setVelocityCmd(12),
+                        intake.setPowerCmd(-0.3),
                         () -> intake.detectingCoral()),
-                elevator.setVelocityCmd(2));
+                elevator.setPowerCommand(0.1));
     }
 
     public void resetMotors() {

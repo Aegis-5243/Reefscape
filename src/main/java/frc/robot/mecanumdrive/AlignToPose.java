@@ -34,9 +34,9 @@ public class AlignToPose extends Command {
     this.maxErrorLimit = errorDist;
     noSpeeds = new ChassisSpeeds();
 
-    xController = new PIDController(3.1, 0.04, 0); // Vertical movement
-    yController = new PIDController(3.1, 0.08, 0); // Horitontal movement
-    rotController = new PIDController(0.05, 0.0004, 0); // Rotation
+    xController = new PIDController(1.2, 0.04, 0.16); // Vertical movement
+    yController = new PIDController(1.2, 0.04, 0.16); // Horitontal movement
+    rotController = new PIDController(0.03, 0.00004, 0.009); // Rotation
 
     rotController.setSetpoint(pose.getRotation().getDegrees());
     rotController.setTolerance(4);

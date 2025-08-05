@@ -31,13 +31,14 @@ public class IntakeHw extends Intake {
                 new SparkMaxConfig()
                         .idleMode(IdleMode.kBrake)
                         .disableFollowerMode()
-                        .inverted(false)
+                        .inverted(true)
                         .apply(new EncoderConfig()
                                 .positionConversionFactor(Constants.ROLLER_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(Constants.ROLLER_VELOCITY_CONVERSION_FACTOR))
                         .apply(new ClosedLoopConfig()
                                 .pid(kP, kI, kD)
-                                .apply(new MAXMotionConfig().maxVelocity(90))),
+                                .apply(new MAXMotionConfig().maxVelocity(90)))
+                        .closedLoopRampRate(0.3),
                 ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         roller.getEncoder().setPosition(0);
@@ -74,8 +75,15 @@ public class IntakeHw extends Intake {
         laser.getRange();
     }
 
+    // 0.3 is 20 inches per second
+    public void setPower(double power) {
+        super.setPower(power);
+        roller.set(power);
+    }
+
     @Override
     public void stopIntake() {
+        isPosition = false;
         roller.set(0);
     }
 

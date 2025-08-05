@@ -57,6 +57,7 @@ public class ElevatorHw extends Elevator {
                         .apply(new SoftLimitConfig()
                                 .reverseSoftLimit(0)
                                 .forwardSoftLimit(Constants.ELEVATOR_MAX_HEIGHT))
+                        .openLoopRampRate(0.3)
                         .closedLoopRampRate(0.3), /* <--- Absolute godsend right here */
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
@@ -95,6 +96,16 @@ public class ElevatorHw extends Elevator {
         rightMotor.getEncoder().setPosition(position);
     }
 
+    @Override
+    public void setPower(double power) {
+        isPosition = false;
+        double pos = getPosition();
+        if (pos <= 0 && power < 1 || power > 1 && pos >= Constants.ELEVATOR_MAX_HEIGHT) {
+            power = 0;
+        }
+        leftMotor.set(power);
+    }
+
     public double getOutputCurrent() {
         return leftMotor.getOutputCurrent();
     }
@@ -119,6 +130,7 @@ public class ElevatorHw extends Elevator {
 
     @Override
     public void stopElevator() {
+        isPosition = false;
         leftMotor.stopMotor();
         rightMotor.stopMotor();
     }

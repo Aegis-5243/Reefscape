@@ -26,6 +26,8 @@ public abstract class Elevator extends SubsystemBase {
 
     public abstract void stopElevator();
 
+    public abstract void setPower(double power);
+
     private double targetPosition = 0;
 
     private HashMap<ScoringPositions, DoubleSupplier> positions;
@@ -117,6 +119,10 @@ public abstract class Elevator extends SubsystemBase {
 
     public boolean isInPositionMode() {
         return isPosition;
+    }
+
+    public Command setPowerCommand(double power) {
+        return run(() -> setPower(power));
     }
 
 }

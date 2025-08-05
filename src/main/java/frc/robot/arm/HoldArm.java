@@ -2,7 +2,6 @@ package frc.robot.arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-
 public class HoldArm extends Command {
     private Arm arm;
 
@@ -15,7 +14,11 @@ public class HoldArm extends Command {
 
     @Override
     public void initialize() {
-        startPos = arm.getAngle();
+        if (arm.isInPositionMode()) {
+            startPos = arm.getTargetAngle();
+        } else {
+            startPos = arm.getAngle();
+        }
     }
 
     @Override

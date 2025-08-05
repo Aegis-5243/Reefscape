@@ -30,6 +30,8 @@ public abstract class Intake extends SubsystemBase {
 
     private double targetPosition = 0;
 
+    protected boolean isPosition;
+
     public Intake() {
         super();
 
@@ -84,7 +86,20 @@ public abstract class Intake extends SubsystemBase {
         return targetSpeed;
     }
 
+    public void setPower(double power) {
+        isPosition = false;
+    }
+
+    public Command setPowerCmd(double power) {
+        return run(() -> setPower(power));
+    }
+
     public Command stopIntakeCommand() {
         return run(this::stopIntake);
+    }
+
+    
+    public boolean isInPositionMode() {
+        return isPosition;
     }
 }

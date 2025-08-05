@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -37,14 +38,23 @@ public class Vision extends SubsystemBase {
     private BooleanSupplier isCoralSupplier;
     private boolean aprilTagAllowed;
 
+    private boolean doRejectUpdate = false;
+
+    private Pose2d mt2pose;
+
     public Vision(DriveSubsystem driveSubsystem) {
         super();
 
         this.driveSubsystem = driveSubsystem;
 
+        Shuffleboard.getTab("Teleoperated").addBoolean("IsUsingVision", () -> aprilTagAllowed);
+        Shuffleboard.getTab("Teleoperated").addBoolean("IsSeeing", () -> !doRejectUpdate);
+
+        LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
+
         // get blue poles
         Transform2d reefCenter = new Transform2d(4.5, 4, Rotation2d.fromDegrees(0));
-        double distFromCenter = 1.370;
+        double distFromCenter = 1.50;
         Pose2d offsetLeft = new Pose2d(-distFromCenter, Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
         Pose2d offsetMiddle = new Pose2d(-distFromCenter, 0, Rotation2d.fromDegrees(0));
         Pose2d offsetRight = new Pose2d(-distFromCenter, -Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
@@ -79,6 +89,14 @@ public class Vision extends SubsystemBase {
         calcClosestPole();
 
         updateOdometry();
+
+        driveSubsystem.field.getObject("closePole").setPose(closestPole);
+
+        if (mt2pose == null) {
+            driveSubsystem.field.getObject("mt2pose").setPose(new Pose2d(-10, -0, Rotation2d.kZero));
+        } else {
+            driveSubsystem.field.getObject("mt2est").setPose(mt2pose);
+        }
     }
 
     public enum Poles {
@@ -98,7 +116,7 @@ public class Vision extends SubsystemBase {
 
     public void updateOdometry() {
         boolean useMegaTag2 = true; // set to false to use MegaTag1
-        boolean doRejectUpdate = false;
+        doRejectUpdate = false;
 
         if (aprilTagAllowed) {
             if (useMegaTag2 == false) {
@@ -128,6 +146,9 @@ public class Vision extends SubsystemBase {
                         driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
                 LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                         .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+                
+                mt2pose = mt2.pose;
+                
                 if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
                                                                    // degrees
                                                                    // per second,
@@ -181,13 +202,9 @@ public class Vision extends SubsystemBase {
             var currentPose = driveSubsystem.getPose();
             var finalPose = driveSubsystem.getPose();
             var closeDist = 10000000000.;
-            var red = driveSubsystem.isRedAlliance();
 
             for (var key : blueAlgae.keySet()) {
                 var algaePose = blueAlgae.get(key);
-                if (red) {
-                    algaePose = flipFieldAlways(algaePose);
-                }
                 var newDist = UtilFunctions.getDistance(currentPose, algaePose);
                 if (newDist < closeDist) {
                     closeDist = newDist;
@@ -216,18 +233,12 @@ public class Vision extends SubsystemBase {
         return closestPole;
     }
 
-    public Command diableAprilTags() {
-        return runOnce(
-                () -> {
-                    aprilTagAllowed = false;
-                });
+    public void diableAprilTags() {
+        aprilTagAllowed = false;
     }
 
-    public Command enableAprilTags() {
-        return runOnce(
-                () -> {
-                    aprilTagAllowed = true;
-                });
+    public void enableAprilTags() {
+        aprilTagAllowed = true;
     }
 
     public Pose2d getPoleLocation(Poles pole) {

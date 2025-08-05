@@ -46,22 +46,21 @@ public final class Constants {
      * 
      */
 
-    public static final Distance MECANUM_WHEEL_DIAMETER = Units.Inches.of(6);
+    public static final double MECANUM_WHEEL_DIAMETER = 6;
 
     /** Rotations to meters of mecanum alternate encoders */
-    public static final double MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR = Units.Rotations.of(1).in(Units.Radians) *
-            Constants.MECANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;
+    public static final double MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR = Math.PI *
+            Units.Meters.convertFrom(Constants.MECANUM_WHEEL_DIAMETER, Units.Inches);
     /** RPM to meters per second of mecanum alternate encoders */
-    public static final double MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Units.RPM.of(1).in(Units.RadiansPerSecond)
-            *
-            Constants.MECANUM_WHEEL_DIAMETER.in(Units.Meters) / 2;
+    public static final double MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Math.PI * 
+        Units.Meters.convertFrom(Constants.MECANUM_WHEEL_DIAMETER, Units.Inches) / 60;
 
     /** Rotations to meters of mecanum encoders */
     public static final double MECANUM_POSITION_CONVERSION_FACTOR = MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
-            * 12.76;
+            / 12.76;
     /** RPM to meters per second of mecanum encoders */
     public static final double MECANUM_VELOCITY_CONVERSION_FACTOR = MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR
-            * 12.76;
+            / 12.76;
 
     public static final double FR_kA = 0.32;
     public static final double FR_kS = 0.13;
@@ -169,13 +168,13 @@ public final class Constants {
     public static final double ARM_MIN_POS = 17;
 
     /** Maximum velocity of arm in maxMotion mode in degrees per second */
-    public static final double ARM_MAX_VELOCITY = 12;
+    public static final double ARM_MAX_VELOCITY = 90;
     /** Maximum acceleraton of arm in maxMotion mode in degrees per second squared*/
-    public static final double ARM_MAX_ACCELERATION = 0;
+    public static final double ARM_MAX_ACCELERATION = 180;
 
     public static final double ARM_kP = 0.03;
     public static final double ARM_kI = 0;
-    public static final double ARM_kD = 0.01;
+    public static final double ARM_kD = 0.05;
 
     public static final int ARM_LIMIT_SWITCH_PORT = 9;
 
@@ -186,16 +185,16 @@ public final class Constants {
 
     /*
      * Roller conversion factors
-     * Belt ratio: 12 / 48
+     * Belt ratio: 12 / 30
      * Roller diameter: 2 inches
-     * = (12 / 48) * (2 * PI) = 1.57079633
+     * = (12 / 30) * (2 * PI)
      */
     /** Rotations to inches for intake roller encoders */
-    public static final double ROLLER_POSITION_CONVERSION_FACTOR = 1.57079633; // TODO: check belt ratio
+    public static final double ROLLER_POSITION_CONVERSION_FACTOR = 12. / 30 * 2 * Math.PI; // TODO: check belt ratio
     /** RPM to inches per second for intake roller encoders */
     public static final double ROLLER_VELOCITY_CONVERSION_FACTOR = ROLLER_POSITION_CONVERSION_FACTOR / 60;
 
-    public static final double ROLLER_kP = 3.596;
+    public static final double ROLLER_kP = 0.018;
     public static final double ROLLER_kI = 0;
     public static final double ROLLER_kD = 0;
 
