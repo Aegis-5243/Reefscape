@@ -24,6 +24,8 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract boolean detectingCoral();
 
+    public abstract Command stopIntakeCommand();
+
     private double targetSpeed = 0;
 
     private double targetPosition = 0;

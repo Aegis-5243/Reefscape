@@ -20,7 +20,9 @@ public abstract class Elevator extends SubsystemBase {
 
     public abstract double getOutputVoltage();
 
-    public abstract void setVelocity(double velocity);
+    public void setVelocity(double velocity) {
+        isPosition = false;
+    };
 
     public abstract void setEncoderPosition(double position);
 
@@ -29,6 +31,8 @@ public abstract class Elevator extends SubsystemBase {
     private double targetPosition = 0;
 
     private HashMap<ScoringPositions, DoubleSupplier> positions;
+
+    public boolean isPosition;
 
     public Elevator() {
         super();
@@ -77,6 +81,7 @@ public abstract class Elevator extends SubsystemBase {
     }
 
     public void setPosition(double distance) {
+        isPosition = true;
         targetPosition = distance;
     }
 
@@ -103,6 +108,6 @@ public abstract class Elevator extends SubsystemBase {
     public Command holdElevator() {
         return new HoldElevator(this);
     }
-    
+
     protected abstract double getVelocity();
 }

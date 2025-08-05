@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 
 import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -47,13 +49,15 @@ import frc.robot.elevator.ElevatorHw;
  */
 public class RobotContainer {
     DriveSubsystem driveSubsystem = new DriveSubsystem();
-    
+
     Vision vision;
     Elevator elevator;
     Arm arm;
     Intake intake;
 
     SendableChooser<Command> autoChooser;
+
+    BooleanSupplier isCoralSupplier;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,9 +70,13 @@ public class RobotContainer {
         vision = new Vision(driveSubsystem);
         driveSubsystem.setVisionSubsystem(vision);
 
-        /* The bot will align with the center of the reef (to take off algae) instead of to the sides (to place coral)
-         * whenever it is in zone D */
-        vision.addCoralModeSupplier(() -> getZone(elevator.getPosition(), arm.getAngle()) != Zones.ZoneD);
+        /*
+         * The bot will align with the center of the reef (to take off algae) instead of
+         * to the sides (to place coral)
+         * whenever it is in zone D
+         */
+        isCoralSupplier = () -> getCurrentZone() != Zones.ZoneD;
+        vision.addCoralModeSupplier(isCoralSupplier);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -95,8 +103,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("HomeCoral", homeCoral());
 
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
-        
-
 
         // Configure the trigger bindings
         configureBindings();
@@ -109,12 +115,39 @@ public class RobotContainer {
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
         elevator.setDefaultCommand(elevator.holdElevator());
         arm.setDefaultCommand(arm.holdArm());
+        intake.setDefaultCommand(intake.stopIntakeCommand());
 
         driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
-        // new Trigger(driver::getIntake).whileTrue(intake.homeCoral());
+        new Trigger(driver::getIntake).whileTrue(homeCoral());
+
+        /* Right trigger takes off algae when arm is in algae zone
+         * or it outtakes when arm is not in intake zone
+         */
+        new Trigger(driver::getOuttake).onTrue(
+                new ConditionalCommand(
+                        new ConditionalCommand(
+                                intake.setVelocityCmd(6),
+                                null,
+                                () -> getCurrentZone() != Zones.ZoneA),
+                        removeAlgaeCommand(),
+                        isCoralSupplier));
         driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(2, 4, new Rotation2d(0))));
 
-        new Trigger(driver::getL1Command).onTrue(setScoringPosition(ScoringPositions.L1Coral));
+        new Trigger(driver::getL1Command)
+                .onTrue(setScoringPosition(ScoringPositions.L1Coral));
+        new Trigger(driver::getL2Command)
+                .onTrue(setScoringPosition(ScoringPositions.L2Coral));
+        new Trigger(driver::getL3Command)
+                .onTrue(setScoringPosition(ScoringPositions.L3Coral));
+        new Trigger(driver::getL4Command)
+                .onTrue(setScoringPosition(ScoringPositions.L4Coral));
+        new Trigger(driver::getL2AlgaeCommand)
+                .onTrue(setScoringPosition(ScoringPositions.L2Algae));
+        new Trigger(driver::getL3AlgaeCommand)
+                .onTrue(setScoringPosition(ScoringPositions.L3Algae));
+        new Trigger(driver::getLoadingPositionCommand)
+                .onTrue(setScoringPosition(ScoringPositions.LoadingPosition));
+
     }
 
     enum Zones {
@@ -145,6 +178,10 @@ public class RobotContainer {
         }
     }
 
+    private Zones getCurrentZone() {
+        return getZone(elevator.getPosition(), arm.getAngle());
+    }
+
     /*
      * Potential implementations
      * - better approach to detecting coral
@@ -163,7 +200,7 @@ public class RobotContainer {
     private Command setScoringPositionDeferred(ScoringPositions position) { // TODO: test
         // state machine like logic from
         // https://github.com/FRC2832/Robot2832-2025Njord/blob/a11e334a0eab59214d62ff34fd51ab5178f034c5/src/main/java/frc/robot/RobotContainer.java#L405
-        Zones currZone = getZone(elevator.getPosition(), arm.getAngle());
+        Zones currZone = getCurrentZone();
         Zones destZone = getZone(elevator.getSetPosition(position), arm.getSetPosition(position));
 
         Command result;
@@ -230,6 +267,11 @@ public class RobotContainer {
                 intake.setVelocityCmd(-1)
                         .until(() -> !intake.detectingCoral()),
                 intake.setPositionCmd(() -> intake.getPosition() + 2.8));
+    }
+
+    private Command removeAlgaeCommand() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAlgaeCommand'");
     }
 
     public void resetMotors() {

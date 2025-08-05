@@ -38,7 +38,7 @@ public class DriverControls {
     }
 
     public boolean getLoadingPositionCommand() {
-        return driverRight.getRawButton(6);
+        return driverLeft.getRawButton(4);
     }
 
     public boolean getL1Command() {
@@ -54,16 +54,17 @@ public class DriverControls {
     }
 
     public boolean getL4Command() {
-        return driverLeft.getRawButton(6);
+        return driverRight.getRawButton(6);
     }
 
-    // public boolean getAlignLeft() {
-    //     return driverLeft.getRawButton(3);
-    // }
 
-    // public boolean getAlignRight() {
-    //     return driverLeft.getRawButton(4);
-    // }
+    public boolean getL2AlgaeCommand() {
+        return driverLeft.getRawButton(5);
+    }
+
+    public boolean getL3AlgaeCommand() {
+        return driverLeft.getRawButton(6);
+    }
 
     public boolean getIntake() {
         return driverRight.getRawButton(2);
@@ -80,4 +81,5 @@ public class DriverControls {
     public Trigger resetOdo() {
         return new JoystickButton(driverLeft, 2);
     }
+
 }
