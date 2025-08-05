@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
+import javax.xml.crypto.dsig.Transform;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
@@ -47,25 +49,28 @@ public class Vision extends SubsystemBase {
         Pose2d offsetMiddle = new Pose2d(-distFromCenter, 0, Rotation2d.fromDegrees(0));
         Pose2d offsetRight = new Pose2d(-distFromCenter, -Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
 
-        bluePoses.put(Poles.PoleA, offsetLeft.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
-        bluePoses.put(Poles.PoleB, offsetRight.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
-        bluePoses.put(Poles.PoleC, offsetLeft.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
-        bluePoses.put(Poles.PoleD, offsetRight.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
-        bluePoses.put(Poles.PoleE, offsetLeft.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
-        bluePoses.put(Poles.PoleF, offsetRight.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
-        bluePoses.put(Poles.PoleG, offsetLeft.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
-        bluePoses.put(Poles.PoleH, offsetRight.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
-        bluePoses.put(Poles.PoleI, offsetLeft.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
-        bluePoses.put(Poles.PoleJ, offsetRight.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
-        bluePoses.put(Poles.PoleK, offsetLeft.rotateBy(Rotation2d.fromDegrees(300)).plus(reefCenter));
-        bluePoses.put(Poles.PoleL, offsetRight.rotateBy(Rotation2d.fromDegrees(300)).plus(reefCenter));
+        bluePoses.put(Poles.PoleA, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(0)), reefCenter));
+        bluePoses.put(Poles.PoleB, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(0)), reefCenter));
+        bluePoses.put(Poles.PoleC, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(60)), reefCenter));
+        bluePoses.put(Poles.PoleD, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(60)), reefCenter));
+        bluePoses.put(Poles.PoleE, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(120)), reefCenter));
+        bluePoses.put(Poles.PoleF, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(120)), reefCenter));
+        bluePoses.put(Poles.PoleG, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(180)), reefCenter));
+        bluePoses.put(Poles.PoleH, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(180)), reefCenter));
+        bluePoses.put(Poles.PoleI, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(240)), reefCenter));
+        bluePoses.put(Poles.PoleJ, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(240)), reefCenter));
+        bluePoses.put(Poles.PoleK, posePlusNoJunk(offsetLeft.rotateBy(Rotation2d.fromDegrees(300)), reefCenter));
+        bluePoses.put(Poles.PoleL, posePlusNoJunk(offsetRight.rotateBy(Rotation2d.fromDegrees(300)), reefCenter));
 
-        blueAlgae.put(Algae.AlgaeAB, offsetMiddle.rotateBy(Rotation2d.fromDegrees(0)).plus(reefCenter));
-        blueAlgae.put(Algae.AlgaeCD, offsetMiddle.rotateBy(Rotation2d.fromDegrees(60)).plus(reefCenter));
-        blueAlgae.put(Algae.AlgaeEF, offsetMiddle.rotateBy(Rotation2d.fromDegrees(120)).plus(reefCenter));
-        blueAlgae.put(Algae.AlgaeGH, offsetMiddle.rotateBy(Rotation2d.fromDegrees(180)).plus(reefCenter));
-        blueAlgae.put(Algae.AlgaeIJ, offsetMiddle.rotateBy(Rotation2d.fromDegrees(240)).plus(reefCenter));
-        blueAlgae.put(Algae.AlgaeKL, offsetMiddle.rotateBy(Rotation2d.fromDegrees(360)).plus(reefCenter));
+        blueAlgae.put(Algae.AlgaeAB, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(0)), reefCenter));
+        blueAlgae.put(Algae.AlgaeCD, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(60)), reefCenter));
+        blueAlgae.put(Algae.AlgaeEF, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(120)), reefCenter));
+        blueAlgae.put(Algae.AlgaeGH, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(180)), reefCenter));
+        blueAlgae.put(Algae.AlgaeIJ, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(240)), reefCenter));
+        blueAlgae.put(Algae.AlgaeKL, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(300)), reefCenter));
+
+        driveSubsystem.field.getObject("ScoringPoles").setPoses(bluePoses.values().toArray(Pose2d[]::new));
+        driveSubsystem.field.getObject("AlgaeLocs").setPoses(blueAlgae.values().toArray(Pose2d[]::new));
 
     }
 
@@ -194,6 +199,17 @@ public class Vision extends SubsystemBase {
             closestPole = finalPose;
         }
 
+    }
+
+    /**
+     * Pose2d's .translateBy() and .plus() methods both use a relative translation
+     * based on rotation, this function creates a global translation
+     */
+    public Pose2d posePlusNoJunk(Pose2d pose, Transform2d transform) {
+        return new Pose2d(
+                pose.getX() + transform.getX(),
+                pose.getY() + transform.getY(),
+                pose.getRotation());
     }
 
     public Pose2d getClosestPole() {

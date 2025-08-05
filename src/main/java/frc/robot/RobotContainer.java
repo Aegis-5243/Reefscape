@@ -123,11 +123,12 @@ public class RobotContainer {
         /* Right trigger takes off algae when arm is in algae zone
          * or it outtakes when arm is not in intake zone
          */
+        
         new Trigger(driver::getOuttake).onTrue(
                 new ConditionalCommand(
                         new ConditionalCommand(
                                 intake.setVelocityCmd(6),
-                                null,
+                                Commands.none(),
                                 () -> getCurrentZone() != Zones.ZoneA),
                         removeAlgaeCommand(),
                         isCoralSupplier));
@@ -273,14 +274,18 @@ public class RobotContainer {
      * Assumes the arm is in algae zone already */
     private Command removeAlgaeCommand() {
         return new ParallelCommandGroup(
-            intake.setVelocityCmd(12),
-            elevator.setVelocityCmd(1)
+            new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
+                Commands.none(), 
+                intake.setVelocityCmd(12), 
+                () -> intake.detectingCoral()),
+            elevator.setVelocityCmd(2)
         );
     }
 
     public void resetMotors() {
         elevator.stopElevator();
         arm.stopArm();
+        intake.stopIntake();
     }
 
 }

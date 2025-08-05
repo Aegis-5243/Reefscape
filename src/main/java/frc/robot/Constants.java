@@ -164,12 +164,14 @@ public final class Constants {
     public static final double ARM_VELOCITY_CONVERSION_FACTOR = ARM_POSITION_CONVERSION_FACTOR / 60;
 
     /** Maximum position of arm in degrees, used for soft limit */
-    public static final double ARM_MAX_POS = 180; // degrees
+    public static final double ARM_MAX_POS = 180;
     /** Minimum position of arm in degrees, used for soft limit */
-    public static final double ARM_MIN_POS = 17; // degrees
+    public static final double ARM_MIN_POS = 17;
 
-    /** Maximum velocity of arm in degrees per second */
-    public static final double ARM_MAX_VELOCITY = 12; // degrees per second
+    /** Maximum velocity of arm in maxMotion mode in degrees per second */
+    public static final double ARM_MAX_VELOCITY = 12;
+    /** Maximum acceleraton of arm in maxMotion mode in degrees per second squared*/
+    public static final double ARM_MAX_ACCELERATION = 0;
 
     public static final double ARM_kP = 0.03;
     public static final double ARM_kI = 0;

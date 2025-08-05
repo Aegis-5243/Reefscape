@@ -43,10 +43,9 @@ public class IntakeHw extends Intake {
         roller.getEncoder().setPosition(0);
 
         laser = new TimeOfFlight(Constants.ROLLER_TIME_OF_FLIGHT_PORT);
-        
+
         laser.setRangingMode(RangingMode.Short, 24);
 
-        
     }
 
     @Override
@@ -76,8 +75,8 @@ public class IntakeHw extends Intake {
     }
 
     @Override
-    public Command stopIntakeCommand() {
-        return run(() -> roller.set(0));
+    public void stopIntake() {
+        roller.set(0);
     }
 
     @Override

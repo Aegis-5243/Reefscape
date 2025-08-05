@@ -7,6 +7,7 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
@@ -37,7 +38,8 @@ public class ArmHw extends Arm {
                         .apply(new ClosedLoopConfig()
                                 .pid(kP, kI, kD)
                                 .apply(new MAXMotionConfig()
-                                        .maxVelocity(Constants.ARM_MAX_VELOCITY)))
+                                        .maxVelocity(Constants.ARM_MAX_VELOCITY)
+                                        .maxAcceleration(Constants.ARM_MAX_ACCELERATION)))
                         .closedLoopRampRate(0.1),
                 SparkMax.ResetMode.kResetSafeParameters,
                 SparkMax.PersistMode.kPersistParameters);

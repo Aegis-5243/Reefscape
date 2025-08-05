@@ -30,7 +30,7 @@ public abstract class Elevator extends SubsystemBase {
 
     private HashMap<ScoringPositions, DoubleSupplier> positions;
 
-    public boolean isPosition;
+    public boolean isPosition = false;
 
     public Elevator() {
         super();

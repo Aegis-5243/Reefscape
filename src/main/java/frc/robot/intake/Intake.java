@@ -24,7 +24,7 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract boolean detectingCoral();
 
-    public abstract Command stopIntakeCommand();
+    public abstract void stopIntake();
 
     private double targetSpeed = 0;
 
@@ -82,5 +82,9 @@ public abstract class Intake extends SubsystemBase {
 
     public double getTargetSpeed() {
         return targetSpeed;
+    }
+
+    public Command stopIntakeCommand() {
+        return run(this::stopIntake);
     }
 }
