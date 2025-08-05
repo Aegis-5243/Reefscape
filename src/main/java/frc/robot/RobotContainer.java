@@ -13,8 +13,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,6 +67,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+
         elevator = new ElevatorHw();
         arm = new ArmHw();
         intake = new IntakeHw();
@@ -103,6 +108,18 @@ public class RobotContainer {
         NamedCommands.registerCommand("HomeCoral", homeCoral());
 
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
+        /* driveSubsystem adds the field (0,0) 6x3 */
+        tab.addDouble("Voltage", RobotController::getBatteryVoltage)
+                .withPosition(4, 3)
+                .withSize(2, 1)
+                .withWidget(BuiltInWidgets.kVoltageView);
+        
+        tab.add("Auto Chooser", autoChooser)
+                .withPosition(6, 1)
+                .withSize(2, 1);
+        
+        tab.add("Has Coral", intake.detectingCoral())
+        .withPosition(8, 3);
 
         // Configure the trigger bindings
         configureBindings();
@@ -120,10 +137,11 @@ public class RobotContainer {
         driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
         new Trigger(driver::getIntake).whileTrue(homeCoral());
 
-        /* Right trigger takes off algae when arm is in algae zone
+        /*
+         * Right trigger takes off algae when arm is in algae zone
          * or it outtakes when arm is not in intake zone
          */
-        
+
         new Trigger(driver::getOuttake).onTrue(
                 new ConditionalCommand(
                         new ConditionalCommand(
@@ -270,16 +288,17 @@ public class RobotContainer {
                 intake.setPositionCmd(() -> intake.getPosition() + 2.8));
     }
 
-    /** Spins intake and moves elevator up to remove algae
-     * Assumes the arm is in algae zone already */
+    /**
+     * Spins intake and moves elevator up to remove algae
+     * Assumes the arm is in algae zone already
+     */
     private Command removeAlgaeCommand() {
         return new ParallelCommandGroup(
-            new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
-                Commands.none(), 
-                intake.setVelocityCmd(12), 
-                () -> intake.detectingCoral()),
-            elevator.setVelocityCmd(2)
-        );
+                new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
+                        Commands.none(),
+                        intake.setVelocityCmd(12),
+                        () -> intake.detectingCoral()),
+                elevator.setVelocityCmd(2));
     }
 
     public void resetMotors() {

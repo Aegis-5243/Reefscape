@@ -58,10 +58,10 @@ public final class Constants {
 
     /** Rotations to meters of mecanum encoders */
     public static final double MECANUM_POSITION_CONVERSION_FACTOR = MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
-            / 12.75;
+            * 12.76;
     /** RPM to meters per second of mecanum encoders */
     public static final double MECANUM_VELOCITY_CONVERSION_FACTOR = MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR
-            / 12.75;;
+            * 12.76;
 
     public static final double FR_kA = 0.32;
     public static final double FR_kS = 0.13;

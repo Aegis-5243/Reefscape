@@ -1,5 +1,6 @@
 package frc.robot.mecanumdrive;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -35,9 +36,12 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -165,6 +169,9 @@ public class DriveSubsystem extends SubsystemBase {
                 .withSize(6, 3);
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drive");
+        tab.add("DriveSubsystem", this)
+                .withPosition(0, 0)
+                .withSize(3, 1);
         tab.addFloatArray("Encoder Velocities", () -> {
             return new float[] {
                     (float) fl.getEncoder().getVelocity(),
@@ -173,7 +180,7 @@ public class DriveSubsystem extends SubsystemBase {
                     (float) br.getEncoder().getVelocity()
             };
         })
-                .withPosition(0, 0)
+                .withPosition(0, 1)
                 .withSize(2, 1);
         tab.addFloatArray("Alternate Encoder Velocities", () -> {
             return new float[] {
@@ -183,7 +190,7 @@ public class DriveSubsystem extends SubsystemBase {
                     (float) br.getAlternateEncoder().getVelocity()
             };
         })
-                .withPosition(0, 1)
+                .withPosition(0, 2)
                 .withSize(2, 1);
         tab.addFloatArray("Encoder Positions", () -> {
             return new float[] {
@@ -193,7 +200,7 @@ public class DriveSubsystem extends SubsystemBase {
                     (float) br.getEncoder().getPosition()
             };
         })
-                .withPosition(0, 2)
+                .withPosition(0, 3)
                 .withSize(2, 1);
         tab.addFloatArray("Alternate Encoder Positions", () -> {
             return new float[] {
@@ -203,7 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
                     (float) br.getAlternateEncoder().getPosition()
             };
         })
-                .withPosition(0, 3)
+                .withPosition(0, 4)
                 .withSize(2, 1);
         tab.addFloatArray("Motor Voltages", () -> {
             return new float[] {
@@ -213,6 +220,36 @@ public class DriveSubsystem extends SubsystemBase {
                     (float) (br.getBusVoltage() * br.getAppliedOutput())
             };
         });
+
+        // (future reference) Can be replaced with SmartDashboard.putData and manually
+        // added to elastic
+        // https://frc-elastic.gitbook.io/docs/additional-features-and-references/widgets-list-and-properties-reference
+        Shuffleboard.getTab("Teleoperated").add("Mecanum Drive", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.setSmartDashboardType("SwerveDrive");
+
+                builder.addDoubleProperty("Front Left Angle", () -> flEncoder.getVelocity() < 0 ? 180 : 0, null);
+                builder.addDoubleProperty("Front Left Velocity", () -> Math.abs(flEncoder.getVelocity()), null);
+
+                builder.addDoubleProperty("Front Right Angle", () -> frEncoder.getVelocity() < 0 ? 180 : 0, null);
+                builder.addDoubleProperty("Front Right Velocity", () -> Math.abs(frEncoder.getVelocity()), null);
+
+                builder.addDoubleProperty("Back Left Angle", () -> blEncoder.getVelocity() < 0 ? 180 : 0, null);
+                builder.addDoubleProperty("Back Left Velocity", () -> Math.abs(blEncoder.getVelocity()), null);
+
+                builder.addDoubleProperty("Back Right Angle", () -> brEncoder.getVelocity() < 0 ? 180 : 0, null);
+                builder.addDoubleProperty("Back Right Velocity", () -> Math.abs(brEncoder.getVelocity()), null);
+
+                builder.addDoubleProperty("Robot Angle", () -> getHeading().getDegrees(), null);
+            }
+        }).withPosition(2, 3)
+                .withSize(2, 2);
+        Shuffleboard.getTab("Teleoperated").addDouble("Velocity", () -> getVelocity())
+        .withPosition(8, 0)
+        .withSize(2,2)
+        .withWidget(BuiltInWidgets.kDial)
+        .withProperties(Map.of("Min", 0, "Max", 8));
         tab.addDouble("xSpeed", () -> getChassisSpeeds().vxMetersPerSecond)
                 .withPosition(3, 0)
                 .withSize(1, 1);
@@ -232,6 +269,17 @@ public class DriveSubsystem extends SubsystemBase {
                 .withPosition(5, 1)
                 .withSize(1, 1);
 
+    }
+
+    private double getRelativeMovementAngle() {
+        ChassisSpeeds speeds = getChassisSpeeds();
+        double angle = Math.toDegrees(Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond));
+        return angle;
+    }
+
+    private double getVelocity() {
+        ChassisSpeeds speeds = getChassisSpeeds();
+        return Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond);
     }
 
     public void setVisionSubsystem(Vision visionSubsystem) {
@@ -292,7 +340,8 @@ public class DriveSubsystem extends SubsystemBase {
         return run(() -> driveCartesian(
                 translationX.getAsDouble(),
                 translationY.getAsDouble(),
-                angularRotationX.getAsDouble()));
+                angularRotationX.getAsDouble()))
+                        .withName("driveCommandRobotCentric");
 
     }
 

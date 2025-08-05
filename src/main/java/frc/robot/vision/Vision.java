@@ -69,8 +69,8 @@ public class Vision extends SubsystemBase {
         blueAlgae.put(Algae.AlgaeIJ, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(240)), reefCenter));
         blueAlgae.put(Algae.AlgaeKL, posePlusNoJunk(offsetMiddle.rotateBy(Rotation2d.fromDegrees(300)), reefCenter));
 
-        driveSubsystem.field.getObject("ScoringPoles").setPoses(bluePoses.values().toArray(Pose2d[]::new));
-        driveSubsystem.field.getObject("AlgaeLocs").setPoses(blueAlgae.values().toArray(Pose2d[]::new));
+        // driveSubsystem.field.getObject("ScoringPoles").setPoses(bluePoses.values().toArray(Pose2d[]::new));
+        // driveSubsystem.field.getObject("AlgaeLocs").setPoses(blueAlgae.values().toArray(Pose2d[]::new));
 
     }
 

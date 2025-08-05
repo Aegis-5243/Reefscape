@@ -129,6 +129,10 @@ public class ElevatorHw extends Elevator {
 
     @Override
     public void setVelocity(double velocity) {
+        double pos = getPosition();
+        if (pos <= 0 || pos >= Constants.ELEVATOR_MAX_HEIGHT) {
+            velocity = 0;
+        }
         super.setVelocity(velocity);
         leftMotor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0,
                 Constants.ELEVATOR_FF_VOLTAGE);
