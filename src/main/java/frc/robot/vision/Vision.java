@@ -93,7 +93,7 @@ public class Vision extends SubsystemBase {
         driveSubsystem.field.getObject("closePole").setPose(closestPole);
 
         if (mt2pose == null) {
-            driveSubsystem.field.getObject("mt2pose").setPose(new Pose2d(-10, -0, Rotation2d.kZero));
+            driveSubsystem.field.getObject("mt2pose").setPose(new Pose2d(-1000, -1000, Rotation2d.kZero));
         } else {
             driveSubsystem.field.getObject("mt2est").setPose(mt2pose);
         }

@@ -241,7 +241,7 @@ public class RobotContainer {
 
     
 
-    private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) { // TODO: test
+    private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) {
         // state machine like logic from
         // https://github.com/FRC2832/Robot2832-2025Njord/blob/a11e334a0eab59214d62ff34fd51ab5178f034c5/src/main/java/frc/robot/RobotContainer.java#L405
         Zones currZone = getCurrentZone();

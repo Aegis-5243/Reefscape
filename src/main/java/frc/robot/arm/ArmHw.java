@@ -7,8 +7,6 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -101,8 +99,6 @@ public class ArmHw extends Arm {
     @Override
     public void setVelocity(double velocity) {
         super.setVelocity(velocity);
-        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity); // TODO: find and use
-                                                                                                   // arbitrary
-                                                                                                   // feedforward
+        armMotor.getClosedLoopController().setReference(velocity, SparkMax.ControlType.kVelocity);
     }
 }

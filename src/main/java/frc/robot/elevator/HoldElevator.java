@@ -6,7 +6,6 @@ public class HoldElevator extends Command {
 
     private Elevator elevator;
     private double startPos;
-    private boolean foundSetpoint;
 
     /**
      * Creates a new HoldElevator Command.
@@ -30,7 +29,6 @@ public class HoldElevator extends Command {
         } else {
             startPos = elevator.getPosition();
         }
-        foundSetpoint = false;
 
         // double targetPos = elevator.getTargetPosition();
         // if (Math.abs(startPos - targetPos) <= 1.5) {

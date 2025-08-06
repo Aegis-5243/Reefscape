@@ -190,7 +190,7 @@ public final class Constants {
      * = (12 / 30) * (2 * PI)
      */
     /** Rotations to inches for intake roller encoders */
-    public static final double ROLLER_POSITION_CONVERSION_FACTOR = 12. / 30 * 2 * Math.PI; // TODO: check belt ratio
+    public static final double ROLLER_POSITION_CONVERSION_FACTOR = 12. / 30 * 2 * Math.PI;
     /** RPM to inches per second for intake roller encoders */
     public static final double ROLLER_VELOCITY_CONVERSION_FACTOR = ROLLER_POSITION_CONVERSION_FACTOR / 60;
 

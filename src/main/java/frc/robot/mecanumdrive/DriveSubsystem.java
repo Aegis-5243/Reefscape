@@ -110,7 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
                                         Constants.MECANUM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(
                                         Constants.MECANUM_VELOCITY_CONVERSION_FACTOR))
-                .idleMode(IdleMode.kCoast)
+                .idleMode(IdleMode.kBrake) // TODO: test with loopRampRates
                 .openLoopRampRate(.5)
                 .closedLoopRampRate(.5);
         // Match inversions on motor and alternate encoder and apply global config

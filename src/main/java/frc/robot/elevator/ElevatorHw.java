@@ -66,7 +66,7 @@ public class ElevatorHw extends Elevator {
                 new SparkMaxConfig()
                         .apply(config)
                         .apply(encoderConfig)
-                        .follow(leftMotor, true), // TODO: get proper inversions from REV hardware client
+                        .follow(leftMotor, true),
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
