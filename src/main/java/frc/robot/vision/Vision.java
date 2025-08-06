@@ -146,15 +146,14 @@ public class Vision extends SubsystemBase {
                         driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
                 LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                         .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
-                
+
                 if (mt2 == null) {
                     doRejectUpdate = true;
                     return;
                 }
-                
+
                 mt2pose = mt2.pose;
-            
-                
+
                 if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
                                                                    // degrees
                                                                    // per second,
@@ -184,6 +183,8 @@ public class Vision extends SubsystemBase {
     }
 
     private Pose2d closestPole = new Pose2d();
+
+    private Pose2d coralSupplyPoint = new Pose2d();
 
     private void calcClosestPole() {
         if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
@@ -221,7 +222,12 @@ public class Vision extends SubsystemBase {
 
             closestPole = finalPose;
         }
+    }
 
+    public void calcClosestCoralSupplyPoint() {
+
+        double sgn = driveSubsystem.getPose().getY() > 4 ? 1 : -1;
+        coralSupplyPoint = new Pose2d(1.187, 4 + 2.978 * sgn, Rotation2d.fromDegrees(-55 * sgn));
     }
 
     /**
@@ -237,6 +243,10 @@ public class Vision extends SubsystemBase {
 
     public Pose2d getClosestPole() {
         return closestPole;
+    }
+
+    public Pose2d getClosestCoralSupplyPoint() {
+        return coralSupplyPoint;
     }
 
     public void diableAprilTags() {

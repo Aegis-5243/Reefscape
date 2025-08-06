@@ -28,7 +28,7 @@ public abstract class DriverControls {
 
     public abstract boolean getOuttake();
 
-    public abstract Trigger driveToPole();
+    public abstract Trigger macroTrigger();
 
     public abstract Trigger resetOdo();
 }

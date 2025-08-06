@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -60,6 +61,8 @@ public class RobotContainer {
     Elevator elevator;
     Arm arm;
     Intake intake;
+
+    DriverControls driver;
 
     SendableChooser<Command> autoChooser;
 
@@ -132,7 +135,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        DriverControls driver = new StickControls();
+        driver = new StickControls();
 
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
@@ -140,7 +143,10 @@ public class RobotContainer {
         arm.setDefaultCommand(arm.holdArm());
         intake.setDefaultCommand(intake.stopIntakeCommand());
 
-        driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
+        driver.macroTrigger().whileTrue(new ConditionalCommand(
+                driveSubsystem.alignToClosestCoralSupply(),
+                driveSubsystem.alignToClosestPole(),
+                () -> getCurrentZone() == Zones.ZoneA));
         new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
@@ -304,15 +310,17 @@ public class RobotContainer {
                 // intake.setPowerCmd(-0.3), // maybe maybe not
                 // elevator.setPowerCommand(0.1),
                 arm.setAngleCmd(80),
-                driveSubsystem.driveCommandRobotCentric(() -> -0.05, () -> 0, () -> 0))
-                , Commands.none(), 
+                driveSubsystem.driveCommandRobotCentric(() -> -0.05, () -> 0, () -> 0)), Commands.none(),
                 () -> getCurrentZone() == Zones.ZoneD);
     }
 
-    public void resetMotors() {
+    public void reset() {
         elevator.stopElevator();
         arm.stopArm();
         intake.stopIntake();
+        driveSubsystem.driveCartesian(0, 0, 0);
+
+        CommandScheduler.getInstance().cancelAll();
     }
 
 }

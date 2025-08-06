@@ -74,7 +74,7 @@ public class StickControls extends DriverControls {
         return driverRight.getRawButton(1);
     }
 
-    public Trigger driveToPole() {
+    public Trigger macroTrigger() {
         return new JoystickButton(driverLeft, 1);
     }
 

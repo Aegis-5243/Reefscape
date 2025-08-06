@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class XBoxControls extends DriverControls {
 
-    XboxController controller;
+    public XboxController controller;
 
     enum dPad {
         UP,
@@ -31,6 +31,10 @@ public class XBoxControls extends DriverControls {
 
     public XBoxControls() {
         controller = new XboxController(3);
+
+        if (controller.isConnected()) {
+            
+        }
     }
 
     @Override
@@ -94,7 +98,7 @@ public class XBoxControls extends DriverControls {
     }
 
     @Override
-    public Trigger driveToPole() {
+    public Trigger macroTrigger() {
         return new Trigger(() -> controller.getLeftTriggerAxis() > 0.5);
     }
 
@@ -102,5 +106,8 @@ public class XBoxControls extends DriverControls {
     public Trigger resetOdo() {
         return new Trigger(() -> controller.getBackButton());
     }
-    
+
+    public boolean getStopTeleop() {
+        return controller.getStartButton();
+    }
 }
