@@ -68,6 +68,9 @@ public class RobotContainer {
 
     BooleanSupplier isCoralSupplier;
 
+    Zones targetZone;
+    boolean isTargetZone;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -87,7 +90,7 @@ public class RobotContainer {
          * to the sides (to place coral)
          * whenever it is in zone D
          */
-        isCoralSupplier = () -> getCurrentZone() != Zones.ZoneD;
+        isCoralSupplier = () -> targetZone != Zones.ZoneD;
         vision.addCoralModeSupplier(isCoralSupplier);
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -146,7 +149,7 @@ public class RobotContainer {
         driver.macroTrigger().whileTrue(new ConditionalCommand(
                 driveSubsystem.alignToClosestCoralSupply(),
                 driveSubsystem.alignToClosestPole(),
-                () -> getCurrentZone() == Zones.ZoneA));
+                () -> targetZone == Zones.ZoneA));
         new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
@@ -225,28 +228,38 @@ public class RobotContainer {
      */
 
     private Command setScoringPosition(ScoringPositions position) {
-        return new DeferredCommand(() -> setScoringPositionDeferred(position), Set.of(elevator, arm));
+        return setScoringPosition(position, true);
+    }
+    private Command setScoringPosition(ScoringPositions position, boolean isFirst) {
+        return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm));
     }
 
-    private Command setScoringPositionDeferred(ScoringPositions position) { // TODO: test
+    
+
+    private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) { // TODO: test
         // state machine like logic from
         // https://github.com/FRC2832/Robot2832-2025Njord/blob/a11e334a0eab59214d62ff34fd51ab5178f034c5/src/main/java/frc/robot/RobotContainer.java#L405
         Zones currZone = getCurrentZone();
         Zones destZone = getZone(elevator.getSetPosition(position), arm.getSetPosition(position));
+
+        if (isFirst) {
+            isTargetZone = true;
+            targetZone = destZone;
+        }
 
         Command result;
 
         if (currZone == Zones.ZoneE || currZone == Zones.ZoneF) { // E or F to C initially since E and F cannot
             result = arm.setAngleCmd(65)
                     .until(() -> arm.getAngle() > 60)
-                    .andThen(setScoringPosition(position));
+                    .andThen(setScoringPosition(position, false));
         } else if (currZone == destZone) { // Already in the correct zone, no potential collisions
             result = new ParallelCommandGroup(arm.setAngleCmd(position),
                     elevator.setPositionCmd(position));
         } else if (currZone == Zones.ZoneD) { // D to C then repeat
             result = arm.setAngleCmd(60)
                     .until(() -> arm.getAngle() < 65)
-                    .andThen(setScoringPosition(position));
+                    .andThen(setScoringPosition(position, false));
         } else if (currZone == Zones.ZoneB) { // B to A or C
             if (destZone == Zones.ZoneA) { // B to A
                 result = new ParallelCommandGroup(
@@ -254,7 +267,7 @@ public class RobotContainer {
                         elevator.setPositionCmd(position));
             } else { // B to A then repeat
                 result = elevator.setPositionCmd(0)
-                        .andThen(setScoringPosition(position));
+                        .andThen(setScoringPosition(position, false));
             }
         } else if (currZone == Zones.ZoneA) { // A to B or C
             if (destZone == Zones.ZoneB) { // A to B
@@ -262,9 +275,10 @@ public class RobotContainer {
                         arm.setAngleCmd(position),
                         elevator.setPositionCmd(position));
             } else { // A to C then repeat
+                // TODO: Detect when coral in arm collides with elevator and prevent this
                 result = arm.setAngleCmd(65)
                         .until(() -> arm.getAngle() > 60)
-                        .andThen(setScoringPosition(position));
+                        .andThen(setScoringPosition(position, false));
             }
         } else if (currZone == Zones.ZoneC) { // C to A, B, D, or E
             if (destZone == Zones.ZoneB) { // C to B
@@ -285,6 +299,8 @@ public class RobotContainer {
                 result = Commands.none();
             }
         } else {
+            System.out.println("Invalid zones called: " + currZone.name() + " to " + destZone.name());
+            isTargetZone = false;
             result = Commands.none();
         }
 
