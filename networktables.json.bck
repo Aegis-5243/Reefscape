@@ -126,5 +126,13 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/DriveStick/Deadband",
+    "type": "double",
+    "value": 0.05,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

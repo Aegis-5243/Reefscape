@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -55,7 +56,9 @@ import frc.robot.elevator.ElevatorHw;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    DriveSubsystem driveSubsystem = new DriveSubsystem();
+    Field2d field = new Field2d();
+
+    DriveSubsystem driveSubsystem = new DriveSubsystem(field);
 
     Vision vision;
     Elevator elevator;
@@ -132,6 +135,8 @@ public class RobotContainer {
 
         tab.addBoolean("Has Coral", intake::detectingCoral)
                 .withPosition(8, 3);
+
+        tab.addNumber("Match time", () -> DriverStation.getMatchTime());
 
         // Configure the trigger bindings
         configureBindings();
@@ -331,12 +336,12 @@ public class RobotContainer {
     }
 
     public void reset() {
+        CommandScheduler.getInstance().cancelAll();
+
         elevator.stopElevator();
         arm.stopArm();
         intake.stopIntake();
         driveSubsystem.driveCartesian(0, 0, 0);
-
-        CommandScheduler.getInstance().cancelAll();
     }
 
 }

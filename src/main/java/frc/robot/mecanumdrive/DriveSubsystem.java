@@ -78,7 +78,6 @@ public class DriveSubsystem extends SubsystemBase {
     public MecanumDrivePoseEstimator poseEstimator;
 
     public Field2d field;
-
     public FieldObject2d robotObject;
 
     private DoubleSubscriber strafeSpeedScale;
@@ -86,7 +85,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Vision vision;
 
-    public DriveSubsystem() {
+    public DriveSubsystem(Field2d field) {
+        this.field = field;
 
         strafeSpeedScale = UtilFunctions.getSettingSub("mecanum/strafeSpeedScale", 1.22);
         turnSpeedScale = UtilFunctions.getSettingSub("mecanum/turnSpeedScale", 1.08);
@@ -170,7 +170,6 @@ public class DriveSubsystem extends SubsystemBase {
                 Pose2d.kZero);
 
         setUpPathPlanner();
-        field = new Field2d();
         robotObject = field.getRobotObject();
 
         Shuffleboard.getTab("Teleoperated").add(field)
