@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
+import frc.robot.controllers.StickControls;
+import frc.robot.controllers.XBoxControls;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
 import frc.robot.mecanumdrive.DriveSubsystem;
@@ -107,7 +109,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("ElevatorL2Algae", setScoringPosition(ScoringPositions.L2Algae));
         NamedCommands.registerCommand("ElevatorL3Algae", setScoringPosition(ScoringPositions.L3Algae));
         NamedCommands.registerCommand("ElevatorLoading", setScoringPosition(ScoringPositions.LoadingPosition));
-        NamedCommands.registerCommand("HomeCoral", homeCoral());
+        NamedCommands.registerCommand("RemoveAlgaeWithArm", removeAlgaeWithArmCommand());
+        NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
+        NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
 
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
         /* driveSubsystem adds the field (0,0) 6x3 */
@@ -115,20 +119,20 @@ public class RobotContainer {
                 .withPosition(4, 3)
                 .withSize(2, 1)
                 .withWidget(BuiltInWidgets.kVoltageView);
-        
+
         tab.add("Auto Chooser", autoChooser)
                 .withPosition(6, 1)
                 .withSize(2, 1);
-        
+
         tab.addBoolean("Has Coral", intake::detectingCoral)
-        .withPosition(8, 3);
+                .withPosition(8, 3);
 
         // Configure the trigger bindings
         configureBindings();
     }
 
     private void configureBindings() {
-        DriverControls driver = new DriverControls();
+        DriverControls driver = new StickControls();
 
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
@@ -137,7 +141,7 @@ public class RobotContainer {
         intake.setDefaultCommand(intake.stopIntakeCommand());
 
         driver.driveToPole().whileTrue(driveSubsystem.alignToClosestPole());
-        new Trigger(driver::getIntake).whileTrue(homeCoral());
+        new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
          * Right trigger takes off algae when arm is in algae zone
@@ -281,15 +285,6 @@ public class RobotContainer {
         return result;
     }
 
-    private Command homeCoral() {
-        return new SequentialCommandGroup(
-                intake.setPowerCmd(0.1)
-                        .until(() -> intake.detectingCoral()),
-                intake.setPowerCmd(-0.03)
-                        .until(() -> !intake.detectingCoral()),
-                intake.setPositionCmd(() -> intake.getPosition() + 2.7));
-    }
-
     /**
      * Spins intake and moves elevator up to remove algae
      * Assumes the arm is in algae zone already
@@ -301,6 +296,17 @@ public class RobotContainer {
                         intake.setPowerCmd(-0.3),
                         () -> intake.detectingCoral()),
                 elevator.setPowerCommand(0.1));
+    }
+
+    /** For auton, assumes arm is under algae (already driven forward) */
+    private Command removeAlgaeWithArmCommand() {
+        return new ConditionalCommand(new ParallelCommandGroup(
+                // intake.setPowerCmd(-0.3), // maybe maybe not
+                // elevator.setPowerCommand(0.1),
+                arm.setAngleCmd(80),
+                driveSubsystem.driveCommandRobotCentric(() -> -0.05, () -> 0, () -> 0))
+                , Commands.none(), 
+                () -> getCurrentZone() == Zones.ZoneD);
     }
 
     public void resetMotors() {

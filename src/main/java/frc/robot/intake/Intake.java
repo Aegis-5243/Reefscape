@@ -10,7 +10,9 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Intake extends SubsystemBase {
@@ -65,7 +67,7 @@ public abstract class Intake extends SubsystemBase {
 
     public Command setPositionCmd(DoubleSupplier position) {
 
-        return new DeferredCommand(() -> setPositionCmd(position.getAsDouble()), Set.of(this)); 
+        return new DeferredCommand(() -> setPositionCmd(position.getAsDouble()), Set.of(this));
     }
 
     public void setPosition(double position) {
@@ -102,5 +104,19 @@ public abstract class Intake extends SubsystemBase {
 
     public boolean isInPositionMode() {
         return isPosition;
+    }
+
+    public Command homeCoralCommand() {
+        return new SequentialCommandGroup(
+                setPowerCmd(0.1)
+                        .until(() -> detectingCoral()),
+                setPowerCmd(-0.03)
+                        .until(() -> !detectingCoral()),
+                setPositionCmd(() -> getPosition() + 2.7));
+    }
+
+    public Command outtakeCommand() {
+        return setPowerCmd(0.3)
+                .withDeadline(Commands.waitSeconds(1));
     }
 }

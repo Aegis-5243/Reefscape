@@ -1,85 +1,34 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.utils.UtilFunctions;
 
-public class DriverControls {
-    public static Joystick driverLeft;
-    public static Joystick driverRight;
+public abstract class DriverControls {
 
-    private DoubleSubscriber deadband;
+    public abstract double getDriveX();
 
-    public DriverControls() {
-        driverLeft = new Joystick(0);
-        driverRight = new Joystick(1);
+    public abstract double getDriveY();
 
-        deadband = UtilFunctions.getSettingSub("DriveStick/Deadband", 0.05);
-    }
+    public abstract double getTurn();
 
-    // Forward
-    public double getDriveX() {
-        var dead = deadband.get();
-        return UtilFunctions.deadband(-driverLeft.getY(), dead);
-    }
+    public abstract boolean getLoadingPositionCommand();
 
-    // Left
-    public double getDriveY() {
-        var dead = deadband.get();
-        return UtilFunctions.deadband(driverLeft.getX(), dead);
-    }
+    public abstract boolean getL1Command();
 
-    // Counterclockwise
-    public double getTurn() {
-        var dead = deadband.get();
-        return UtilFunctions.deadband(driverRight.getX(), dead);
-    }
+    public abstract boolean getL2Command();
 
-    public boolean getLoadingPositionCommand() {
-        return driverLeft.getRawButton(4);
-    }
+    public abstract boolean getL3Command();
 
-    public boolean getL1Command() {
-        return driverRight.getRawButton(3);
-    }
+    public abstract boolean getL4Command();
 
-    public boolean getL2Command() {
-        return driverRight.getRawButton(4);
-    }
+    public abstract boolean getL2AlgaeCommand();
 
-    public boolean getL3Command() {
-        return driverRight.getRawButton(5);
-    }
+    public abstract boolean getL3AlgaeCommand();
 
-    public boolean getL4Command() {
-        return driverRight.getRawButton(6);
-    }
+    public abstract boolean getIntake();
 
+    public abstract boolean getOuttake();
 
-    public boolean getL2AlgaeCommand() {
-        return driverLeft.getRawButton(5);
-    }
+    public abstract Trigger driveToPole();
 
-    public boolean getL3AlgaeCommand() {
-        return driverLeft.getRawButton(6);
-    }
-
-    public boolean getIntake() {
-        return driverRight.getRawButton(2);
-    }
-
-    public boolean getOuttake() {
-        return driverRight.getRawButton(1);
-    }
-
-    public Trigger driveToPole() {
-        return new JoystickButton(driverLeft, 1);
-    }
-
-    public Trigger resetOdo() {
-        return new JoystickButton(driverLeft, 2);
-    }
-
+    public abstract Trigger resetOdo();
 }

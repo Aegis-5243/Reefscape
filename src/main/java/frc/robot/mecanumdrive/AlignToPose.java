@@ -36,7 +36,7 @@ public class AlignToPose extends Command {
 
     xController = new PIDController(1.2, 0.04, 0.16); // Vertical movement
     yController = new PIDController(1.2, 0.04, 0.16); // Horitontal movement
-    rotController = new PIDController(0.03, 0.00004, 0.009); // Rotation
+    rotController = new PIDController(0.08, 0.00004, 0.009); // Rotation
 
     rotController.setSetpoint(pose.getRotation().getDegrees());
     rotController.setTolerance(4);

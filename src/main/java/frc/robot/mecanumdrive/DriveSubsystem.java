@@ -27,14 +27,12 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -46,11 +44,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.UtilFunctions;
@@ -263,7 +258,7 @@ public class DriveSubsystem extends SubsystemBase {
                                 builder.addDoubleProperty("Back Right Velocity",
                                                 () -> Math.abs(brEncoder.getVelocity()), null);
 
-                                builder.addDoubleProperty("Robot Angle", () -> getHeading().getDegrees(), null);
+                                builder.addDoubleProperty("Robot Angle", () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
                         }
                 }).withPosition(2, 3)
                                 .withSize(2, 2);
@@ -325,7 +320,6 @@ public class DriveSubsystem extends SubsystemBase {
                 try {
                         config = RobotConfig.fromGUISettings();
                 } catch (Exception e) {
-                        // TODO: handle exception
                         config = null;
                         e.printStackTrace();
                 }
@@ -365,7 +359,6 @@ public class DriveSubsystem extends SubsystemBase {
                                 translationY.getAsDouble(),
                                 angularRotationX.getAsDouble()))
                                                 .withName("driveCommandRobotCentric");
-
         }
 
         public Rotation2d getHeading() {

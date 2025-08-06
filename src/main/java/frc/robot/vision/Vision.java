@@ -147,7 +147,13 @@ public class Vision extends SubsystemBase {
                 LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                         .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
                 
+                if (mt2 == null) {
+                    doRejectUpdate = true;
+                    return;
+                }
+                
                 mt2pose = mt2.pose;
+            
                 
                 if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
                                                                    // degrees
