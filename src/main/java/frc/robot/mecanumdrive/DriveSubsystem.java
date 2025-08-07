@@ -463,7 +463,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         private Command alignToClosestPoleDeferred() {
                 Pose2d polePosition = vision.getClosestPole();
-                return driveToPose(polePosition.transformBy(new Transform2d(-0.2, 0, Rotation2d.kZero)),0.07)
+                return driveToPose(polePosition.transformBy(new Transform2d(-0.2, 0, Rotation2d.kZero)),0.03)
                                 .andThen(alignToPose(polePosition));
         }
 

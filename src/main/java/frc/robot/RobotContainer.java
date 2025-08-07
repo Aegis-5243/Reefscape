@@ -107,6 +107,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("FineDriveJ", driveSubsystem.alignToPoleDeferred(Poles.PoleJ));
         NamedCommands.registerCommand("FineDriveK", driveSubsystem.alignToPoleDeferred(Poles.PoleK));
         NamedCommands.registerCommand("FineDriveL", driveSubsystem.alignToPoleDeferred(Poles.PoleL));
+        NamedCommands.registerCommand("FineDriveIntakeL", driveSubsystem.driveToClosestCoralSupply());
         NamedCommands.registerCommand("ElevatorL1Coral", setScoringPosition(ScoringPositions.L1Coral));
         NamedCommands.registerCommand("ElevatorL2Coral", setScoringPosition(ScoringPositions.L2Coral));
         NamedCommands.registerCommand("ElevatorL3Coral", setScoringPosition(ScoringPositions.L3Coral));
@@ -174,7 +175,7 @@ public class RobotContainer {
                                 () -> getCurrentZone() != Zones.ZoneA),
                         removeAlgaeCommand(),
                         isCoralSupplier));
-        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-120))));
+        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
 
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new Pose2d(2, 4, new Rotation2d(0))));
         driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
