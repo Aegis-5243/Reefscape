@@ -478,7 +478,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Command alignToClosestCoralSupplyDeferred() {
         Pose2d coralPose = vision.getClosestCoralSupplyPoint();
-        return alignToPose(coralPose);
+        return driveToPose(coralPose);
     }
 
 }

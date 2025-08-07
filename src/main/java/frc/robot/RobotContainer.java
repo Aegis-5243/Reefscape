@@ -108,7 +108,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("FineDriveE", driveSubsystem.alignToPoleDeferred(Poles.PoleE));
         NamedCommands.registerCommand("FineDriveF", driveSubsystem.alignToPoleDeferred(Poles.PoleF));
         NamedCommands.registerCommand("FineDriveG", driveSubsystem.alignToPoleDeferred(Poles.PoleG));
-        NamedCommands.registerCommand("FineDriveHp", driveSubsystem.alignToPoleDeferred(Poles.PoleH));
+        NamedCommands.registerCommand("FineDriveH", driveSubsystem.alignToPoleDeferred(Poles.PoleH));
         NamedCommands.registerCommand("FineDriveI", driveSubsystem.alignToPoleDeferred(Poles.PoleI));
         NamedCommands.registerCommand("FineDriveJ", driveSubsystem.alignToPoleDeferred(Poles.PoleJ));
         NamedCommands.registerCommand("FineDriveK", driveSubsystem.alignToPoleDeferred(Poles.PoleK));
@@ -124,6 +124,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
         NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
 
+        supplyTelemetry();
+
+        configureBindings();
+    }
+
+    private void supplyTelemetry() {
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
         /* driveSubsystem adds the field (0,0) 6x3 */
         
@@ -146,9 +152,6 @@ public class RobotContainer {
 
         Shuffleboard.getTab("Test")
                 .add(new PowerDistribution());
-
-        // Configure the trigger bindings
-        configureBindings();
     }
 
     private void configureBindings() {

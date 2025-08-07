@@ -134,5 +134,53 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/Align/kP",
+    "type": "double",
+    "value": 1.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Align/kI",
+    "type": "double",
+    "value": 0.04,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Align/kD",
+    "type": "double",
+    "value": 0.16,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Align/rkP",
+    "type": "double",
+    "value": 0.08,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Align/rkI",
+    "type": "double",
+    "value": 4e-05,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Align/rkD",
+    "type": "double",
+    "value": 0.009,
+    "properties": {
+      "persistent": true
+    }
   }
 ]
