@@ -28,7 +28,7 @@ public abstract class DriverControls {
 
     public abstract boolean getOuttake();
 
-    public abstract Trigger posTestTrigger();
+    public abstract Trigger macroIntakeTrigger();
 
     public abstract Trigger autoTestTrigger();
 

@@ -157,10 +157,8 @@ public class RobotContainer {
         arm.setDefaultCommand(arm.holdArm());
         intake.setDefaultCommand(intake.stopIntakeCommand());
 
-        driver.macroTrigger().whileTrue(new ConditionalCommand(
-                driveSubsystem.alignToClosestCoralSupply(),
-                driveSubsystem.alignToClosestPole(),
-                () -> /* targetZone */ getCurrentZone() == Zones.ZoneA));
+        driver.macroTrigger().whileTrue(
+                driveSubsystem.alignToClosestPole());
         new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
@@ -176,9 +174,10 @@ public class RobotContainer {
                                 () -> getCurrentZone() != Zones.ZoneA),
                         removeAlgaeCommand(),
                         isCoralSupplier));
-        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(2, 4, new Rotation2d(0))));
+        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-120))));
 
-        driver.posTestTrigger().whileTrue(driveSubsystem.driveToPose(new Pose2d(2, 4, new Rotation2d(0))));
+        // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new Pose2d(2, 4, new Rotation2d(0))));
+        driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
 
         driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
 
@@ -207,7 +206,7 @@ public class RobotContainer {
     private Zones getZone(double height, double angle) {
         // Zone A - Intake area with elevator down
         // Zone B - Intake area with elevator up, need to go down to A
-        // Zone C - Coral scoring
+        // Zone C - Elevator movement area
         // Zone D - Algae removal
         // Zone E - The positions to be scored from; the arm is potentially
         // ........ intersecting the elevator check intersections on cad

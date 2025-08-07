@@ -108,9 +108,9 @@ public final class Constants {
     public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 3.14;
 
     /* Drive PID constants (meters)*/
-    public static final double DRIVE_kP = 1.8;
-    public static final double DRIVE_kI = 0.04;
-    public static final double DRIVE_kD = 0.16;
+    public static final double DRIVE_kP = 5.0;
+    public static final double DRIVE_kI = 0;
+    public static final double DRIVE_kD = 1.0;
 
     /* Drive rotation PID constants (degrees) */
     public static final double DRIVE_ROTATE_kP = 0.08;

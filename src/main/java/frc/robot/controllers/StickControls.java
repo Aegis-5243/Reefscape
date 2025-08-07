@@ -74,7 +74,7 @@ public class StickControls extends DriverControls {
         return driverRight.getRawButton(1);
     }
 
-    public Trigger posTestTrigger() {
+    public Trigger macroIntakeTrigger() {
         return new Trigger(() -> false);
     }
 

@@ -101,7 +101,7 @@ public class XBoxControls extends DriverControls {
     }
 
     @Override
-    public Trigger posTestTrigger() {
+    public Trigger macroIntakeTrigger() {
         return new Trigger(() -> controller.getLeftBumperButton());
     }
 

@@ -110,9 +110,9 @@ public abstract class Intake extends SubsystemBase {
         return new SequentialCommandGroup(
                 setPowerCmd(0.1)
                         .until(() -> detectingCoral()),
-                setPowerCmd(-0.03)
+                setPowerCmd(-0.06)
                         .until(() -> !detectingCoral()),
-                setPositionCmd(() -> getPosition() + 2.7));
+                setPositionCmd(() -> getPosition() + 3));
     }
 
     public Command outtakeCommand() {
