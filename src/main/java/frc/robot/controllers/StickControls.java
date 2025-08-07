@@ -74,12 +74,21 @@ public class StickControls extends DriverControls {
         return driverRight.getRawButton(1);
     }
 
+    public Trigger posTestTrigger() {
+        return new Trigger(() -> false);
+    }
+
     public Trigger macroTrigger() {
         return new JoystickButton(driverLeft, 1);
     }
 
     public Trigger resetOdo() {
         return new JoystickButton(driverLeft, 2);
+    }
+
+    @Override
+    public Trigger autoTestTrigger() {
+        return new Trigger(() -> false);
     }
 
 }

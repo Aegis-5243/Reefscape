@@ -3,6 +3,7 @@ package frc.robot.mecanumdrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,6 +74,9 @@ public class AlignToPose extends Command {
         MathUtil.inputModulus(curHeading, lastHeading - 180, lastHeading + 180);
     double rotValue = rotController.calculate(centeredHeading);
     lastHeading = centeredHeading;
+
+    SmartDashboard.putNumber("Align CenteredHeading", centeredHeading);
+    SmartDashboard.putNumber("Align rotValue", rotValue);
 
     // send the drive command
     ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);

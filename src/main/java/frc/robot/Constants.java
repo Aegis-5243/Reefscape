@@ -52,8 +52,8 @@ public final class Constants {
     public static final double MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR = Math.PI *
             Units.Meters.convertFrom(Constants.MECANUM_WHEEL_DIAMETER, Units.Inches);
     /** RPM to meters per second of mecanum alternate encoders */
-    public static final double MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Math.PI * 
-        Units.Meters.convertFrom(Constants.MECANUM_WHEEL_DIAMETER, Units.Inches) / 60;
+    public static final double MECANUM_ALTERNATE_VELOCITY_CONVERSION_FACTOR = Math.PI *
+            Units.Meters.convertFrom(Constants.MECANUM_WHEEL_DIAMETER, Units.Inches) / 60;
 
     /** Rotations to meters of mecanum encoders */
     public static final double MECANUM_POSITION_CONVERSION_FACTOR = MECANUM_ALTERNATE_POSITION_CONVERSION_FACTOR
@@ -99,13 +99,13 @@ public final class Constants {
 
     // TODO: tune
     /** Maximum drive speed in meters per second. */
-    public static final double DRIVE_MAX_SPEED = 5;
+    public static final double DRIVE_MAX_SPEED = 1;
     /** Maximum drive acceleration in meters per second squared. */
-    public static final double DRIVE_MAX_ACCELERATION = 2;
+    public static final double DRIVE_MAX_ACCELERATION = 1;
     /** Maximum drive angular speed in radians per second. */
-    public static final double DRIVE_MAX_ANGULAR_SPEED = 6;
+    public static final double DRIVE_MAX_ANGULAR_SPEED = 3.14;
     /** Maximum drive angular acceleration in radians per second squared. */
-    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 4;
+    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 3.14;
     public static final double RIO_CONTROL_LOOP = 0.1;
 
     /* Vision */
@@ -169,7 +169,9 @@ public final class Constants {
 
     /** Maximum velocity of arm in maxMotion mode in degrees per second */
     public static final double ARM_MAX_VELOCITY = 90;
-    /** Maximum acceleraton of arm in maxMotion mode in degrees per second squared*/
+    /**
+     * Maximum acceleraton of arm in maxMotion mode in degrees per second squared
+     */
     public static final double ARM_MAX_ACCELERATION = 180;
 
     public static final double ARM_kP = 0.03;

@@ -330,8 +330,8 @@ public class DriveSubsystem extends SubsystemBase {
                 this::getChassisSpeeds,
                 this::drive,
                 new PPHolonomicDriveController(
-                        new PIDConstants(1, 0, 0),
-                        new PIDConstants(1, 0, 0)),
+                        new PIDConstants(1.2, 0.04, 0.16),
+                        new PIDConstants(0.08, 0, 0)),
                 config,
                 () -> {
                     Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -403,7 +403,7 @@ public class DriveSubsystem extends SubsystemBase {
             speeds.vyMetersPerSecond *= Constants.DRIVE_MAX_SPEED / Math.sqrt(absSpeed);
         }
         if (Math.abs(speeds.omegaRadiansPerSecond) > Constants.DRIVE_MAX_ANGULAR_SPEED) {
-            speeds.omegaRadiansPerSecond = Constants.DRIVE_MAX_ANGULAR_SPEED;
+            speeds.omegaRadiansPerSecond = Constants.DRIVE_MAX_ANGULAR_SPEED * Math.signum(speeds.omegaRadiansPerSecond);
         }
 
         speeds.vyMetersPerSecond *= strafeSpeedScale.getAsDouble();
@@ -418,7 +418,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void driveFieldOriented(ChassisSpeeds speeds) {
-        double rotation = -getHeading().getRadians();
+        double rotation = -poseEstimator.getEstimatedPosition().getRotation().getRadians();
         double sin = Math.sin(rotation);
         double cos = Math.cos(rotation);
 

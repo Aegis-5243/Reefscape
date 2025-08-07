@@ -28,6 +28,10 @@ public abstract class DriverControls {
 
     public abstract boolean getOuttake();
 
+    public abstract Trigger posTestTrigger();
+
+    public abstract Trigger autoTestTrigger();
+
     public abstract Trigger macroTrigger();
 
     public abstract Trigger resetOdo();

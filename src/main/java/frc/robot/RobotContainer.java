@@ -10,6 +10,7 @@ import java.util.function.BooleanSupplier;
 import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -124,6 +125,7 @@ public class RobotContainer {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
         /* driveSubsystem adds the field (0,0) 6x3 */
+        
         tab.addDouble("Voltage", RobotController::getBatteryVoltage)
                 .withPosition(4, 3)
                 .withSize(2, 1)
@@ -138,12 +140,15 @@ public class RobotContainer {
 
         tab.addNumber("Match time", () -> DriverStation.getMatchTime());
 
+        tab.addString("Current Zone", () -> getCurrentZone().name());
+        tab.addString("Target Zone", () -> isTargetZone ? targetZone.name() : "none");
+
         // Configure the trigger bindings
         configureBindings();
     }
 
     private void configureBindings() {
-        driver = new StickControls();
+        driver = new XBoxControls();
 
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
@@ -154,7 +159,7 @@ public class RobotContainer {
         driver.macroTrigger().whileTrue(new ConditionalCommand(
                 driveSubsystem.alignToClosestCoralSupply(),
                 driveSubsystem.alignToClosestPole(),
-                () -> targetZone == Zones.ZoneA));
+                () -> /* targetZone */ getCurrentZone() == Zones.ZoneA));
         new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
@@ -171,6 +176,11 @@ public class RobotContainer {
                         removeAlgaeCommand(),
                         isCoralSupplier));
         driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(2, 4, new Rotation2d(0))));
+
+        driver.posTestTrigger().whileTrue(driveSubsystem.driveToPose(new Pose2d(2, 4, new Rotation2d(0))));
+
+        driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
+
 
         new Trigger(driver::getL1Command)
                 .onTrue(setScoringPosition(ScoringPositions.L1Coral));

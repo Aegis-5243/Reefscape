@@ -1,17 +1,18 @@
 package frc.robot.controllers;
 
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.utils.UtilFunctions;
 
 public class XBoxControls extends DriverControls {
 
     public XboxController controller;
 
+    private DoubleSubscriber deadband;
+
     enum dPad {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
+        UP, DOWN, LEFT, RIGHT
     }
 
     private boolean getDPad(dPad dir) {
@@ -32,24 +33,26 @@ public class XBoxControls extends DriverControls {
     public XBoxControls() {
         controller = new XboxController(3);
 
-        if (controller.isConnected()) {
-            
-        }
+        deadband = UtilFunctions.getSettingSub("DriveStick/Deadband", 0.05);
+
     }
 
     @Override
     public double getDriveX() {
-        return -controller.getLeftY();
+        var dead = deadband.get();
+        return UtilFunctions.deadband(-controller.getLeftY(), dead);
     }
 
     @Override
     public double getDriveY() {
-        return -controller.getLeftX();
+        var dead = deadband.get();
+        return UtilFunctions.deadband(controller.getLeftX(), dead);
     }
 
     @Override
     public double getTurn() {
-        return -controller.getRightX();
+        var dead = deadband.get();
+        return UtilFunctions.deadband(controller.getRightX(), dead);
     }
 
     @Override
@@ -98,6 +101,11 @@ public class XBoxControls extends DriverControls {
     }
 
     @Override
+    public Trigger posTestTrigger() {
+        return new Trigger(() -> controller.getLeftBumperButton());
+    }
+
+    @Override
     public Trigger macroTrigger() {
         return new Trigger(() -> controller.getLeftTriggerAxis() > 0.5);
     }
@@ -109,5 +117,10 @@ public class XBoxControls extends DriverControls {
 
     public boolean getStopTeleop() {
         return controller.getStartButton();
+    }
+
+    @Override
+    public Trigger autoTestTrigger() {
+        return new Trigger(() -> getDPad(dPad.LEFT));
     }
 }
