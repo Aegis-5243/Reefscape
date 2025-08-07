@@ -330,8 +330,17 @@ public class DriveSubsystem extends SubsystemBase {
                 this::getChassisSpeeds,
                 this::drive,
                 new PPHolonomicDriveController(
-                        new PIDConstants(Constants.DRIVE_kP, Constants.DRIVE_kI, Constants.DRIVE_kD),
-                        new PIDConstants(Constants.DRIVE_ROTATE_kP * Math.PI / 180, Constants.DRIVE_ROTATE_kI * Math.PI / 180, Constants.DRIVE_ROTATE_kD * Math.PI / 180)),
+                        new PIDConstants(
+                                UtilFunctions.getSettingSub("Align/kP", Constants.DRIVE_kP).getAsDouble(),
+                                UtilFunctions.getSettingSub("Align/kI", Constants.DRIVE_kI).getAsDouble(),
+                                UtilFunctions.getSettingSub("Align/kD", Constants.DRIVE_kD).getAsDouble()),
+                        new PIDConstants(
+                                UtilFunctions.getSettingSub("Align/rkP", Constants.DRIVE_ROTATE_kP).getAsDouble()
+                                        * Math.PI / 180,
+                                UtilFunctions.getSettingSub("Align/rkI", Constants.DRIVE_ROTATE_kI).getAsDouble()
+                                        * Math.PI / 180,
+                                UtilFunctions.getSettingSub("Align/rkD", Constants.DRIVE_ROTATE_kD).getAsDouble()
+                                        * Math.PI / 180)),
                 config,
                 () -> {
                     Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -403,7 +412,8 @@ public class DriveSubsystem extends SubsystemBase {
             speeds.vyMetersPerSecond *= Constants.DRIVE_MAX_SPEED / Math.sqrt(absSpeed);
         }
         if (Math.abs(speeds.omegaRadiansPerSecond) > Constants.DRIVE_MAX_ANGULAR_SPEED) {
-            speeds.omegaRadiansPerSecond = Constants.DRIVE_MAX_ANGULAR_SPEED * Math.signum(speeds.omegaRadiansPerSecond);
+            speeds.omegaRadiansPerSecond = Constants.DRIVE_MAX_ANGULAR_SPEED
+                    * Math.signum(speeds.omegaRadiansPerSecond);
         }
 
         speeds.vyMetersPerSecond *= strafeSpeedScale.getAsDouble();
@@ -471,7 +481,6 @@ public class DriveSubsystem extends SubsystemBase {
         return alignToPose(polePosition);
     }
 
-    
     public Command alignToClosestCoralSupply() {
         return new DeferredCommand(() -> alignToClosestCoralSupplyDeferred(), Set.of(this));
     }
