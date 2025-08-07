@@ -330,8 +330,8 @@ public class DriveSubsystem extends SubsystemBase {
                 this::getChassisSpeeds,
                 this::drive,
                 new PPHolonomicDriveController(
-                        new PIDConstants(1.2, 0.04, 0.16),
-                        new PIDConstants(0.08, 0, 0)),
+                        new PIDConstants(Constants.DRIVE_kP, Constants.DRIVE_kI, Constants.DRIVE_kD),
+                        new PIDConstants(Constants.DRIVE_ROTATE_kP * Math.PI / 180, Constants.DRIVE_ROTATE_kI * Math.PI / 180, Constants.DRIVE_ROTATE_kD * Math.PI / 180)),
                 config,
                 () -> {
                     Optional<Alliance> alliance = DriverStation.getAlliance();

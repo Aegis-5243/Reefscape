@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 
 /* https://github.com/FRC2832/Robot2832-2025Njord/blob/main/src/main/java/frc/robot/swervedrive/AlignToPose.java */
 public class AlignToPose extends Command {
@@ -35,9 +36,10 @@ public class AlignToPose extends Command {
     this.maxErrorLimit = errorDist;
     noSpeeds = new ChassisSpeeds();
 
-    xController = new PIDController(1.2, 0.04, 0.16); // Vertical movement
-    yController = new PIDController(1.2, 0.04, 0.16); // Horitontal movement
-    rotController = new PIDController(0.08, 0.00004, 0.009); // Rotation
+    xController = new PIDController(Constants.DRIVE_kP, Constants.DRIVE_kI, Constants.DRIVE_kD); // Vertical movement
+    yController = new PIDController(Constants.DRIVE_kP, Constants.DRIVE_kI, Constants.DRIVE_kD); // Horitontal movement
+    rotController = new PIDController(Constants.DRIVE_ROTATE_kP, Constants.DRIVE_ROTATE_kI, Constants.DRIVE_ROTATE_kD); // Rotation
+    rotController.enableContinuousInput(-180, 180);
 
     rotController.setSetpoint(pose.getRotation().getDegrees());
     rotController.setTolerance(4);
@@ -64,19 +66,13 @@ public class AlignToPose extends Command {
 
     double xSpeed = xController.calculate(pose.getX());
     double ySpeed = yController.calculate(pose.getY());
-    SmartDashboard.putNumber("Align XError", xError);
-    SmartDashboard.putNumber("Align YError", yError);
-    SmartDashboard.putNumber("Align RotError", rotError);
 
     // handle 360 circle problem
     double curHeading = pose.getRotation().getDegrees();
-    double centeredHeading =
-        MathUtil.inputModulus(curHeading, lastHeading - 180, lastHeading + 180);
-    double rotValue = rotController.calculate(centeredHeading);
-    lastHeading = centeredHeading;
-
-    SmartDashboard.putNumber("Align CenteredHeading", centeredHeading);
-    SmartDashboard.putNumber("Align rotValue", rotValue);
+    // double centeredHeading =
+    //     MathUtil.inputModulus(curHeading, lastHeading - 180, lastHeading + 180);
+    double rotValue = rotController.calculate(curHeading);
+    lastHeading = curHeading;
 
     // send the drive command
     ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);

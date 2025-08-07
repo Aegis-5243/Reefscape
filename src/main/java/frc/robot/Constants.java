@@ -106,6 +106,17 @@ public final class Constants {
     public static final double DRIVE_MAX_ANGULAR_SPEED = 3.14;
     /** Maximum drive angular acceleration in radians per second squared. */
     public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 3.14;
+
+    /* Drive PID constants (meters)*/
+    public static final double DRIVE_kP = 1.8;
+    public static final double DRIVE_kI = 0.04;
+    public static final double DRIVE_kD = 0.16;
+
+    /* Drive rotation PID constants (degrees) */
+    public static final double DRIVE_ROTATE_kP = 0.08;
+    public static final double DRIVE_ROTATE_kI = 0.00004;
+    public static final double DRIVE_ROTATE_kD = 0.009;
+
     public static final double RIO_CONTROL_LOOP = 0.1;
 
     /* Vision */

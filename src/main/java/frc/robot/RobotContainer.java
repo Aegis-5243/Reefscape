@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -142,6 +143,9 @@ public class RobotContainer {
 
         tab.addString("Current Zone", () -> getCurrentZone().name());
         tab.addString("Target Zone", () -> isTargetZone ? targetZone.name() : "none");
+
+        Shuffleboard.getTab("Test")
+                .add(new PowerDistribution());
 
         // Configure the trigger bindings
         configureBindings();
