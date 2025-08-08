@@ -66,7 +66,7 @@ public abstract class Arm extends SubsystemBase {
         positions = new HashMap<>();
 
         positions.put(ScoringPositions.LoadingPosition, UtilFunctions.getSettingSub("ArmPos/LoadingPosition", 17));
-        positions.put(ScoringPositions.L1Coral, UtilFunctions.getSettingSub("ArmPos/L1Coral", 45));
+        positions.put(ScoringPositions.L1Coral, UtilFunctions.getSettingSub("ArmPos/L1Coral", 120)); // TODO: restore default preference
         positions.put(ScoringPositions.L2Coral, UtilFunctions.getSettingSub("ArmPos/L2Coral", 45));
         positions.put(ScoringPositions.L3Coral, UtilFunctions.getSettingSub("ArmPos/L3Coral,", 45));
         positions.put(ScoringPositions.L4Coral, UtilFunctions.getSettingSub("ArmPos/L4Coral,", 60));

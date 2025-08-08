@@ -116,7 +116,12 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command outtakeCommand() {
-        return setPowerCmd(0.3)
-                .withDeadline(Commands.waitSeconds(1));
+        return setPowerCmd(0.2)
+                .withDeadline(Commands.waitSeconds(1)); // TODO: test if enough time
+    }
+
+    public Command reverseOuttakeCommand() {
+        return setPowerCmd(-0.2)
+            .withDeadline(Commands.waitSeconds(1));
     }
 }

@@ -97,7 +97,6 @@ public final class Constants {
     public static final Distance TRACK_WIDTH = Units.Inches.of(22.25);
     public static final Distance TRACK_HEIGHT = Units.Inches.of(20.3599);
 
-    // TODO: tune
     /** Maximum drive speed in meters per second. */
     public static final double DRIVE_MAX_SPEED = 1;
     /** Maximum drive acceleration in meters per second squared. */
@@ -114,7 +113,7 @@ public final class Constants {
 
     /* Drive rotation PID constants (degrees) */
     public static final double DRIVE_ROTATE_kP = 0.08;
-    public static final double DRIVE_ROTATE_kI = 0.00004;
+    public static final double DRIVE_ROTATE_kI = 0;
     public static final double DRIVE_ROTATE_kD = 0.009;
 
     public static final double RIO_CONTROL_LOOP = 0.1;

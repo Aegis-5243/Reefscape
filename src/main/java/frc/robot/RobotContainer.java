@@ -7,12 +7,15 @@ package frc.robot;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
+import org.ejml.equation.Sequence;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
@@ -28,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
@@ -69,6 +73,9 @@ public class RobotContainer {
 
     Zones targetZone;
     boolean isTargetZone;
+
+    ScoringPositions currentPosition;
+    ScoringPositions targetPosition;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -127,7 +134,7 @@ public class RobotContainer {
     private void supplyTelemetry() {
         ShuffleboardTab tab = Shuffleboard.getTab("Teleoperated");
         /* driveSubsystem adds the field (0,0) 6x3 */
-        
+
         tab.addDouble("Voltage", RobotController::getBatteryVoltage)
                 .withPosition(4, 3)
                 .withSize(2, 1)
@@ -144,6 +151,8 @@ public class RobotContainer {
 
         tab.addString("Current Zone", () -> getCurrentZone().name());
         tab.addString("Target Zone", () -> isTargetZone ? targetZone.name() : "none");
+        tab.addString("Current Scoring Position", () -> currentPosition != null ? currentPosition.name() : "none");
+        tab.addString("Target Scoring Position", () -> targetPosition != null ? targetPosition.name() : "none");
 
         Shuffleboard.getTab("Test")
                 .add(new PowerDistribution());
@@ -159,7 +168,7 @@ public class RobotContainer {
         intake.setDefaultCommand(intake.stopIntakeCommand());
 
         driver.macroTrigger().whileTrue(
-                driveSubsystem.alignToClosestPole());
+                driveSubsystem.fineDriveToClosestPole());
         new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
 
         /*
@@ -177,27 +186,75 @@ public class RobotContainer {
                         isCoralSupplier));
         driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
 
-        // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new Pose2d(2, 4, new Rotation2d(0))));
+        // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new
+        // Pose2d(2, 4, new Rotation2d(0))));
         driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
 
         driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
 
-
         new Trigger(driver::getL1Command)
-                .onTrue(setScoringPosition(ScoringPositions.L1Coral));
+                .onTrue(setScoringPosition(ScoringPositions.L1Coral))
+                .whileTrue(macroWithPosition(ScoringPositions.L1Coral));
         new Trigger(driver::getL2Command)
-                .onTrue(setScoringPosition(ScoringPositions.L2Coral));
+                .onTrue(setScoringPosition(ScoringPositions.L2Coral))
+                .whileTrue(macroWithPosition(ScoringPositions.L2Coral));
         new Trigger(driver::getL3Command)
-                .onTrue(setScoringPosition(ScoringPositions.L3Coral));
+                .onTrue(setScoringPosition(ScoringPositions.L3Coral))
+                .whileTrue(macroWithPosition(ScoringPositions.L3Coral));
         new Trigger(driver::getL4Command)
-                .onTrue(setScoringPosition(ScoringPositions.L4Coral));
+                .onTrue(setScoringPosition(ScoringPositions.L4Coral))
+                .whileTrue(macroWithPosition(ScoringPositions.L4Coral));
         new Trigger(driver::getL2AlgaeCommand)
-                .onTrue(setScoringPosition(ScoringPositions.L2Algae));
+                .onTrue(setScoringPosition(ScoringPositions.L2Algae))
+                .whileTrue(macroWithPosition(ScoringPositions.L2Algae));
         new Trigger(driver::getL3AlgaeCommand)
-                .onTrue(setScoringPosition(ScoringPositions.L3Algae));
+                .onTrue(setScoringPosition(ScoringPositions.L3Algae))
+                .whileTrue(macroWithPosition(ScoringPositions.L3Algae));
         new Trigger(driver::getLoadingPositionCommand)
-                .onTrue(setScoringPosition(ScoringPositions.LoadingPosition));
+                .onTrue(setScoringPosition(ScoringPositions.LoadingPosition))
+                .whileTrue(macroWithPosition(ScoringPositions.LoadingPosition));
 
+    }
+
+    private Command macroWithPosition(ScoringPositions position) {
+        /* TODO: hope this doesn't mess up with command Set preference */
+        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, elevator, arm));
+    }
+
+    private Command macroWithPositionDeferred(ScoringPositions position) {
+        /* I LOVE WPILIB COMMANDS 🎉🎉🎉 */
+        Command result = Commands.waitSeconds(0.5);
+
+        if (position == ScoringPositions.LoadingPosition) {
+            result = new SequentialCommandGroup(
+                    result,
+                    driveSubsystem.fineDriveToClosestCoralSupply(),
+                    intake.homeCoralCommand());
+        } else if (position == ScoringPositions.L4Coral) {
+            /* TODO: implement after arm is fixed */
+        } else if (position == ScoringPositions.L1Coral) {
+            result = new SequentialCommandGroup(
+                    result,
+                    driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(6)),
+                    Commands.waitUntil(() -> currentPosition == position),
+                    intake.reverseOuttakeCommand());
+        } else if (position.getType() == ScoringPositions.Type.Coral) {
+            result = new SequentialCommandGroup(
+                    result,
+                    driveSubsystem.fineDriveToClosestPole(),
+                    Commands.waitUntil(() -> currentPosition == position),
+                    intake.outtakeCommand());
+        } else if (position.getType() == ScoringPositions.Type.Algae) {
+            result = new SequentialCommandGroup(
+                    result,
+                    driveSubsystem.fineDriveToClosestPole(),
+                    Commands.waitUntil(() -> currentPosition == position),
+                    removeAlgaeCommand()
+                            .alongWith(arm.setAngleCmd(100))
+                            .withDeadline(Commands.waitSeconds(3)));
+        }
+
+        return result;
     }
 
     enum Zones {
@@ -246,11 +303,10 @@ public class RobotContainer {
     private Command setScoringPosition(ScoringPositions position) {
         return setScoringPosition(position, true);
     }
+
     private Command setScoringPosition(ScoringPositions position, boolean isFirst) {
         return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm));
     }
-
-    
 
     private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) {
         // state machine like logic from
@@ -261,9 +317,10 @@ public class RobotContainer {
         if (isFirst) {
             isTargetZone = true;
             targetZone = destZone;
+            currentPosition = null;
         }
 
-        Command result;
+        Command result = null;
 
         if (currZone == Zones.ZoneE || currZone == Zones.ZoneF) { // E or F to C initially since E and F cannot
             result = arm.setAngleCmd(65)
@@ -313,6 +370,12 @@ public class RobotContainer {
                         .andThen(arm.setAngleCmd(position));
             } else {
                 result = Commands.none();
+            }
+        }
+        if (result != null) {
+            if (isFirst) {
+                targetPosition = position;
+                result = result.andThen(Commands.runOnce(() -> currentPosition = position));
             }
         } else {
             System.out.println("Invalid zones called: " + currZone.name() + " to " + destZone.name());
