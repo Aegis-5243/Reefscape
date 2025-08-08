@@ -30,6 +30,10 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract void stopIntake();
 
+    public abstract boolean detectingCoral1();
+    
+    public abstract boolean detectingCoral2();
+
     private double targetSpeed = 0;
 
     private double targetPosition = 0;

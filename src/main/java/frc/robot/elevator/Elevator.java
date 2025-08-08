@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utils.ScoringPositions;
-import frc.robot.utils.UtilFunctions;
+import frc.robot.util.ScoringPositions;
+import frc.robot.util.UtilFunctions;
 
 public abstract class Elevator extends SubsystemBase {
 
@@ -20,7 +20,7 @@ public abstract class Elevator extends SubsystemBase {
 
     public abstract double getOutputVoltage();
 
-    protected abstract double getVelocity();
+    public abstract double getVelocity();
 
     public abstract void setEncoderPosition(double position);
 

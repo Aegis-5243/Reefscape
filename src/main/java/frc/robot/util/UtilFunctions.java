@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.util;
 
 import java.lang.reflect.Field;
 import java.util.EnumSet;

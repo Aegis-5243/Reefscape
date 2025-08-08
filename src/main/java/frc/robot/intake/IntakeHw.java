@@ -52,8 +52,8 @@ public class IntakeHw extends Intake {
         laser2.setRangingMode(RangingMode.Short, 24);
 
         Shuffleboard.getTab("Intake").addDouble("Sensor dist", () -> laser1.getRange())
-            
-            ;
+
+        ;
     }
 
     @Override
@@ -123,11 +123,13 @@ public class IntakeHw extends Intake {
         return detectingCoral1();
     }
 
-
-    private boolean detectingCoral1() {
+    @Override
+    public boolean detectingCoral1() {
         return laser1.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD_1;
     }
-    private boolean detectingCoral2() {
+
+    @Override
+    public boolean detectingCoral2() {
         return laser2.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD_2;
     }
 }

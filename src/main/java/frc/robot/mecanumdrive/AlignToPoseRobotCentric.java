@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.utils.UtilFunctions;
+import frc.robot.util.UtilFunctions;
 
 /* https://github.com/FRC2832/Robot2832-2025Njord/blob/main/src/main/java/frc/robot/swervedrive/AlignToPose.java */
 public class AlignToPoseRobotCentric extends Command {

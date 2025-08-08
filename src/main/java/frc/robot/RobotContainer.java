@@ -17,6 +17,8 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
@@ -41,7 +43,7 @@ import frc.robot.controllers.XBoxControls;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
 import frc.robot.mecanumdrive.DriveSubsystem;
-import frc.robot.utils.ScoringPositions;
+import frc.robot.util.ScoringPositions;
 import frc.robot.vision.Vision;
 import frc.robot.vision.Vision.Poles;
 import frc.robot.elevator.Elevator;
@@ -149,6 +151,20 @@ public class RobotContainer {
         tab.addString("Target Zone", () -> isTargetZone ? targetZone.name() : "none");
         tab.addString("Current Scoring Position", () -> currentPosition != null ? currentPosition.name() : "none");
         tab.addString("Target Scoring Position", () -> targetPosition != null ? targetPosition.name() : "none");
+
+        Shuffleboard.getTab("Teleoperated").add("Chum Bucket", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.setSmartDashboardType("ChumBucket");
+                builder.addDoubleProperty("Elevator Position", () -> elevator.getPosition(), null);
+                builder.addDoubleProperty("Elevator Velocity", () -> elevator.getVelocity(), null);
+                builder.addDoubleProperty("Arm Angle", () -> arm.getAngle(), null);
+                builder.addDoubleProperty("Arm Velocity", () -> arm.getVelocity(), null);
+                builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
+                builder.addBooleanProperty("Intake TOF 1", () -> intake.detectingCoral1(), null);
+                builder.addBooleanProperty("Intake TOF 2", () -> intake.detectingCoral2(), null);
+            }
+        });
 
         Shuffleboard.getTab("Test")
                 .add(new PowerDistribution());

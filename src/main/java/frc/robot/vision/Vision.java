@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.mecanumdrive.DriveSubsystem;
-import frc.robot.utils.LimelightHelpers;
-import frc.robot.utils.UtilFunctions;
+import frc.robot.util.LimelightHelpers;
+import frc.robot.util.UtilFunctions;
 
 /** Covers vision and odometry positioning */
 public class Vision extends SubsystemBase {

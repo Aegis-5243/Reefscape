@@ -116,7 +116,7 @@ public class ElevatorHw extends Elevator {
     }
 
     @Override
-    protected double getVelocity() {
+    public double getVelocity() {
         return leftMotor.getEncoder().getVelocity();
     }
 
