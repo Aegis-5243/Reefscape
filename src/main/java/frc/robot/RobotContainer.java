@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -99,9 +100,6 @@ public class RobotContainer {
         isCoralSupplier = () -> targetZone != Zones.ZoneD;
         vision.addCoralModeSupplier(isCoralSupplier);
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
         NamedCommands.registerCommand("FineDriveA", driveSubsystem.alignToPoleDeferred(Poles.PoleA));
         NamedCommands.registerCommand("FineDriveB", driveSubsystem.alignToPoleDeferred(Poles.PoleB));
         NamedCommands.registerCommand("FineDriveC", driveSubsystem.alignToPoleDeferred(Poles.PoleC));
@@ -126,6 +124,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
         NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
 
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
         supplyTelemetry();
 
         configureBindings();
@@ -136,16 +137,11 @@ public class RobotContainer {
         /* driveSubsystem adds the field (0,0) 6x3 */
 
         tab.addDouble("Voltage", RobotController::getBatteryVoltage)
-                
-                
                 .withWidget(BuiltInWidgets.kVoltageView);
 
-        tab.add("Auto Chooser", autoChooser)
-                
-                ;
+        tab.add("Auto Chooser", autoChooser);
 
-        tab.addBoolean("Has Coral", intake::hasCoral)
-                ;
+        tab.addBoolean("Has Coral", intake::hasCoral);
 
         tab.addNumber("Match time", () -> DriverStation.getMatchTime());
 
@@ -192,68 +188,61 @@ public class RobotContainer {
 
         driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
 
-        new Trigger(driver::getL1Command)
-                .onTrue(setScoringPosition(ScoringPositions.L1Coral))
-                .whileTrue(macroWithPosition(ScoringPositions.L1Coral));
-        new Trigger(driver::getL2Command)
-                .onTrue(setScoringPosition(ScoringPositions.L2Coral))
-                .whileTrue(macroWithPosition(ScoringPositions.L2Coral));
-        new Trigger(driver::getL3Command)
-                .onTrue(setScoringPosition(ScoringPositions.L3Coral))
-                .whileTrue(macroWithPosition(ScoringPositions.L3Coral));
-        new Trigger(driver::getL4Command)
-                .onTrue(setScoringPosition(ScoringPositions.L4Coral))
-                .whileTrue(macroWithPosition(ScoringPositions.L4Coral));
-        new Trigger(driver::getL2AlgaeCommand)
-                .onTrue(setScoringPosition(ScoringPositions.L2Algae))
-                .whileTrue(macroWithPosition(ScoringPositions.L2Algae));
-        new Trigger(driver::getL3AlgaeCommand)
-                .onTrue(setScoringPosition(ScoringPositions.L3Algae))
-                .whileTrue(macroWithPosition(ScoringPositions.L3Algae));
-        new Trigger(driver::getLoadingPositionCommand)
-                .onTrue(setScoringPosition(ScoringPositions.LoadingPosition))
-                .whileTrue(macroWithPosition(ScoringPositions.LoadingPosition));
+        createMacroWithPosition(new Trigger(driver::getL1Command), ScoringPositions.L1Coral);
+        createMacroWithPosition(new Trigger(driver::getL2Command), ScoringPositions.L2Coral);
+        createMacroWithPosition(new Trigger(driver::getL3Command), ScoringPositions.L3Coral);
+        createMacroWithPosition(new Trigger(driver::getL4Command), ScoringPositions.L4Coral);
+        createMacroWithPosition(new Trigger(driver::getL2AlgaeCommand), ScoringPositions.L2Algae);
+        createMacroWithPosition(new Trigger(driver::getL3AlgaeCommand), ScoringPositions.L3Algae);
+        createMacroWithPosition(new Trigger(driver::getLoadingPositionCommand), ScoringPositions.LoadingPosition);
 
+    }
+
+    private void createMacroWithPosition(Trigger trigger, ScoringPositions position) {
+        trigger.onTrue(setScoringPosition(position));
+        trigger.debounce(0.3, DebounceType.kRising).whileTrue(macroWithPosition(position));
     }
 
     private Command macroWithPosition(ScoringPositions position) {
         /* TODO: hope this doesn't mess up with command Set preference */
-        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, elevator, arm, intake));
+        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, intake)).withName("Macro pos " + position.name());
     }
 
     private Command macroWithPositionDeferred(ScoringPositions position) {
         /* I LOVE WPILIB COMMANDS 🎉🎉🎉 */
-        Command result = Commands.waitSeconds(0.5);
+        Command result;
+        // need to handle set scoring position already called a moment ago
 
         if (position == ScoringPositions.LoadingPosition) {
             result = new SequentialCommandGroup(
-                    result,
                     driveSubsystem.fineDriveToClosestCoralSupply(),
                     intake.homeCoralCommand());
         } else if (position == ScoringPositions.L4Coral) {
+            result = Commands.none();
             /* TODO: implement after arm is fixed */
         } else if (position == ScoringPositions.L1Coral) {
             result = new SequentialCommandGroup(
-                    result,
                     driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(6)),
                     Commands.waitUntil(() -> currentPosition == position),
                     intake.reverseOuttakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Coral) {
             result = new SequentialCommandGroup(
-                    result,
                     driveSubsystem.fineDriveToClosestPole(),
                     Commands.waitUntil(() -> currentPosition == position),
                     intake.outtakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Algae) {
             result = new SequentialCommandGroup(
-                    result,
                     driveSubsystem.fineDriveToClosestPole(),
                     Commands.waitUntil(() -> currentPosition == position),
                     removeAlgaeCommand()
-                            .alongWith(arm.setAngleCmd(100))
+                            .alongWith(Commands.runOnce(() -> arm.setAngle(100))) // TODO: make sure the bot doesn't
+                                                                                  // implode
                             .withDeadline(Commands.waitSeconds(3)));
+        } else {
+            result = Commands.none();
         }
 
+        result.setName("Macro with SSP " + position.name());
         return result;
     }
 
@@ -305,7 +294,7 @@ public class RobotContainer {
     }
 
     private Command setScoringPosition(ScoringPositions position, boolean isFirst) {
-        return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm));
+        return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm)).withName("SSP deferred " + position.name());
     }
 
     private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) {
@@ -375,13 +364,15 @@ public class RobotContainer {
         if (result != null) {
             if (isFirst) {
                 targetPosition = position;
-                result = result.andThen(Commands.runOnce(() -> currentPosition = position));
+                result = result.finallyDo(() -> currentPosition = position);
             }
         } else {
             System.out.println("Invalid zones called: " + currZone.name() + " to " + destZone.name());
             isTargetZone = false;
             result = Commands.none();
         }
+
+        result.setName("SSP " + position.name() + " from " + currZone.name() + " to " + position.name());
 
         return result;
     }

@@ -42,18 +42,12 @@ public abstract class Intake extends SubsystemBase {
         super();
 
         ShuffleboardTab tab = Shuffleboard.getTab("Intake");
-        tab.addDouble("Current Position", this::getPosition)
-                ;
-        tab.addDouble("Target Position", () -> targetPosition)
-                ;
-        tab.addDouble("Current Speed", this::getVelocity)
-                ;
-        tab.addDouble("Target Speed", this::getTargetSpeed)
-                ;
-        tab.addDouble("Output voltage", this::getOutputVoltage)
-                ;
-        tab.addDouble("Output current", this::getOutputCurrent)
-                ;
+        tab.addDouble("Current Position", this::getPosition);
+        tab.addDouble("Target Position", () -> targetPosition);
+        tab.addDouble("Current Speed", this::getVelocity);
+        tab.addDouble("Target Speed", this::getTargetSpeed);
+        tab.addDouble("Output voltage", this::getOutputVoltage);
+        tab.addDouble("Output current", this::getOutputCurrent);
     }
 
     @Override
@@ -97,11 +91,11 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command setPowerCmd(double power) {
-        return run(() -> setPower(power));
+        return run(() -> setPower(power)).withName("Intake power " + power);
     }
 
     public Command stopIntakeCommand() {
-        return run(this::stopIntake);
+        return run(this::stopIntake).withName("Stop Intake Default Command");
     }
 
     public boolean isInPositionMode() {
@@ -114,7 +108,7 @@ public abstract class Intake extends SubsystemBase {
                         .until(() -> hasCoral()),
                 setPowerCmd(-0.06)
                         .until(() -> !hasCoral()),
-                setPositionCmd(() -> getPosition() + 3));
+                setPositionCmd(() -> getPosition() + 3)).withName("Home coral command");
     }
 
     public Command outtakeCommand() {
@@ -124,15 +118,11 @@ public abstract class Intake extends SubsystemBase {
 
     public Command reverseOuttakeCommand() {
         return setPowerCmd(-0.2)
-            .withDeadline(Commands.waitSeconds(1));
+                .withDeadline(Commands.waitSeconds(1));
     }
 
-
     public enum CoralStates {
-        NONE,
-        INWARD,
-        SAFE,
-        OUTWARD
+        NONE, INWARD, SAFE, OUTWARD
     }
 
     public CoralStates getCoralState() {

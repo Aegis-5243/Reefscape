@@ -59,6 +59,8 @@ public class AlignToPoseRobotCentric extends Command {
         // yController.setSetpoint(pose.getY());
         yController.setSetpoint(0);
         yController.setTolerance(Units.inchesToMeters(0.9));
+        
+        this.setName("Align to pose (RC) " + pose);
     }
 
     @Override

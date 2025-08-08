@@ -474,7 +474,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command driveToClosestCoralSupply() {
-        return new DeferredCommand(() -> driveToClosestCoralSupplyDeferred(), Set.of(this));
+        return new DeferredCommand(() -> driveToClosestCoralSupplyDeferred(), Set.of(this)).withName("Drive to supply deferred");
     }
 
     private Command driveToClosestCoralSupplyDeferred() {

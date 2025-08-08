@@ -45,28 +45,30 @@ public abstract class Arm extends SubsystemBase {
         tab.addDouble("Output Voltage", this::getOutputVoltage);
 
         tab.add("Reset arm home position", runOnce(() -> setEncoderPosition(17)))
-                
-                ;
+
+        ;
         tab.add("Arm to 17deg", setAngleCmd(17))
-                
-                ;
+
+        ;
         tab.add("Arm to 45deg", setAngleCmd(45))
-                
-                ;
+
+        ;
         tab.add("Arm to 60deg", setAngleCmd(60))
-                
-                ;
+
+        ;
         tab.add("Arm to 90deg", setAngleCmd(90))
-                
-                ;
+
+        ;
         tab.add("Arm to 120deg", setAngleCmd(120))
-                
-                ;
+
+        ;
 
         positions = new HashMap<>();
 
         positions.put(ScoringPositions.LoadingPosition, UtilFunctions.getSettingSub("ArmPos/LoadingPosition", 17));
-        positions.put(ScoringPositions.L1Coral, UtilFunctions.getSettingSub("ArmPos/L1Coral", 120)); // TODO: restore default preference
+        positions.put(ScoringPositions.L1Coral, UtilFunctions.getSettingSub("ArmPos/L1Coral", 120)); // TODO: restore
+                                                                                                     // default
+                                                                                                     // preference
         positions.put(ScoringPositions.L2Coral, UtilFunctions.getSettingSub("ArmPos/L2Coral", 45));
         positions.put(ScoringPositions.L3Coral, UtilFunctions.getSettingSub("ArmPos/L3Coral,", 45));
         positions.put(ScoringPositions.L4Coral, UtilFunctions.getSettingSub("ArmPos/L4Coral,", 60));
@@ -92,7 +94,9 @@ public abstract class Arm extends SubsystemBase {
     }
 
     public Command setAngleCmd(double angle) {
-        return run(() -> setAngle(angle)).until(() -> Math.abs(this.getAngle() - angle) < 2.);
+        return run(() -> setAngle(angle))
+                .until(() -> Math.abs(this.getAngle() - angle) < 2.)
+                .withName("Set arm angle " + angle);
     }
 
     public Command setAngleCmd(ScoringPositions position) {
@@ -103,7 +107,6 @@ public abstract class Arm extends SubsystemBase {
         return positions.get(position).getAsDouble();
     }
 
-    
     public boolean isInPositionMode() {
         return isPosition;
     }

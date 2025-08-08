@@ -39,30 +39,18 @@ public abstract class Elevator extends SubsystemBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
-        tab.addDouble("Current Position", this::getPosition)
-                ;
-        tab.addDouble("Target Position", this::getTargetPosition)
-                ;
-        tab.addDouble("Velocity", this::getVelocity)
-                ;
-        tab.addBoolean("Limit Switch", this::getLimitSwitch)
-                ;
-        tab.addDouble("Output current", this::getOutputCurrent)
-                ;
-        tab.addDouble("Output voltage", this::getOutputVoltage)
-                ;
-        tab.add("Set Position Command 0 inches", setPositionCmd(0))
-                ;
-        tab.add("Set Position Command 10 inches", setPositionCmd(10))
-                ;
-        tab.add("Set Position Command 20 inches", setPositionCmd(20))
-                ;
-        tab.add("Set Position Command 30 inches", setPositionCmd(30))
-                ;
-        tab.add("Set Position Command 40 inches", setPositionCmd(40))
-                ;
-        tab.add("Set Position Command 50 inches", setPositionCmd(50))
-                ;
+        tab.addDouble("Current Position", this::getPosition);
+        tab.addDouble("Target Position", this::getTargetPosition);
+        tab.addDouble("Velocity", this::getVelocity);
+        tab.addBoolean("Limit Switch", this::getLimitSwitch);
+        tab.addDouble("Output current", this::getOutputCurrent);
+        tab.addDouble("Output voltage", this::getOutputVoltage);
+        tab.add("Set Position Command 0 inches", setPositionCmd(0));
+        tab.add("Set Position Command 10 inches", setPositionCmd(10));
+        tab.add("Set Position Command 20 inches", setPositionCmd(20));
+        tab.add("Set Position Command 30 inches", setPositionCmd(30));
+        tab.add("Set Position Command 40 inches", setPositionCmd(40));
+        tab.add("Set Position Command 50 inches", setPositionCmd(50));
 
         positions = new HashMap<>();
 
@@ -94,7 +82,9 @@ public abstract class Elevator extends SubsystemBase {
     };
 
     public Command setPositionCmd(double position) {
-        return run(() -> setPosition(position)).until(() -> Math.abs(getPosition() - position) < 1);
+        return run(() -> setPosition(position))
+                .until(() -> Math.abs(getPosition() - position) < 1)
+                .withName("Elevator set position " + position);
     }
 
     public Command setPositionCmd(ScoringPositions position) {
