@@ -218,7 +218,7 @@ public class RobotContainer {
 
     private Command macroWithPosition(ScoringPositions position) {
         /* TODO: hope this doesn't mess up with command Set preference */
-        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, elevator, arm));
+        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, elevator, arm, intake));
     }
 
     private Command macroWithPositionDeferred(ScoringPositions position) {

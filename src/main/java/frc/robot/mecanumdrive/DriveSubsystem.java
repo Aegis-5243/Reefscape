@@ -442,11 +442,11 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command alignToPose(Pose2d pose) {
-        return new AlignToPose(this, pose);
+        return new AlignToPoseRobotCentric(this, pose);
     }
 
     public Command alignToPose(Pose2d pose, int endCounts, double errorDist) {
-        return new AlignToPose(this, pose, endCounts, errorDist);
+        return new AlignToPoseRobotCentric(this, pose, endCounts, errorDist);
     }
 
     public Command alignToPoleDeferred(Poles pole) {

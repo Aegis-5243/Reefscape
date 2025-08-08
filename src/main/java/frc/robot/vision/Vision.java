@@ -47,8 +47,11 @@ public class Vision extends SubsystemBase {
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
 
         // get blue poles
-        Transform2d reefCenter = new Transform2d(4.47, 4, Rotation2d.fromDegrees(0));
-        double distFromCenter = 1.37;
+        Transform2d reefCenter = new Transform2d(4.486, 4.045, Rotation2d.fromDegrees(0));
+        /** The distance from the center of the reef to the middle of the bot
+         * makes the bumpers touch the reef
+         */
+        double distFromCenter = 1.354;
         Pose2d offsetLeft = new Pose2d(-distFromCenter, Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));
         Pose2d offsetMiddle = new Pose2d(-distFromCenter, 0, Rotation2d.fromDegrees(0));
         Pose2d offsetRight = new Pose2d(-distFromCenter, -Units.inchesToMeters(6.5), Rotation2d.fromDegrees(0));

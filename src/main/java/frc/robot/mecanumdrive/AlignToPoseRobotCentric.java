@@ -10,7 +10,7 @@ import frc.robot.Constants;
 import frc.robot.utils.UtilFunctions;
 
 /* https://github.com/FRC2832/Robot2832-2025Njord/blob/main/src/main/java/frc/robot/swervedrive/AlignToPose.java */
-public class AlignToPose extends Command {
+public class AlignToPoseRobotCentric extends Command {
     private PIDController xController, yController, rotController;
     private DriveSubsystem drive;
     private ChassisSpeeds noSpeeds;
@@ -25,18 +25,18 @@ public class AlignToPose extends Command {
     DoubleSubscriber kD = UtilFunctions.getSettingSub("Align/kD", Constants.DRIVE_kD);
 
     DoubleSubscriber rkP = UtilFunctions.getSettingSub("Align/rkP", Constants.DRIVE_ROTATE_kP);
-    DoubleSubscriber rkI = UtilFunctions.getSettingSub("Align/rkI", Constants.DRIVE_ROTATE_kI);
+    DoubleSubscriber rkI = UtilFunctions.getSettingSub("Align/rkI", Constants.DRIVE_ROTATE_kI); // TODO: restore default preference
     DoubleSubscriber rkD = UtilFunctions.getSettingSub("Align/rkD", Constants.DRIVE_ROTATE_kD);
 
-    public AlignToPose(DriveSubsystem swerve, Pose2d pose) {
+    public AlignToPoseRobotCentric(DriveSubsystem swerve, Pose2d pose) {
         this(swerve, pose, 10, 1.2);
     }
 
-    public AlignToPose(DriveSubsystem swerve, Pose2d pose, int endCounts) {
+    public AlignToPoseRobotCentric(DriveSubsystem swerve, Pose2d pose, int endCounts) {
         this(swerve, pose, endCounts, 1.2);
     }
 
-    public AlignToPose(DriveSubsystem swerve, Pose2d pose, int endCounts, double errorDist) {
+    public AlignToPoseRobotCentric(DriveSubsystem swerve, Pose2d pose, int endCounts, double errorDist) {
         this.drive = swerve;
         this.target = pose;
         this.maxCounts = endCounts;
@@ -52,10 +52,12 @@ public class AlignToPose extends Command {
         rotController.setTolerance(4);
         lastHeading = pose.getRotation().getDegrees();
 
-        xController.setSetpoint(pose.getX());
+        // xController.setSetpoint(pose.getX());
+        xController.setSetpoint(0);
         xController.setTolerance(Units.inchesToMeters(0.9));
 
-        yController.setSetpoint(pose.getY());
+        // yController.setSetpoint(pose.getY());
+        yController.setSetpoint(0);
         yController.setTolerance(Units.inchesToMeters(0.9));
     }
 
@@ -71,9 +73,6 @@ public class AlignToPose extends Command {
         var yError = Units.metersToInches(pose.getY() - target.getY());
         var rotError = pose.getRotation().minus(target.getRotation()).getDegrees();
 
-        double xSpeed = xController.calculate(pose.getX());
-        double ySpeed = yController.calculate(pose.getY());
-
         // handle 360 circle problem
         double curHeading = pose.getRotation().getDegrees();
         // double centeredHeading =
@@ -81,9 +80,18 @@ public class AlignToPose extends Command {
         double rotValue = rotController.calculate(curHeading);
         lastHeading = curHeading;
 
+        Pose2d robotCentricError = target.relativeTo(pose);
+
+        // TODO: test VERY CAREFULLY
+        // rollback to "after WW planning meeting" to undo changes here
+
+        double xSpeed = xController.calculate(-robotCentricError.getX());
+        double ySpeed = yController.calculate(-robotCentricError.getY());
+
         // send the drive command
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
-        drive.driveFieldOriented(speeds);
+        // drive.driveFieldOriented(speeds);
+        drive.drive(speeds);
 
         // calculate if we are at goal
         // error was 0.8" X, 1.1" Y, or 1.36" total
