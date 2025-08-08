@@ -26,7 +26,7 @@ public abstract class Intake extends SubsystemBase {
 
     public abstract void updateSensors();
 
-    public abstract boolean detectingCoral();
+    public abstract boolean hasCoral();
 
     public abstract void stopIntake();
 
@@ -36,22 +36,24 @@ public abstract class Intake extends SubsystemBase {
 
     protected boolean isPosition;
 
+    protected CoralStates currentCoralState = CoralStates.NONE;
+
     public Intake() {
         super();
 
         ShuffleboardTab tab = Shuffleboard.getTab("Intake");
         tab.addDouble("Current Position", this::getPosition)
-                .withPosition(3, 0);
+                ;
         tab.addDouble("Target Position", () -> targetPosition)
-                .withPosition(5, 0);
+                ;
         tab.addDouble("Current Speed", this::getVelocity)
-                .withPosition(3, 1);
+                ;
         tab.addDouble("Target Speed", this::getTargetSpeed)
-                .withPosition(4, 1);
+                ;
         tab.addDouble("Output voltage", this::getOutputVoltage)
-                .withPosition(0, 0);
+                ;
         tab.addDouble("Output current", this::getOutputCurrent)
-                .withPosition(0, 1);
+                ;
     }
 
     @Override
@@ -109,9 +111,9 @@ public abstract class Intake extends SubsystemBase {
     public Command homeCoralCommand() {
         return new SequentialCommandGroup(
                 setPowerCmd(0.1)
-                        .until(() -> detectingCoral()),
+                        .until(() -> hasCoral()),
                 setPowerCmd(-0.06)
-                        .until(() -> !detectingCoral()),
+                        .until(() -> !hasCoral()),
                 setPositionCmd(() -> getPosition() + 3));
     }
 
@@ -123,5 +125,17 @@ public abstract class Intake extends SubsystemBase {
     public Command reverseOuttakeCommand() {
         return setPowerCmd(-0.2)
             .withDeadline(Commands.waitSeconds(1));
+    }
+
+
+    public enum CoralStates {
+        NONE,
+        INWARD,
+        SAFE,
+        OUTWARD
+    }
+
+    public CoralStates getCoralState() {
+        return currentCoralState;
     }
 }

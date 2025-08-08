@@ -136,16 +136,16 @@ public class RobotContainer {
         /* driveSubsystem adds the field (0,0) 6x3 */
 
         tab.addDouble("Voltage", RobotController::getBatteryVoltage)
-                .withPosition(4, 3)
-                .withSize(2, 1)
+                
+                
                 .withWidget(BuiltInWidgets.kVoltageView);
 
         tab.add("Auto Chooser", autoChooser)
-                .withPosition(6, 1)
-                .withSize(2, 1);
+                
+                ;
 
-        tab.addBoolean("Has Coral", intake::detectingCoral)
-                .withPosition(8, 3);
+        tab.addBoolean("Has Coral", intake::hasCoral)
+                ;
 
         tab.addNumber("Match time", () -> DriverStation.getMatchTime());
 
@@ -348,7 +348,7 @@ public class RobotContainer {
                         arm.setAngleCmd(position),
                         elevator.setPositionCmd(position));
             } else { // A to C then repeat
-                // TODO: Detect when coral in arm collides with elevator and prevent this
+                // TODO: Prevent when coral state is INWARD after 2nd TOF implemented
                 result = arm.setAngleCmd(65)
                         .until(() -> arm.getAngle() > 60)
                         .andThen(setScoringPosition(position, false));
@@ -395,7 +395,7 @@ public class RobotContainer {
                 new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
                         Commands.none(),
                         intake.setPowerCmd(-0.3),
-                        () -> intake.detectingCoral()),
+                        () -> intake.hasCoral()),
                 elevator.setPowerCommand(0.1));
     }
 

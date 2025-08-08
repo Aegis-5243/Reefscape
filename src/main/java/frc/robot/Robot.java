@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.PPLibTelemetry;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.controllers.XBoxControls;
@@ -24,73 +28,91 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private final RobotContainer robotContainer;
+    
+        static boolean teleopFlag = false;
 
-    /**
-     * This function is run when the robot is first started up and should be used
-     * for any
-     * initialization code.
-     */
-    public Robot() {
-
-        // add webserver to allow download of the dashboard in Elastic
-        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-
-        robotContainer = new RobotContainer();
-    }
-
-    /**
-     * This function is called every 20 ms, no matter the mode. Use this for items
-     * like diagnostics
-     * that you want ran during disabled, autonomous, teleoperated and test.
-     *
-     * <p>
-     * This runs after the mode specific periodic functions, but before LiveWindow
-     * and
-     * SmartDashboard integrated updating.
-     */
-    @Override
-    public void robotPeriodic() {
-        // Runs the Scheduler. This is responsible for polling buttons, adding
-        // newly-scheduled
-        // commands, running already-scheduled commands, removing finished or
-        // interrupted commands,
-        // and running subsystem periodic() methods. This must be called from the
-        // robot's periodic
-        // block in order for anything in the Command-based framework to work.
-        CommandScheduler.getInstance().run();
-    }
-
-    /** This function is called once each time the robot enters Disabled mode. */
-    @Override
-    public void disabledInit() {
-    }
-
-    @Override
-    public void disabledPeriodic() {
-    }
-
-    /**
-     * This autonomous runs the autonomous command selected by your
-     * {@link RobotContainer} class.
-     */
-    @Override
-    public void autonomousInit() {
-
-    }
-
-    /** This function is called periodically during autonomous. */
-    @Override
-    public void autonomousPeriodic() {
-    }
-
-    @Override
-    public void teleopInit() {
+        public static boolean robotIsTeleop() {
+        return teleopFlag;
+        }
+  
+    
+        /**
+         * This function is run when the robot is first started up and should be used
+         * for any
+         * initialization code.
+         */
+        public Robot() {
+    
+            // add webserver to allow download of the dashboard in Elastic
+            WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+    
+            // turn off hot reload at the competition. (from 2832)
+            if (DriverStation.isFMSAttached()) {
+                PPLibTelemetry.enableCompetitionMode();
+            }
+    
+            SmartDashboard.putData(CommandScheduler.getInstance());
+    
+            robotContainer = new RobotContainer();
+        }
+    
+        /**
+         * This function is called every 20 ms, no matter the mode. Use this for items
+         * like diagnostics
+         * that you want ran during disabled, autonomous, teleoperated and test.
+         *
+         * <p>
+         * This runs after the mode specific periodic functions, but before LiveWindow
+         * and
+         * SmartDashboard integrated updating.
+         */
+        @Override
+        public void robotPeriodic() {
+            // Runs the Scheduler. This is responsible for polling buttons, adding
+            // newly-scheduled
+            // commands, running already-scheduled commands, removing finished or
+            // interrupted commands,
+            // and running subsystem periodic() methods. This must be called from the
+            // robot's periodic
+            // block in order for anything in the Command-based framework to work.
+            CommandScheduler.getInstance().run();
+        }
+    
+        /** This function is called once each time the robot enters Disabled mode. */
+        @Override
+        public void disabledInit() {
+            teleopFlag = false;
+        }
+    
+        @Override
+        public void disabledPeriodic() {
+        }
+    
+        /**
+         * This autonomous runs the autonomous command selected by your
+         * {@link RobotContainer} class.
+         */
+        @Override
+        public void autonomousInit() {
+            teleopFlag = false;
+        }
+    
+        /** This function is called periodically during autonomous. */
+        @Override
+        public void autonomousPeriodic() {
+        }
+    
+        @Override
+        public void teleopInit() {
+            teleopFlag = true;
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
+        } else {
+            CommandScheduler.getInstance().cancelAll();
         }
 
         robotContainer.reset();
@@ -119,6 +141,13 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
+        if (robotContainer.driver instanceof XBoxControls) {
+            XBoxControls driv = (XBoxControls) robotContainer.driver;
+            if (!driv.controller.isConnected() || xBoxFullStopDebouncer.calculate(driv.getStopTeleop())) {
+                // Apparently teleOp can't be cancelled so we'll just call the reset command
+                robotContainer.reset();
+            }
+        }
     }
 
     /** This function is called once when the robot is first started up. */

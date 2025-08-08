@@ -183,17 +183,18 @@ public final class Constants {
      * Maximum acceleraton of arm in maxMotion mode in degrees per second squared
      */
     public static final double ARM_MAX_ACCELERATION = 180;
-
+    
     public static final double ARM_kP = 0.03;
     public static final double ARM_kI = 0;
     public static final double ARM_kD = 0.05;
-
+    
     public static final int ARM_LIMIT_SWITCH_PORT = 9;
-
+    
     /* Roller */
     public static final int ROLLER_PORT = 32;
-
-    public static final int ROLLER_TIME_OF_FLIGHT_PORT = 33;
+    
+    public static final int ROLLER_TIME_OF_FLIGHT_1_PORT = 33;
+    public static final int ROLLER_TIME_OF_FLIGHT_2_PORT = 34;
 
     /*
      * Roller conversion factors
@@ -210,7 +211,9 @@ public final class Constants {
     public static final double ROLLER_kI = 0;
     public static final double ROLLER_kD = 0.05;
 
-    /** Coral detection threshold of the time of flight sensor in mm */
-    public static final double ROLLER_CORAL_DETECTION_THRESHOLD = 70;
+    /** Coral detection threshold of the time of flight sensor located at the start of the intake in mm */
+    public static final double ROLLER_CORAL_DETECTION_THRESHOLD_1 = 70;
+    /** Coral detection threshold of the time of flight sensor located at the end of the intake in mm */
+    public static final double ROLLER_CORAL_DETECTION_THRESHOLD_2 = 70;
 
 }

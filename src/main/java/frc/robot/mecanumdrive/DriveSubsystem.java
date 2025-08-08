@@ -250,8 +250,8 @@ public class DriveSubsystem extends SubsystemBase {
                         () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond),
                         null);
             }
-        }).withPosition(2, 3)
-                .withSize(2, 2);
+        })
+                ;
         Shuffleboard.getTab("Teleoperated").addDouble("Velocity", () -> getVelocity());
         tab.addDouble("xSpeed", () -> getChassisSpeeds().vxMetersPerSecond);
         tab.addDouble("ySpeed", () -> getChassisSpeeds().vyMetersPerSecond);

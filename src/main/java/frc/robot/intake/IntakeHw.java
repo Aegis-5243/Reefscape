@@ -18,7 +18,8 @@ import frc.robot.Constants;
 public class IntakeHw extends Intake {
     public SparkMax roller;
 
-    public TimeOfFlight laser;
+    public TimeOfFlight laser1;
+    public TimeOfFlight laser2;
 
     private double kP = Constants.ROLLER_kP;
     private double kI = Constants.ROLLER_kI;
@@ -44,13 +45,15 @@ public class IntakeHw extends Intake {
 
         roller.getEncoder().setPosition(0);
 
-        laser = new TimeOfFlight(Constants.ROLLER_TIME_OF_FLIGHT_PORT);
+        laser1 = new TimeOfFlight(Constants.ROLLER_TIME_OF_FLIGHT_1_PORT);
+        laser2 = new TimeOfFlight(Constants.ROLLER_TIME_OF_FLIGHT_2_PORT);
 
-        laser.setRangingMode(RangingMode.Short, 24);
+        laser1.setRangingMode(RangingMode.Short, 24);
+        laser2.setRangingMode(RangingMode.Short, 24);
 
-        Shuffleboard.getTab("Intake").addDouble("Sensor dist", () -> laser.getRange())
-            .withPosition(1, 0)
-            .withSize(1, 1);
+        Shuffleboard.getTab("Intake").addDouble("Sensor dist", () -> laser1.getRange())
+            
+            ;
     }
 
     @Override
@@ -76,7 +79,19 @@ public class IntakeHw extends Intake {
 
     @Override
     public void updateSensors() {
-        laser.getRange();
+        if (detectingCoral1()) {
+            if (detectingCoral2()) {
+                currentCoralState = CoralStates.SAFE;
+            } else {
+                currentCoralState = CoralStates.INWARD;
+            }
+        } else {
+            if (detectingCoral2()) {
+                currentCoralState = CoralStates.OUTWARD;
+            } else {
+                currentCoralState = CoralStates.NONE;
+            }
+        }
     }
 
     // 0.3 is 20 inches per second
@@ -103,7 +118,16 @@ public class IntakeHw extends Intake {
     }
 
     @Override
-    public boolean detectingCoral() {
-        return laser.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD;
+    /** Depriciate once 2nd TOF is added */
+    public boolean hasCoral() {
+        return detectingCoral1();
+    }
+
+
+    private boolean detectingCoral1() {
+        return laser1.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD_1;
+    }
+    private boolean detectingCoral2() {
+        return laser2.getRange() < Constants.ROLLER_CORAL_DETECTION_THRESHOLD_2;
     }
 }

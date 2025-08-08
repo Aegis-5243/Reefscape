@@ -45,23 +45,23 @@ public abstract class Arm extends SubsystemBase {
         tab.addDouble("Output Voltage", this::getOutputVoltage);
 
         tab.add("Reset arm home position", runOnce(() -> setEncoderPosition(17)))
-                .withPosition(0, 0)
-                .withSize(2, 1);
+                
+                ;
         tab.add("Arm to 17deg", setAngleCmd(17))
-                .withPosition(0, 0)
-                .withSize(2, 1);
+                
+                ;
         tab.add("Arm to 45deg", setAngleCmd(45))
-                .withPosition(0, 1)
-                .withSize(2, 1);
+                
+                ;
         tab.add("Arm to 60deg", setAngleCmd(60))
-                .withPosition(0, 2)
-                .withSize(2, 1);
+                
+                ;
         tab.add("Arm to 90deg", setAngleCmd(90))
-                .withPosition(0, 3)
-                .withSize(2, 1);
+                
+                ;
         tab.add("Arm to 120deg", setAngleCmd(120))
-                .withPosition(0, 4)
-                .withSize(2, 1);
+                
+                ;
 
         positions = new HashMap<>();
 

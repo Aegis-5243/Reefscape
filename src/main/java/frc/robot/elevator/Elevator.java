@@ -40,29 +40,29 @@ public abstract class Elevator extends SubsystemBase {
         ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
 
         tab.addDouble("Current Position", this::getPosition)
-                .withPosition(3, 0);
+                ;
         tab.addDouble("Target Position", this::getTargetPosition)
-                .withPosition(3, 1);
+                ;
         tab.addDouble("Velocity", this::getVelocity)
-                .withPosition(4, 0);
+                ;
         tab.addBoolean("Limit Switch", this::getLimitSwitch)
-                .withPosition(5, 0);
+                ;
         tab.addDouble("Output current", this::getOutputCurrent)
-                .withPosition(6, 0);
+                ;
         tab.addDouble("Output voltage", this::getOutputVoltage)
-                .withPosition(6, 1);
+                ;
         tab.add("Set Position Command 0 inches", setPositionCmd(0))
-                .withPosition(3, 0);
+                ;
         tab.add("Set Position Command 10 inches", setPositionCmd(10))
-                .withPosition(9, 1);
+                ;
         tab.add("Set Position Command 20 inches", setPositionCmd(20))
-                .withPosition(9, 2);
+                ;
         tab.add("Set Position Command 30 inches", setPositionCmd(30))
-                .withPosition(9, 3);
+                ;
         tab.add("Set Position Command 40 inches", setPositionCmd(40))
-                .withPosition(9, 3);
+                ;
         tab.add("Set Position Command 50 inches", setPositionCmd(50))
-                .withPosition(9, 3);
+                ;
 
         positions = new HashMap<>();
 
