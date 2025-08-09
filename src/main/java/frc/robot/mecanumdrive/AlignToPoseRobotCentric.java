@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.util.UtilFunctions;
@@ -89,6 +90,10 @@ public class AlignToPoseRobotCentric extends Command {
 
         double xSpeed = xController.calculate(-robotCentricError.getX());
         double ySpeed = yController.calculate(-robotCentricError.getY());
+
+        SmartDashboard.putNumber("Align/xError", Units.metersToInches(robotCentricError.getX()));
+        SmartDashboard.putNumber("Align/yError", Units.metersToInches(robotCentricError.getY()));
+        SmartDashboard.putNumber("Align/rotError", rotError);
 
         // send the drive command
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);

@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.util.UtilFunctions;
@@ -82,6 +83,10 @@ public class AlignToPose extends Command {
         // MathUtil.inputModulus(curHeading, lastHeading - 180, lastHeading + 180);
         double rotValue = rotController.calculate(curHeading);
         lastHeading = curHeading;
+
+        SmartDashboard.putNumber("Align/xError", xError);
+        SmartDashboard.putNumber("Align/yError", yError);
+        SmartDashboard.putNumber("Align/rotError", rotError);
 
         // send the drive command
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rotValue);
