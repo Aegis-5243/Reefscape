@@ -163,12 +163,12 @@ public final class Constants {
 
     /*
      * Arm conversion factors
-     * Gear ratio: 1:25
+     * Gear ratio: 1:18
      * Rotations to degrees: 360
-     * = 360 / 25 = 14.4
+     * = 360 / 18 = 20
      */
     /** Rotations to degrees for arm motor encoder */
-    public static final double ARM_POSITION_CONVERSION_FACTOR = 14.4;
+    public static final double ARM_POSITION_CONVERSION_FACTOR = 20.0;
     /** RPM to degrees per second for arm motor encoder */
     public static final double ARM_VELOCITY_CONVERSION_FACTOR = ARM_POSITION_CONVERSION_FACTOR / 60;
 
