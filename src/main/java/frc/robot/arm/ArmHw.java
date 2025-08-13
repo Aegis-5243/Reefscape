@@ -26,7 +26,7 @@ public class ArmHw extends Arm {
         armMotor.configure(
                 new SparkMaxConfig()
                         .idleMode(SparkMaxConfig.IdleMode.kBrake)
-                        .inverted(false)
+                        .inverted(true)
                         .apply(new EncoderConfig()
                                 .positionConversionFactor(Constants.ARM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(Constants.ARM_VELOCITY_CONVERSION_FACTOR))
@@ -34,12 +34,12 @@ public class ArmHw extends Arm {
                                 .reverseSoftLimit(Constants.ARM_MIN_POS)
                                 .forwardSoftLimit(Constants.ARM_MAX_POS))
                         .apply(new ClosedLoopConfig()
-                                .outputRange(-0.1, 0.1)
+                                .outputRange(-1, 1)
                                 .pid(kP, kI, kD)
                                 .apply(new MAXMotionConfig()
                                         .maxVelocity(Constants.ARM_MAX_VELOCITY)
                                         .maxAcceleration(Constants.ARM_MAX_ACCELERATION)))
-                        .closedLoopRampRate(0.3),
+                        .closedLoopRampRate(0.1),
                 SparkMax.ResetMode.kResetSafeParameters,
                 SparkMax.PersistMode.kPersistParameters);
 
@@ -64,7 +64,7 @@ public class ArmHw extends Arm {
 
     @Override
     public void setEncoderPosition(double degrees) {
-        isPosition = true;
+        isPosition = false;
         armMotor.getEncoder().setPosition(degrees);
     }
 

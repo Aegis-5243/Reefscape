@@ -152,22 +152,20 @@ public class RobotContainer {
         tab.addString("Current Scoring Position", () -> currentPosition != null ? currentPosition.name() : "none");
         tab.addString("Target Scoring Position", () -> targetPosition != null ? targetPosition.name() : "none");
 
-        Shuffleboard.getTab("Teleoperated").add("Chum Bucket", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("ChumBucket");
-                builder.addDoubleProperty("Elevator Position", () -> elevator.getPosition(), null);
-                builder.addDoubleProperty("Elevator Velocity", () -> elevator.getVelocity(), null);
-                builder.addDoubleProperty("Arm Angle", () -> arm.getAngle(), null);
-                builder.addDoubleProperty("Arm Velocity", () -> arm.getVelocity(), null);
-                builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
-                builder.addBooleanProperty("Intake TOF 1", () -> intake.detectingCoral1(), null);
-                builder.addBooleanProperty("Intake TOF 2", () -> intake.detectingCoral2(), null);
-            }
-        });
+        // Shuffleboard.getTab("Teleoperated").add("Chum Bucket", new Sendable() {
+        //     @Override
+        //     public void initSendable(SendableBuilder builder) {
+        //         builder.setSmartDashboardType("ChumBucket");
+        //         builder.addDoubleProperty("Elevator Position", () -> elevator.getPosition(), null);
+        //         builder.addDoubleProperty("Elevator Velocity", () -> elevator.getVelocity(), null);
+        //         builder.addDoubleProperty("Arm Angle", () -> arm.getAngle(), null);
+        //         builder.addDoubleProperty("Arm Velocity", () -> arm.getVelocity(), null);
+        //         builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
+        //         builder.addBooleanProperty("Intake TOF 1", () -> intake.detectingCoral1(), null);
+        //         builder.addBooleanProperty("Intake TOF 2", () -> intake.detectingCoral2(), null);
+        //     }
+        // });
 
-        Shuffleboard.getTab("Test")
-                .add(new PowerDistribution());
     }
 
     private void configureBindings() {
