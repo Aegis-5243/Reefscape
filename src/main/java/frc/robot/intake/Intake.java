@@ -112,7 +112,7 @@ public abstract class Intake extends SubsystemBase {
                         .until(() -> hasCoral()),
                 setPowerCmd(-0.06)
                         .until(() -> !hasCoral()),
-                setPositionCmd(() -> getPosition() + 3)).withName("Home coral command");
+                setPositionCmd(() -> getPosition() + 3.3)).withName("Home coral command");
     }
 
     public Command outtakeCommand() {
@@ -121,7 +121,7 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command reverseOuttakeCommand() {
-        return setPowerCmd(-0.2)
+        return setPowerCmd(-0.4)
                 .withDeadline(Commands.waitSeconds(1));
     }
 

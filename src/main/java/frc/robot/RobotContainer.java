@@ -149,21 +149,26 @@ public class RobotContainer {
         tab.addString("Target Scoring Position", () -> targetPosition != null ? targetPosition.name() : "none");
 
         // Shuffleboard.getTab("Teleoperated").add("Chum Bucket", new Sendable() {
-        //     @Override
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("ChumBucket");
-        //         builder.addDoubleProperty("Elevator Position", () -> elevator.getPosition(), null);
-        //         builder.addDoubleProperty("Elevator Velocity", () -> elevator.getVelocity(), null);
-        //         builder.addDoubleProperty("Arm Angle", () -> arm.getAngle(), null);
-        //         builder.addDoubleProperty("Arm Velocity", () -> arm.getVelocity(), null);
-        //         builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(), null);
-        //         builder.addBooleanProperty("Intake TOF 1", () -> intake.detectingCoral1(), null);
-        //         builder.addBooleanProperty("Intake TOF 2", () -> intake.detectingCoral2(), null);
-        //     }
+        // @Override
+        // public void initSendable(SendableBuilder builder) {
+        // builder.setSmartDashboardType("ChumBucket");
+        // builder.addDoubleProperty("Elevator Position", () -> elevator.getPosition(),
+        // null);
+        // builder.addDoubleProperty("Elevator Velocity", () -> elevator.getVelocity(),
+        // null);
+        // builder.addDoubleProperty("Arm Angle", () -> arm.getAngle(), null);
+        // builder.addDoubleProperty("Arm Velocity", () -> arm.getVelocity(), null);
+        // builder.addDoubleProperty("Intake Velocity", () -> intake.getVelocity(),
+        // null);
+        // builder.addBooleanProperty("Intake TOF 1", () -> intake.detectingCoral1(),
+        // null);
+        // builder.addBooleanProperty("Intake TOF 2", () -> intake.detectingCoral2(),
+        // null);
+        // }
         // });
 
-
-        Shuffleboard.getTab("Preferences").add("Reset All Preferences", Commands.runOnce(() -> Preferences.removeAll()));
+        Shuffleboard.getTab("Preferences").add("Reset All Preferences",
+                Commands.runOnce(() -> Preferences.removeAll()).ignoringDisable(true));
     }
 
     private void configureBindings() {
@@ -196,7 +201,8 @@ public class RobotContainer {
 
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new
         // Pose2d(2, 4, new Rotation2d(0))));
-        driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
+        // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
+        driver.macroIntakeTrigger().whileTrue(intake.reverseOuttakeCommand());
 
         driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
 
@@ -217,7 +223,8 @@ public class RobotContainer {
 
     private Command macroWithPosition(ScoringPositions position) {
         /* TODO: hope this doesn't mess up with command Set preference */
-        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, intake)).withName("Macro pos " + position.name());
+        return new DeferredCommand(() -> macroWithPositionDeferred(position), Set.of(driveSubsystem, intake))
+                .withName("Macro pos " + position.name());
     }
 
     private Command macroWithPositionDeferred(ScoringPositions position) {
@@ -234,7 +241,7 @@ public class RobotContainer {
             /* TODO: implement after arm is fixed */
         } else if (position == ScoringPositions.L1Coral) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(6)),
+                    driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(16)),
                     Commands.waitUntil(() -> currentPosition == position),
                     intake.reverseOuttakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Coral) {
@@ -306,7 +313,8 @@ public class RobotContainer {
     }
 
     private Command setScoringPosition(ScoringPositions position, boolean isFirst) {
-        return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm)).withName("SSP deferred " + position.name());
+        return new DeferredCommand(() -> setScoringPositionDeferred(position, isFirst), Set.of(elevator, arm))
+                .withName("SSP deferred " + position.name());
     }
 
     private Command setScoringPositionDeferred(ScoringPositions position, boolean isFirst) {
@@ -330,8 +338,9 @@ public class RobotContainer {
         } else if (currZone == destZone) { // Already in the correct zone, no potential collisions
             result = new ParallelCommandGroup(arm.setAngleCmd(position),
                     elevator.setPositionCmd(position));
-        } else if (currZone == Zones.ZoneD) { // D to C then repeat
+        } else if (currZone == Zones.ZoneD) { // D to C with elevator then repeat
             result = arm.setAngleCmd(60)
+                    .alongWith(elevator.setPositionCmd(position))
                     .until(() -> arm.getAngle() < 65)
                     .andThen(setScoringPosition(position, false));
         } else if (currZone == Zones.ZoneB) { // B to A or C

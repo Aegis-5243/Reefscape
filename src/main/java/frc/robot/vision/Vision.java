@@ -84,23 +84,23 @@ public class Vision extends SubsystemBase {
         // driveSubsystem.field.getObject("AlgaeLocs").setPoses(blueAlgae.values().toArray(Pose2d[]::new));
 
         // Start the updateOdometry method on a separate thread --github copilot
-        executorService.submit(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                updateOdometry();
-                try {
-                    Thread.sleep(20); // Run every 20ms (50Hz)
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
+        // executorService.submit(() -> {
+        //     while (!Thread.currentThread().isInterrupted()) {
+        //         updateOdometry();
+        //         try {
+        //             Thread.sleep(20); // Run every 20ms (50Hz)
+        //         } catch (InterruptedException e) {
+        //             Thread.currentThread().interrupt();
+        //         }
+        //     }
+        // });
     }
 
     @Override
     public void periodic() {
         calcClosestPole();
         calcClosestCoralSupplyPoint();
-        // updateOdometry();
+        updateOdometry();
 
         driveSubsystem.field.getObject("closePole").setPose(closestPole);
 
@@ -111,9 +111,9 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    public void closeVisionThread() { // --github copilot
-        executorService.shutdownNow(); // Ensure the thread is stopped when the subsystem is closed
-    }
+    // public void closeVisionThread() { // --github copilot
+    //     executorService.shutdownNow(); // Ensure the thread is stopped when the subsystem is closed
+    // }
 
     public enum Poles {
         PoleA, PoleB, PoleC, PoleD, PoleE, PoleF, PoleG, PoleH, PoleI, PoleJ, PoleK, PoleL

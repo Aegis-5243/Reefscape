@@ -182,7 +182,7 @@ public final class Constants {
      */
     public static final double ARM_MAX_ACCELERATION = 180;
     
-    public static final double ARM_kP = 0.01;
+    public static final double ARM_kP = 0.014;
     public static final double ARM_kI = 0;
     public static final double ARM_kD = 0.7;
     
