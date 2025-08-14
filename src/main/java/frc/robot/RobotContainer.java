@@ -7,8 +7,6 @@ package frc.robot;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-import org.ejml.equation.Sequence;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -17,10 +15,8 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -166,6 +162,8 @@ public class RobotContainer {
         //     }
         // });
 
+
+        Shuffleboard.getTab("Preferences").add("Reset All Preferences", Commands.runOnce(() -> Preferences.removeAll()));
     }
 
     private void configureBindings() {

@@ -2,6 +2,8 @@ package frc.robot.vision;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -35,6 +37,8 @@ public class Vision extends SubsystemBase {
     private boolean doRejectUpdate = false;
 
     private Pose2d mt2pose;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // --github copilot
 
     public Vision(DriveSubsystem driveSubsystem) {
         super();
@@ -79,13 +83,24 @@ public class Vision extends SubsystemBase {
         // driveSubsystem.field.getObject("ScoringPoles").setPoses(bluePoses.values().toArray(Pose2d[]::new));
         // driveSubsystem.field.getObject("AlgaeLocs").setPoses(blueAlgae.values().toArray(Pose2d[]::new));
 
+        // Start the updateOdometry method on a separate thread --github copilot
+        executorService.submit(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                updateOdometry();
+                try {
+                    Thread.sleep(20); // Run every 20ms (50Hz)
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
     }
 
     @Override
     public void periodic() {
         calcClosestPole();
         calcClosestCoralSupplyPoint();
-        updateOdometry();
+        // updateOdometry();
 
         driveSubsystem.field.getObject("closePole").setPose(closestPole);
 
@@ -94,6 +109,10 @@ public class Vision extends SubsystemBase {
         } else {
             driveSubsystem.field.getObject("mt2est").setPose(mt2pose);
         }
+    }
+
+    public void closeVisionThread() { // --github copilot
+        executorService.shutdownNow(); // Ensure the thread is stopped when the subsystem is closed
     }
 
     public enum Poles {
