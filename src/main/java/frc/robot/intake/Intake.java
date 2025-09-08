@@ -52,6 +52,11 @@ public abstract class Intake extends SubsystemBase {
         tab.addDouble("Target Speed", this::getTargetSpeed);
         tab.addDouble("Output voltage", this::getOutputVoltage);
         tab.addDouble("Output current", this::getOutputCurrent);
+        
+        tab.addBoolean("TOF 1", this::detectingCoral1);
+        tab.addBoolean("TOF 2", this::detectingCoral2);
+
+        tab.addString("Coral State", () -> getCoralState().name());
     }
 
     @Override

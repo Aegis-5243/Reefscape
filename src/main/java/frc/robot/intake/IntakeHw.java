@@ -51,9 +51,9 @@ public class IntakeHw extends Intake {
         laser1.setRangingMode(RangingMode.Short, 24);
         laser2.setRangingMode(RangingMode.Short, 24);
 
-        Shuffleboard.getTab("Intake").addDouble("Sensor dist", () -> laser1.getRange())
+        Shuffleboard.getTab("Intake").addDouble("TOF 1 dist", () -> laser1.getRange());
+        Shuffleboard.getTab("Intake").addDouble("TOF 2 dist", () -> laser2.getRange());
 
-        ;
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 
 public class ArmHw extends Arm {
@@ -45,11 +47,13 @@ public class ArmHw extends Arm {
 
         setEncoderPosition(17);
 
+        ShuffleboardTab tab = Shuffleboard.getTab("Arm");
+        tab.addBoolean("Limit switch arm", this::getLimitSwitch);
     }
 
     @Override
     public boolean getLimitSwitch() {
-        return limitSwitch.get();
+        return !limitSwitch.get();
     }
 
     @Override

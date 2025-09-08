@@ -212,6 +212,6 @@ public final class Constants {
     /** Coral detection threshold of the time of flight sensor located at the start of the intake in mm */
     public static final double ROLLER_CORAL_DETECTION_THRESHOLD_1 = 70;
     /** Coral detection threshold of the time of flight sensor located at the end of the intake in mm */
-    public static final double ROLLER_CORAL_DETECTION_THRESHOLD_2 = 70;
+    public static final double ROLLER_CORAL_DETECTION_THRESHOLD_2 = 120;
 
 }
