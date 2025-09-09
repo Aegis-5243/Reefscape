@@ -51,6 +51,12 @@ public class ArmHw extends Arm {
         tab.addBoolean("Limit switch arm", this::getLimitSwitch);
     }
 
+    public void periodic() {
+        if (getLimitSwitch()) {
+            setEncoderPosition(Constants.ARM_MIN_POS);
+        }
+    }
+
     @Override
     public boolean getLimitSwitch() {
         return !limitSwitch.get();

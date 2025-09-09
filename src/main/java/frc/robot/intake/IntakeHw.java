@@ -25,6 +25,8 @@ public class IntakeHw extends Intake {
     private double kI = Constants.ROLLER_kI;
     private double kD = Constants.ROLLER_kD;
 
+    private final double velocityToPower = 0.02;
+
     public IntakeHw() {
         roller = new SparkMax(Constants.ROLLER_PORT, MotorType.kBrushless);
 
@@ -64,7 +66,8 @@ public class IntakeHw extends Intake {
     @Override
     public void setVelocity(double speed) {
         super.setVelocity(speed);
-        roller.getClosedLoopController().setReference(speed, SparkMax.ControlType.kVelocity);
+        // roller.getClosedLoopController().setReference(speed, SparkMax.ControlType.kVelocity);
+        roller.set(speed * velocityToPower);
     }
 
     @Override

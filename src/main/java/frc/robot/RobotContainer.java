@@ -36,8 +36,10 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
 import frc.robot.controllers.XBoxControls;
+import frc.robot.intake.HomeCoral;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
+import frc.robot.intake.Intake.CoralStates;
 import frc.robot.mecanumdrive.DriveSubsystem;
 import frc.robot.util.ScoringPositions;
 import frc.robot.vision.Vision;
@@ -265,6 +267,10 @@ public class RobotContainer {
         return result;
     }
 
+    private boolean isCoralUnsafe() {
+        return intake.getCoralState() == CoralStates.INWARD || intake.getCoralState() == CoralStates.OUTWARD;
+    }
+
     enum Zones {
         ZoneA, ZoneB, ZoneC, ZoneD, ZoneE, ZoneF
     }
@@ -349,8 +355,10 @@ public class RobotContainer {
                         arm.setAngleCmd(position),
                         elevator.setPositionCmd(position));
             } else { // B to A then repeat
-                result = elevator.setPositionCmd(0)
-                        .andThen(setScoringPosition(position, false));
+                result = new ParallelCommandGroup(
+                        elevator.setPositionCmd(0),
+                        new HomeCoral(intake).onlyIf(() -> intake.getCoralState() == CoralStates.INWARD))
+                                .andThen(setScoringPosition(position, false));
             }
         } else if (currZone == Zones.ZoneA) { // A to B or C
             if (destZone == Zones.ZoneB) { // A to B
@@ -358,19 +366,30 @@ public class RobotContainer {
                         arm.setAngleCmd(position),
                         elevator.setPositionCmd(position));
             } else { // A to C then repeat
-                // TODO: Prevent when coral state is INWARD after 2nd TOF implemented
-                result = arm.setAngleCmd(65)
-                        .until(() -> arm.getAngle() > 60)
-                        .andThen(setScoringPosition(position, false));
+                if (intake.getCoralState() == CoralStates.INWARD) {
+                    result = new HomeCoral(intake).andThen(setScoringPosition(position, false));
+                } else {
+                    result = arm.setAngleCmd(65)
+                            .until(() -> arm.getAngle() > 60)
+                            .andThen(setScoringPosition(position, false));
+                }
             }
         } else if (currZone == Zones.ZoneC) { // C to A, B, D, or E
             if (destZone == Zones.ZoneB) { // C to B
-                result = elevator.setPositionCmd(0)
-                        .andThen(arm.setAngleCmd(position))
-                        .andThen(elevator.setPositionCmd(position));
+                if (intake.getCoralState() == CoralStates.INWARD) {
+                    result = new HomeCoral(intake).andThen(setScoringPosition(position, false));
+                } else {
+                    result = elevator.setPositionCmd(0)
+                            .andThen(arm.setAngleCmd(position))
+                            .andThen(elevator.setPositionCmd(position));
+                }
             } else if (destZone == Zones.ZoneA) {
-                result = elevator.setPositionCmd(position)
-                        .andThen(arm.setAngleCmd(position));
+                if (intake.getCoralState() == CoralStates.INWARD) {
+                    result = new HomeCoral(intake).andThen(setScoringPosition(position, false));
+                } else {
+                    result = elevator.setPositionCmd(position)
+                            .andThen(arm.setAngleCmd(position));
+                }
             } else if (destZone == Zones.ZoneD) {
                 result = new ParallelCommandGroup(
                         arm.setAngleCmd(position),
