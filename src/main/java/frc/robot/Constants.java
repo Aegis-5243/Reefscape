@@ -205,9 +205,14 @@ public final class Constants {
     /** RPM to inches per second for intake roller encoders */
     public static final double ROLLER_VELOCITY_CONVERSION_FACTOR = ROLLER_POSITION_CONVERSION_FACTOR / 60;
 
+    /* Intake roller positional PID */
     public static final double ROLLER_kP = 0.13;
     public static final double ROLLER_kI = 0;
     public static final double ROLLER_kD = 0.05;
+
+    /* Intake roller velocity feedforwards */
+    public static final double ROLLER_kS = 0.1;
+    public static final double ROLLER_kV = 0.5;
 
     /** Coral detection threshold of the time of flight sensor located at the start of the intake in mm */
     public static final double ROLLER_CORAL_DETECTION_THRESHOLD_1 = 70;

@@ -39,7 +39,7 @@ public class HomeCoral extends Command {
 
     @Override
     public void execute() {
-        double speed = 0;
+        double power = 0;
         currentCoralState = intake.getCoralState();
         // if (currentCoralState != previousCoralState) {
         // if (previousCoralState == CoralStates.NONE && currentCoralState ==
@@ -55,19 +55,19 @@ public class HomeCoral extends Command {
         if (hasPosition == false) {
             switch (currentCoralState) {
                 case SAFE:
-                    speed = 0.0;
+                    power = 0.0;
                     break;
                 case INWARD:
-                    speed = 3;
+                    power = 0.1;
                     break;
                 case OUTWARD:
-                    speed = -3;
+                    power = -0.1;
                     break;
                 case NONE:
                     if (tmpName)
-                        speed = 6;
+                        power = 0.2;
             }
-            intake.setVelocity(speed);
+            intake.setPower(power);
         }
     }
 

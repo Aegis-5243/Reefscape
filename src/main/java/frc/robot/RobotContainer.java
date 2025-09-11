@@ -173,6 +173,8 @@ public class RobotContainer {
                 Commands.runOnce(() -> Preferences.removeAll()).ignoringDisable(true));
     }
 
+    boolean pluh = false;
+
     private void configureBindings() {
         driver = new XBoxControls();
 
@@ -184,7 +186,7 @@ public class RobotContainer {
 
         driver.macroTrigger().whileTrue(
                 driveSubsystem.fineDriveToClosestPole());
-        new Trigger(driver::getIntake).whileTrue(intake.homeCoralCommand());
+        new Trigger(driver::getIntake).whileTrue(new HomeCoral(intake, true));
 
         /*
          * Right trigger takes off algae when arm is in algae zone
@@ -198,7 +200,7 @@ public class RobotContainer {
                                 Commands.none(),
                                 () -> getCurrentZone() != Zones.ZoneA),
                         removeAlgaeCommand(),
-                        isCoralSupplier));
+                        isCoralSupplier).withName("Outtaking right now"));
         driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
 
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new
@@ -237,7 +239,7 @@ public class RobotContainer {
         if (position == ScoringPositions.LoadingPosition) {
             result = new SequentialCommandGroup(
                     driveSubsystem.fineDriveToClosestCoralSupply(),
-                    intake.homeCoralCommand());
+                    new HomeCoral(intake, true));
         } else if (position == ScoringPositions.L4Coral) {
             result = Commands.none();
             /* TODO: implement after arm is fixed */
@@ -248,7 +250,7 @@ public class RobotContainer {
                     intake.reverseOuttakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Coral) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(),
+                    driveSubsystem.fineDriveToClosestPole(-0.07),
                     Commands.waitUntil(() -> currentPosition == position),
                     intake.outtakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Algae) {

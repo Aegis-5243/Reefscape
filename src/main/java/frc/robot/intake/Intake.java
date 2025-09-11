@@ -56,6 +56,14 @@ public abstract class Intake extends SubsystemBase {
         tab.addBoolean("TOF 1", this::detectingCoral1);
         tab.addBoolean("TOF 2", this::detectingCoral2);
 
+        tab.add("Set vel 6", setVelocityCmd(6));
+        tab.add("Set vel 3", setVelocityCmd(3));
+        tab.add("Set vel 0", setVelocityCmd(0));
+        tab.add("Set vel -3", setVelocityCmd(-3));
+        tab.add("Set power 0.1", setPowerCmd(0.1));
+        tab.add("Set power 0.2", setPowerCmd(0.2));
+        tab.add("Set power 0.0", setPowerCmd(0));
+
         tab.addString("Coral State", () -> getCoralState().name());
     }
 

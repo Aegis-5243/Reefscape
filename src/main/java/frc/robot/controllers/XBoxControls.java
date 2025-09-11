@@ -52,7 +52,7 @@ public class XBoxControls extends DriverControls {
     @Override
     public double getTurn() {
         var dead = deadband.get();
-        return UtilFunctions.deadband(controller.getRightX(), dead);
+        return UtilFunctions.deadband(controller.getRawAxis(2), dead);
     }
 
     @Override
@@ -97,7 +97,8 @@ public class XBoxControls extends DriverControls {
 
     @Override
     public boolean getOuttake() {
-        return controller.getRightTriggerAxis() > 0.5;
+        // return controller.getRightTriggerAxis() > 0.5;
+        return controller.getRawButton(8);
     }
 
     @Override
@@ -107,16 +108,17 @@ public class XBoxControls extends DriverControls {
 
     @Override
     public Trigger macroTrigger() {
-        return new Trigger(() -> controller.getLeftTriggerAxis() > 0.5);
+        // return new Trigger(() -> controller.getLeftTriggerAxis() > 0.5);
+        return new Trigger(() -> controller.getRawButton(7));
     }
 
     @Override
     public Trigger resetOdo() {
-        return new Trigger(() -> controller.getBackButton());
+        return new Trigger(() -> controller.getRawButton(9));
     }
 
     public boolean getStopTeleop() {
-        return controller.getStartButton();
+        return controller.getRawButton(10);
     }
 
     @Override

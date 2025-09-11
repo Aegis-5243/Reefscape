@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
 
@@ -25,7 +26,7 @@ public class IntakeHw extends Intake {
     private double kI = Constants.ROLLER_kI;
     private double kD = Constants.ROLLER_kD;
 
-    private final double velocityToPower = 0.02;
+    SimpleMotorFeedforward intakeFeedForward;
 
     public IntakeHw() {
         roller = new SparkMax(Constants.ROLLER_PORT, MotorType.kBrushless);
@@ -53,6 +54,8 @@ public class IntakeHw extends Intake {
         laser1.setRangingMode(RangingMode.Short, 24);
         laser2.setRangingMode(RangingMode.Short, 24);
 
+        intakeFeedForward = new SimpleMotorFeedforward(Constants.ROLLER_kS, Constants.ROLLER_kV);
+
         Shuffleboard.getTab("Intake").addDouble("TOF 1 dist", () -> laser1.getRange());
         Shuffleboard.getTab("Intake").addDouble("TOF 2 dist", () -> laser2.getRange());
 
@@ -67,7 +70,7 @@ public class IntakeHw extends Intake {
     public void setVelocity(double speed) {
         super.setVelocity(speed);
         // roller.getClosedLoopController().setReference(speed, SparkMax.ControlType.kVelocity);
-        roller.set(speed * velocityToPower);
+        roller.set(intakeFeedForward.calculate(speed));
     }
 
     @Override
