@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
-import frc.robot.controllers.XBoxControls;
+import frc.robot.controllers.ProConControls;
 import frc.robot.intake.HomeCoral;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
@@ -176,7 +176,7 @@ public class RobotContainer {
     boolean pluh = false;
 
     private void configureBindings() {
-        driver = new XBoxControls();
+        driver = new ProConControls();
 
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
