@@ -95,6 +95,12 @@ public class Robot extends TimedRobot {
         @Override
         public void autonomousInit() {
             teleopFlag = false;
+            m_autonomousCommand = robotContainer.getAutonomousCommand();
+
+            // schedule the autonomous command (example)
+            if (m_autonomousCommand != null) {
+                m_autonomousCommand.schedule();
+            }
         }
     
         /** This function is called periodically during autonomous. */

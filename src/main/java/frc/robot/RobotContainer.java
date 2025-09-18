@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
@@ -100,18 +101,18 @@ public class RobotContainer {
         isCoralSupplier = () -> targetZone != Zones.ZoneD;
         vision.addCoralModeSupplier(isCoralSupplier);
 
-        NamedCommands.registerCommand("FineDriveA", driveSubsystem.alignToPoleDeferred(Poles.PoleA));
-        NamedCommands.registerCommand("FineDriveB", driveSubsystem.alignToPoleDeferred(Poles.PoleB));
-        NamedCommands.registerCommand("FineDriveC", driveSubsystem.alignToPoleDeferred(Poles.PoleC));
-        NamedCommands.registerCommand("FineDriveD", driveSubsystem.alignToPoleDeferred(Poles.PoleD));
-        NamedCommands.registerCommand("FineDriveE", driveSubsystem.alignToPoleDeferred(Poles.PoleE));
-        NamedCommands.registerCommand("FineDriveF", driveSubsystem.alignToPoleDeferred(Poles.PoleF));
-        NamedCommands.registerCommand("FineDriveG", driveSubsystem.alignToPoleDeferred(Poles.PoleG));
-        NamedCommands.registerCommand("FineDriveH", driveSubsystem.alignToPoleDeferred(Poles.PoleH));
-        NamedCommands.registerCommand("FineDriveI", driveSubsystem.alignToPoleDeferred(Poles.PoleI));
-        NamedCommands.registerCommand("FineDriveJ", driveSubsystem.alignToPoleDeferred(Poles.PoleJ));
-        NamedCommands.registerCommand("FineDriveK", driveSubsystem.alignToPoleDeferred(Poles.PoleK));
-        NamedCommands.registerCommand("FineDriveL", driveSubsystem.alignToPoleDeferred(Poles.PoleL));
+        NamedCommands.registerCommand("FineDriveA", driveSubsystem.fineDrivetoPole(Poles.PoleA));
+        NamedCommands.registerCommand("FineDriveB", driveSubsystem.fineDrivetoPole(Poles.PoleB));
+        NamedCommands.registerCommand("FineDriveC", driveSubsystem.fineDrivetoPole(Poles.PoleC));
+        NamedCommands.registerCommand("FineDriveD", driveSubsystem.fineDrivetoPole(Poles.PoleD));
+        NamedCommands.registerCommand("FineDriveE", driveSubsystem.fineDrivetoPole(Poles.PoleE));
+        NamedCommands.registerCommand("FineDriveF", driveSubsystem.fineDrivetoPole(Poles.PoleF));
+        NamedCommands.registerCommand("FineDriveG", driveSubsystem.fineDrivetoPole(Poles.PoleG));
+        NamedCommands.registerCommand("FineDriveH", driveSubsystem.fineDrivetoPole(Poles.PoleH));
+        NamedCommands.registerCommand("FineDriveI", driveSubsystem.fineDrivetoPole(Poles.PoleI));
+        NamedCommands.registerCommand("FineDriveJ", driveSubsystem.fineDrivetoPole(Poles.PoleJ));
+        NamedCommands.registerCommand("FineDriveK", driveSubsystem.fineDrivetoPole(Poles.PoleK));
+        NamedCommands.registerCommand("FineDriveL", driveSubsystem.fineDrivetoPole(Poles.PoleL));
         NamedCommands.registerCommand("FineDriveIntakeL", driveSubsystem.driveToClosestCoralSupply());
         NamedCommands.registerCommand("ElevatorL1Coral", setScoringPosition(ScoringPositions.L1Coral));
         NamedCommands.registerCommand("ElevatorL2Coral", setScoringPosition(ScoringPositions.L2Coral));
@@ -121,7 +122,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("ElevatorL3Algae", setScoringPosition(ScoringPositions.L3Algae));
         NamedCommands.registerCommand("ElevatorLoading", setScoringPosition(ScoringPositions.LoadingPosition));
         NamedCommands.registerCommand("RemoveAlgaeWithArm", removeAlgaeWithArmCommand());
-        NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
+        NamedCommands.registerCommand("Intake", new HomeCoral(intake));
+        NamedCommands.registerCommand("HomeCoral", new HomeCoral(intake));
+        // NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
         NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -178,14 +181,18 @@ public class RobotContainer {
     private void configureBindings() {
         driver = new XBoxControls();
 
-        driveSubsystem.setDefaultCommand(
-                driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn));
+        Command driveDefaultCommand = driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn);
+        // BooleanSupplier useMt2Supplier = () -> !CommandScheduler.getInstance().isScheduled(driveDefaultCommand);
+
+        // vision.addMt2Supplier(useMt2Supplier);
+
+        driveSubsystem.setDefaultCommand(driveDefaultCommand);
         elevator.setDefaultCommand(elevator.holdElevator());
         arm.setDefaultCommand(arm.holdArm());
         intake.setDefaultCommand(intake.stopIntakeCommand());
 
         driver.macroTrigger().whileTrue(
-                driveSubsystem.fineDriveToClosestPole());
+                driveSubsystem.fineDriveToClosestPole(-0.07));
         new Trigger(driver::getIntake).whileTrue(new HomeCoral(intake, true));
 
         /*
@@ -196,17 +203,21 @@ public class RobotContainer {
         new Trigger(driver::getOuttake).whileTrue(
                 new ConditionalCommand(
                         new ConditionalCommand(
-                                intake.setPowerCmd(0.3),
+                                new ConditionalCommand(
+                                    intake.setPowerCmd(0.3),
+                                intake.setPowerCmd(-0.3),
+                                () -> currentPosition != ScoringPositions.L1Coral),
                                 Commands.none(),
-                                () -> getCurrentZone() != Zones.ZoneA),
+                                () -> currentPosition.getType() != ScoringPositions.Type.Algae),
                         removeAlgaeCommand(),
                         isCoralSupplier).withName("Outtaking right now"));
-        driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
-
+        // driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
+        Trigger odoTrigger = driver.resetOdo();
+        vision.addMt2Supplier(() -> !odoTrigger.getAsBoolean());
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new
         // Pose2d(2, 4, new Rotation2d(0))));
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
-        driver.macroIntakeTrigger().whileTrue(intake.reverseOuttakeCommand());
+        driver.macroIntakeTrigger().whileTrue(intake.setPowerCmd(-0.1));
 
         driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
 
@@ -241,7 +252,8 @@ public class RobotContainer {
                     driveSubsystem.fineDriveToClosestCoralSupply(),
                     new HomeCoral(intake, true));
         } else if (position == ScoringPositions.L4Coral) {
-            result = Commands.none();
+            // result = Commands.none();
+            result = driveSubsystem.fineDriveToClosestPole(-0.07);
             /* TODO: implement after arm is fixed */
         } else if (position == ScoringPositions.L1Coral) {
             result = new SequentialCommandGroup(
@@ -450,5 +462,17 @@ public class RobotContainer {
         intake.stopIntake();
         driveSubsystem.driveCartesian(0, 0, 0);
     }
+
+    /**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	public Command getAutonomousCommand() {
+		// An example command will be run in autonomous
+		// Command auton = m_chooser.getSelected();
+		// if (auton == null) auton = Autos.moveForward(5, m_driveSubsystem);
+		return autoChooser.getSelected();
+	}
 
 }

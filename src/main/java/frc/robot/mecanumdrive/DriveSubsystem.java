@@ -164,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
                 new Translation2d(0.259, -0.283),
                 new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
 
-        poseEstimator = new MecanumDrivePoseEstimator(kinematics, getHeading(),
+        poseEstimator = new MecanumDrivePoseEstimator(kinematics, getRawHeading(),
                 new MecanumDriveWheelPositions(),
                 Pose2d.kZero);
 
@@ -257,6 +257,7 @@ public class DriveSubsystem extends SubsystemBase {
         tab.addDouble("xPosition", () -> getPose().getX());
         tab.addDouble("yPosition", () -> getPose().getY());
         tab.addDouble("Heading", () -> getHeading().getDegrees());
+        tab.addDouble("Raw Heading", () -> getRawHeading().getDegrees());
 
     }
 
@@ -278,7 +279,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        poseEstimator.update(getHeading(), new MecanumDriveWheelPositions(
+        poseEstimator.update(getRawHeading(), new MecanumDriveWheelPositions(
                 fl.getEncoder().getPosition(),
                 fr.getEncoder().getPosition(),
                 bl.getEncoder().getPosition(),
@@ -349,6 +350,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getHeading() {
+        return poseEstimator.getEstimatedPosition().getRotation();
+    }
+    
+    public Rotation2d getRawHeading() {
         return gyro.getRotation2d();
     }
 
@@ -458,11 +463,25 @@ public class DriveSubsystem extends SubsystemBase {
         return fineDriveToClosestPole(0);
     }
 
+    public Command fineDrivetoPole(Poles pole) {
+        return fineDriveToPole(pole, -0.07);
+    }
+
+    public Command fineDriveToPole(Poles pole, double offset) {
+        return new DeferredCommand(() -> fineDriveToPoleDeferred(pole, offset), Set.of(this));
+    }
+
     /** Offset of zero means bumpers will be touching the reef
      * @param offset meters away from reef
      */
     public Command fineDriveToClosestPole(double offset) {
         return new DeferredCommand(() -> fineDriveToClosestPoleDeferred(offset), Set.of(this));
+    }
+
+    private Command fineDriveToPoleDeferred(Poles pole, double offset) {
+        Pose2d polePosition = vision.getPoleLocation(pole);
+        return driveToPose(polePosition.transformBy(new Transform2d(-0.2 - offset, 0, Rotation2d.kZero)), 0.03)
+                .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
     private Command fineDriveToClosestPoleDeferred(double offset) {

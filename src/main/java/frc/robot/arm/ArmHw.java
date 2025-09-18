@@ -1,5 +1,6 @@
 package frc.robot.arm;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
@@ -81,7 +82,7 @@ public class ArmHw extends Arm {
     @Override
     public void setAngle(double degrees) {
         super.setAngle(degrees);
-        armMotor.getClosedLoopController().setReference(degrees, ControlType.kPosition);
+        armMotor.getClosedLoopController().setReference(degrees, ControlType.kPosition, ClosedLoopSlot.kSlot0, 0.50);
 
     }
 

@@ -32,6 +32,7 @@ public class Vision extends SubsystemBase {
     private HashMap<Algae, Pose2d> blueAlgae = new HashMap<Vision.Algae, Pose2d>();
 
     private BooleanSupplier isCoralSupplier;
+    private BooleanSupplier useMt2Supplier = () -> false;
     private boolean aprilTagAllowed;
 
     private boolean doRejectUpdate = false;
@@ -51,7 +52,7 @@ public class Vision extends SubsystemBase {
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
 
         // get blue poles
-        Transform2d reefCenter = new Transform2d(4.486, 4.045, Rotation2d.fromDegrees(0));
+        Transform2d reefCenter = new Transform2d(4.497, 4.045, Rotation2d.fromDegrees(0));
         /** The distance from the center of the reef to the middle of the bot
          * makes the bumpers touch the reef
          */
@@ -131,7 +132,7 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateOdometry() {
-        boolean useMegaTag2 = true; // set to false to use MegaTag1
+        boolean useMegaTag2 = useMt2Supplier.getAsBoolean(); // set to false to use MegaTag1
         doRejectUpdate = false;
 
         if (aprilTagAllowed) {
@@ -152,7 +153,7 @@ public class Vision extends SubsystemBase {
                 }
 
                 if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0, 2.0, Math.PI/6.0));
                     driveSubsystem.poseEstimator.addVisionMeasurement(
                             mt1.pose,
                             mt1.timestampSeconds);
@@ -181,7 +182,7 @@ public class Vision extends SubsystemBase {
                     doRejectUpdate = true;
                 }
                 if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 99999999.0));
                     driveSubsystem.poseEstimator.addVisionMeasurement(
                             mt2.pose,
                             mt2.timestampSeconds);
@@ -192,6 +193,10 @@ public class Vision extends SubsystemBase {
 
     public void addCoralModeSupplier(BooleanSupplier coralMode) {
         isCoralSupplier = coralMode;
+    }
+
+    public void addMt2Supplier(BooleanSupplier mt2Supplier){
+        useMt2Supplier = mt2Supplier;
     }
 
     public HashMap<Poles, Pose2d> getPoles(boolean red) {
