@@ -1,9 +1,9 @@
 package frc.robot.vision;
 
 import java.util.HashMap;
-import java.util.function.BooleanSupplier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -13,9 +13,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.mecanumdrive.DriveSubsystem;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.UtilFunctions;
@@ -53,7 +56,8 @@ public class Vision extends SubsystemBase {
 
         // get blue poles
         Transform2d reefCenter = new Transform2d(4.497, 4.045, Rotation2d.fromDegrees(0));
-        /** The distance from the center of the reef to the middle of the bot
+        /**
+         * The distance from the center of the reef to the middle of the bot
          * makes the bumpers touch the reef
          */
         double distFromCenter = 1.354;
@@ -86,15 +90,17 @@ public class Vision extends SubsystemBase {
 
         // Start the updateOdometry method on a separate thread --github copilot
         // executorService.submit(() -> {
-        //     while (!Thread.currentThread().isInterrupted()) {
-        //         updateOdometry();
-        //         try {
-        //             Thread.sleep(20); // Run every 20ms (50Hz)
-        //         } catch (InterruptedException e) {
-        //             Thread.currentThread().interrupt();
-        //         }
-        //     }
+        // while (!Thread.currentThread().isInterrupted()) {
+        // updateOdometry();
+        // try {
+        // Thread.sleep(20); // Run every 20ms (50Hz)
+        // } catch (InterruptedException e) {
+        // Thread.currentThread().interrupt();
+        // }
+        // }
         // });
+
+        // CameraServer.startAutomaticCapture(1);
     }
 
     @Override
@@ -113,7 +119,8 @@ public class Vision extends SubsystemBase {
     }
 
     // public void closeVisionThread() { // --github copilot
-    //     executorService.shutdownNow(); // Ensure the thread is stopped when the subsystem is closed
+    // executorService.shutdownNow(); // Ensure the thread is stopped when the
+    // subsystem is closed
     // }
 
     public enum Poles {
@@ -132,14 +139,27 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateOdometry() {
-        boolean useMegaTag2 = useMt2Supplier.getAsBoolean(); // set to false to use MegaTag1
+        boolean useMegaTag2 = useMt2Supplier.getAsBoolean() && Robot.robotIsTeleop(); // set to false to use MegaTag1
         doRejectUpdate = false;
+
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
 
         if (aprilTagAllowed) {
             if (useMegaTag2 == false) {
-                LimelightHelpers.PoseEstimate mt1 = LimelightHelpers
-                        .getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
+                LimelightHelpers.PoseEstimate mt1;
+                if (alliance == Alliance.Blue)
+                    mt1 = LimelightHelpers
+                            .getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
+                else {
+                    mt1 = LimelightHelpers
+                            .getBotPoseEstimate_wpiRed(Constants.FRONT_LIMELIGHT);
+                }
+                if (mt1 == null) {
 
+                    doRejectUpdate = true;
+                    return;
+                }
+                ;
                 if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
                     if (mt1.rawFiducials[0].ambiguity > .7) {
                         doRejectUpdate = true;
@@ -153,16 +173,22 @@ public class Vision extends SubsystemBase {
                 }
 
                 if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0, 2.0, Math.PI/6.0));
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0, 2.0, Math.PI / 6.0));
                     driveSubsystem.poseEstimator.addVisionMeasurement(
                             mt1.pose,
                             mt1.timestampSeconds);
                 }
             } else if (useMegaTag2 == true) {
                 LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
-                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-                LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
-                        .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees() + (alliance == Alliance.Red ? 180.0 : 0.0), 0, 0, 0, 0, 0);
+                LimelightHelpers.PoseEstimate mt2;
+                if (alliance == Alliance.Blue)
+                    mt2 = LimelightHelpers
+                            .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
+                else {
+                    mt2 = LimelightHelpers
+                            .getBotPoseEstimate_wpiRed_MegaTag2(Constants.FRONT_LIMELIGHT);
+                }
 
                 if (mt2 == null) {
                     doRejectUpdate = true;
@@ -195,7 +221,7 @@ public class Vision extends SubsystemBase {
         isCoralSupplier = coralMode;
     }
 
-    public void addMt2Supplier(BooleanSupplier mt2Supplier){
+    public void addMt2Supplier(BooleanSupplier mt2Supplier) {
         useMt2Supplier = mt2Supplier;
     }
 

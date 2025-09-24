@@ -370,7 +370,7 @@ public class DriveSubsystem extends SubsystemBase {
 							doRejectUpdate = true;
 						}
 					}
-					if (mt1.tagCount == 0) {
+					if (mt1 != null && mt1.tagCount == 0) {
 						doRejectUpdate = true;
 					}
 

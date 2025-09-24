@@ -322,11 +322,12 @@ public class DriveSubsystem extends SubsystemBase {
                                         * Math.PI / 180)),
                 config,
                 () -> {
-                    Optional<Alliance> alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
                     return false;
+                    // Optional<Alliance> alliance = DriverStation.getAlliance();
+                    // if (alliance.isPresent()) {
+                    //     return alliance.get() == DriverStation.Alliance.Red;
+                    // }
+                    // return false;
                 },
                 this);
     }
@@ -464,7 +465,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command fineDrivetoPole(Poles pole) {
-        return fineDriveToPole(pole, -0.07);
+        return fineDriveToPole(pole, -0.08);
     }
 
     public Command fineDriveToPole(Poles pole, double offset) {

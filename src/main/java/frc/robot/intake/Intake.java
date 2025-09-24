@@ -31,7 +31,7 @@ public abstract class Intake extends SubsystemBase {
     public abstract void stopIntake();
 
     public abstract boolean detectingCoral1();
-    
+
     public abstract boolean detectingCoral2();
 
     private double targetSpeed = 0;
@@ -52,7 +52,7 @@ public abstract class Intake extends SubsystemBase {
         tab.addDouble("Target Speed", this::getTargetSpeed);
         tab.addDouble("Output voltage", this::getOutputVoltage);
         tab.addDouble("Output current", this::getOutputCurrent);
-        
+
         tab.addBoolean("TOF 1", this::detectingCoral1);
         tab.addBoolean("TOF 2", this::detectingCoral2);
 
@@ -119,6 +119,13 @@ public abstract class Intake extends SubsystemBase {
         return isPosition;
     }
 
+    public Command backupCoralCommand() {
+        return runEnd(() -> setPower(-0.1),
+                () -> setPower(0.0)).onlyWhile(
+                        () -> getCoralState() == CoralStates.OUTWARD ||
+                                getCoralState() == CoralStates.SAFE);
+    }
+
     public Command homeCoralCommand() {
         return new SequentialCommandGroup(
                 setPowerCmd(0.1)
@@ -134,7 +141,7 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command reverseOuttakeCommand() {
-        return setPowerCmd(-0.4)
+        return setPowerCmd(-0.3)
                 .withDeadline(Commands.waitSeconds(1));
     }
 

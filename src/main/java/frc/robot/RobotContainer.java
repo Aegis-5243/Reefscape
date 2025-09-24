@@ -121,6 +121,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ElevatorL2Algae", setScoringPosition(ScoringPositions.L2Algae));
         NamedCommands.registerCommand("ElevatorL3Algae", setScoringPosition(ScoringPositions.L3Algae));
         NamedCommands.registerCommand("ElevatorLoading", setScoringPosition(ScoringPositions.LoadingPosition));
+        NamedCommands.registerCommand("BackupCoral", intake.backupCoralCommand());
         NamedCommands.registerCommand("RemoveAlgaeWithArm", removeAlgaeWithArmCommand());
         NamedCommands.registerCommand("Intake", new HomeCoral(intake));
         NamedCommands.registerCommand("HomeCoral", new HomeCoral(intake));
@@ -181,8 +182,10 @@ public class RobotContainer {
     private void configureBindings() {
         driver = new ProConControls();
 
-        Command driveDefaultCommand = driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY, driver::getTurn);
-        // BooleanSupplier useMt2Supplier = () -> !CommandScheduler.getInstance().isScheduled(driveDefaultCommand);
+        Command driveDefaultCommand = driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY,
+                driver::getTurn);
+        // BooleanSupplier useMt2Supplier = () ->
+        // !CommandScheduler.getInstance().isScheduled(driveDefaultCommand);
 
         // vision.addMt2Supplier(useMt2Supplier);
 
@@ -204,14 +207,15 @@ public class RobotContainer {
                 new ConditionalCommand(
                         new ConditionalCommand(
                                 new ConditionalCommand(
-                                    intake.setPowerCmd(0.3),
-                                intake.setPowerCmd(-0.3),
-                                () -> currentPosition != ScoringPositions.L1Coral),
+                                        intake.setPowerCmd(0.3),
+                                        intake.setPowerCmd(-0.3),
+                                        () -> currentPosition != ScoringPositions.L1Coral),
                                 Commands.none(),
                                 () -> currentPosition.getType() != ScoringPositions.Type.Algae),
                         removeAlgaeCommand(),
                         isCoralSupplier).withName("Outtaking right now"));
-        // driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2, Rotation2d.fromDegrees(-60))));
+        // driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2,
+        // Rotation2d.fromDegrees(-60))));
         Trigger odoTrigger = driver.resetOdo();
         vision.addMt2Supplier(() -> !odoTrigger.getAsBoolean());
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToPose(new
@@ -253,11 +257,17 @@ public class RobotContainer {
                     new HomeCoral(intake, true));
         } else if (position == ScoringPositions.L4Coral) {
             // result = Commands.none();
-            result = driveSubsystem.fineDriveToClosestPole(-0.07);
-            /* TODO: implement after arm is fixed */
+            result = new SequentialCommandGroup(
+                    new ParallelCommandGroup(
+                            driveSubsystem.fineDriveToClosestPole(0.15)),
+                    Commands.waitUntil(() -> currentPosition == position),
+                    intake.backupCoralCommand(),
+                    driveSubsystem.fineDriveToClosestPole(-0.1),
+                    intake.outtakeCommand());
+
         } else if (position == ScoringPositions.L1Coral) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(16)),
+                    driveSubsystem.fineDriveToClosestPole(Units.inchesToMeters(12)),
                     Commands.waitUntil(() -> currentPosition == position),
                     intake.reverseOuttakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Coral) {
@@ -267,7 +277,7 @@ public class RobotContainer {
                     intake.outtakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Algae) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(),
+                    driveSubsystem.fineDriveToClosestPole(-0.07),
                     Commands.waitUntil(() -> currentPosition == position),
                     removeAlgaeCommand()
                             .alongWith(Commands.runOnce(() -> arm.setAngle(100))) // TODO: make sure the bot doesn't
@@ -464,15 +474,15 @@ public class RobotContainer {
     }
 
     /**
-	 * Use this to pass the autonomous command to the main {@link Robot} class.
-	 *
-	 * @return the command to run in autonomous
-	 */
-	public Command getAutonomousCommand() {
-		// An example command will be run in autonomous
-		// Command auton = m_chooser.getSelected();
-		// if (auton == null) auton = Autos.moveForward(5, m_driveSubsystem);
-		return autoChooser.getSelected();
-	}
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An example command will be run in autonomous
+        // Command auton = m_chooser.getSelected();
+        // if (auton == null) auton = Autos.moveForward(5, m_driveSubsystem);
+        return autoChooser.getSelected();
+    }
 
 }
