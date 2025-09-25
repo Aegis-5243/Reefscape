@@ -207,14 +207,14 @@ public class RobotContainer {
 
         new Trigger(driver::getOuttake).whileTrue(
                 new ConditionalCommand(
-                    intake.reverseOuttakeCommand(),
-                    new ConditionalCommand(
+                        intake.reverseOuttakeCommand(),
                         new ConditionalCommand(
-                                intake.outtakeCommand(),
-                                Commands.none(),
-                                () -> currentPosition.getType() != ScoringPositions.Type.Algae),
-                        removeAlgaeCommand(),
-                        isCoralSupplier),
+                                new ConditionalCommand(
+                                        intake.outtakeCommand(),
+                                        Commands.none(),
+                                        () -> currentPosition == null || currentPosition.getType() != ScoringPositions.Type.Algae),
+                                removeAlgaeCommand(),
+                                isCoralSupplier),
                         () -> currentPosition == ScoringPositions.L1Coral).withName("Outtaking right now"));
         // driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2,
         // Rotation2d.fromDegrees(-60))));
