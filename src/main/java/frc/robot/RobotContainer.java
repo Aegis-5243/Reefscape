@@ -37,6 +37,7 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
 import frc.robot.controllers.DriverControls;
 import frc.robot.controllers.ProConControls;
+import frc.robot.controllers.XBoxControls;
 import frc.robot.intake.HomeCoral;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeHw;
@@ -180,7 +181,8 @@ public class RobotContainer {
     boolean pluh = false;
 
     private void configureBindings() {
-        driver = new ProConControls();
+        // driver = new ProConControls();
+        driver = new XBoxControls();
 
         Command driveDefaultCommand = driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY,
                 driver::getTurn);
@@ -205,15 +207,15 @@ public class RobotContainer {
 
         new Trigger(driver::getOuttake).whileTrue(
                 new ConditionalCommand(
+                    intake.reverseOuttakeCommand(),
+                    new ConditionalCommand(
                         new ConditionalCommand(
-                                new ConditionalCommand(
-                                        intake.setPowerCmd(0.3),
-                                        intake.setPowerCmd(-0.3),
-                                        () -> currentPosition != ScoringPositions.L1Coral),
+                                intake.outtakeCommand(),
                                 Commands.none(),
                                 () -> currentPosition.getType() != ScoringPositions.Type.Algae),
                         removeAlgaeCommand(),
-                        isCoralSupplier).withName("Outtaking right now"));
+                        isCoralSupplier),
+                        () -> currentPosition == ScoringPositions.L1Coral).withName("Outtaking right now"));
         // driver.resetOdo().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(5.7, 6.2,
         // Rotation2d.fromDegrees(-60))));
         Trigger odoTrigger = driver.resetOdo();

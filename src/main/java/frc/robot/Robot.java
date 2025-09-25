@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.controllers.ProConControls;
+import frc.robot.controllers.XBoxControls;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -52,6 +53,8 @@ public class Robot extends TimedRobot {
             }
     
             SmartDashboard.putData(CommandScheduler.getInstance());
+
+            
     
             robotContainer = new RobotContainer();
         }
@@ -124,13 +127,19 @@ public class Robot extends TimedRobot {
         robotContainer.reset();
     }
 
-    Debouncer xBoxFullStopDebouncer = new Debouncer(0.5, DebounceType.kRising);
+    Debouncer xBoxFullStopDebouncer = new Debouncer(0.25, DebounceType.kRising);
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
         if (robotContainer.driver instanceof ProConControls) {
             ProConControls driv = (ProConControls) robotContainer.driver;
+            if (!driv.controller.isConnected() || xBoxFullStopDebouncer.calculate(driv.getStopTeleop())) {
+                // Apparently teleOp can't be cancelled so we'll just call the reset command
+                robotContainer.reset();
+            }
+        } else if (robotContainer.driver instanceof XBoxControls) {
+            XBoxControls driv = (XBoxControls) robotContainer.driver;
             if (!driv.controller.isConnected() || xBoxFullStopDebouncer.calculate(driv.getStopTeleop())) {
                 // Apparently teleOp can't be cancelled so we'll just call the reset command
                 robotContainer.reset();
