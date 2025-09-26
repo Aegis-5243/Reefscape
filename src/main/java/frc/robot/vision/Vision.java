@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -38,6 +39,8 @@ public class Vision extends SubsystemBase {
     private BooleanSupplier isCoralSupplier;
     private BooleanSupplier useMt2Supplier = () -> false;
     private boolean aprilTagAllowed;
+
+    private Supplier<Poles> forceTargetSupplier;
 
     private boolean doRejectUpdate = false;
 
@@ -223,6 +226,10 @@ public class Vision extends SubsystemBase {
         isCoralSupplier = coralMode;
     }
 
+    public void addForcePoleSupplier(Supplier<Poles> forceTargetSupplier) {
+        this.forceTargetSupplier = forceTargetSupplier;
+    }
+
     public void addMt2Supplier(BooleanSupplier mt2Supplier) {
         useMt2Supplier = mt2Supplier;
     }
@@ -291,6 +298,73 @@ public class Vision extends SubsystemBase {
     }
 
     public Pose2d getClosestPole() {
+        boolean allowTargetForcing = false;
+        
+        if (allowTargetForcing && forceTargetSupplier != null && forceTargetSupplier.get() != null) {
+            if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
+                return bluePoses.getOrDefault(forceTargetSupplier.get(), closestPole);
+            } else {
+                Algae newPole;
+
+                // holy switch-case statement
+                switch (forceTargetSupplier.get()) {
+                    case PoleA:
+                        newPole = Algae.AlgaeAB;
+                        break;
+                    
+                    case PoleB:
+                        newPole = Algae.AlgaeAB;
+                        break;
+                    
+                    case PoleC:
+                        newPole = Algae.AlgaeCD;
+                        break;
+                    
+                    case PoleD:
+                        newPole = Algae.AlgaeCD;
+                        break;
+                    
+                    case PoleE:
+                        newPole = Algae.AlgaeEF;
+                        break;
+                    
+                    case PoleF:
+                        newPole = Algae.AlgaeEF;
+                        break;
+
+                    case PoleG:
+                        newPole = Algae.AlgaeGH;
+                        break;
+
+                    case PoleH:
+                        newPole = Algae.AlgaeGH;
+                        break;
+                    
+                    case PoleI:
+                        newPole = Algae.AlgaeIJ;
+                        break;
+                    
+                    case PoleJ:
+                        newPole = Algae.AlgaeIJ;
+                        break;
+                    
+                    case PoleK:
+                        newPole = Algae.AlgaeKL;
+                        break;
+
+                    case PoleL:
+                        newPole = Algae.AlgaeKL;
+                        break;
+
+                    default:
+                        newPole = null;
+                        break;
+                }
+
+                return blueAlgae.getOrDefault(newPole, closestPole);
+            }
+        }
+
         return closestPole;
     }
 

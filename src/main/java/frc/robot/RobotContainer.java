@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmHw;
+import frc.robot.controllers.ButtonPadControls;
 import frc.robot.controllers.DriverControls;
 import frc.robot.controllers.ProConControls;
 import frc.robot.controllers.XBoxControls;
@@ -235,6 +236,7 @@ public class RobotContainer {
         createMacroWithPosition(new Trigger(driver::getL3AlgaeCommand), ScoringPositions.L3Algae);
         createMacroWithPosition(new Trigger(driver::getLoadingPositionCommand), ScoringPositions.LoadingPosition);
 
+        vision.addForcePoleSupplier(new ButtonPadControls().getPoleSupplier());
     }
 
     private void createMacroWithPosition(Trigger trigger, ScoringPositions position) {
