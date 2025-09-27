@@ -228,7 +228,7 @@ public class RobotContainer {
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
         driver.macroIntakeTrigger().whileTrue(intake.setPowerCmd(-0.1));
 
-        driver.autoTestTrigger().whileTrue((new PathPlannerAuto("Newer Aeuto")));
+        // driver.autoTestTrigger().whileTrue();
 
         createMacroWithPosition(new Trigger(driver::getL1Command), ScoringPositions.L1Coral);
         createMacroWithPosition(new Trigger(driver::getL2Command), ScoringPositions.L2Coral);

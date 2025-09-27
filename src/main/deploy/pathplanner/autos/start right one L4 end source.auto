@@ -40,13 +40,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Start To Coral Station"
+                        "pathName": "Start to reef right"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "FineDriveI"
+                        "name": "FineDriveE"
                       }
                     }
                   ]
@@ -87,7 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral to Source"
+                  "pathName": "Right back reef to source"
                 }
               }
             ]
