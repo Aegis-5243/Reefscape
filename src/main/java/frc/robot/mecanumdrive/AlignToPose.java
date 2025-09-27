@@ -95,7 +95,7 @@ public class AlignToPose extends Command {
         // calculate if we are at goal
         // error was 0.8" X, 1.1" Y, or 1.36" total
         double distError = Math.sqrt((xError * xError) + (yError * yError));
-        if (Math.abs(rotError) < 2 && distError < maxErrorLimit) {
+        if (Math.abs(rotError) < 5.0 && distError < maxErrorLimit) {
             counts++;
         } else {
             // either decrement the count or make it zero

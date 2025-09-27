@@ -106,6 +106,7 @@ public class Vision extends SubsystemBase {
         // });
 
         // CameraServer.startAutomaticCapture(1);
+        initCamera();
     }
 
     @Override
@@ -397,7 +398,7 @@ public class Vision extends SubsystemBase {
         return bluePoses.get(pole);
     }
 
-    public void initCameras() {
+    public void initCamera() {
 
         CameraServer.startAutomaticCapture(0);
 

@@ -37,9 +37,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "FineDriveH"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FineDriveH"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              }
+            ]
           }
         },
         {
