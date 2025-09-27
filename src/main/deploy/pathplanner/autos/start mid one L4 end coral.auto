@@ -37,19 +37,19 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "FineDriveH"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FineDriveH"
                 }
               }
             ]
