@@ -109,7 +109,7 @@ public final class Constants {
     /* Drive PID constants (meters)*/
     public static final double DRIVE_kP = 5.0;
     public static final double DRIVE_kI = 0;
-    public static final double DRIVE_kD = 1.0;
+    public static final double DRIVE_kD = 0.8;
 
     /* Drive rotation PID constants (degrees) */
     public static final double DRIVE_ROTATE_kP = 0.08;

@@ -487,7 +487,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Command fineDriveToClosestPoleDeferred(double offset) {
         Pose2d polePosition = vision.getClosestPole();
-        return driveToPose(polePosition.transformBy(new Transform2d(-0.2 - offset, 0, Rotation2d.kZero)), 0.03)
+        return driveToPose(polePosition.transformBy(new Transform2d(-0.1 - offset, 0, Rotation2d.kZero)), 0.03)
                 .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
