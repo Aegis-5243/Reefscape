@@ -320,7 +320,7 @@ public class Vision extends SubsystemBase {
                 // holy switch-case statement
                 // gone
 
-                closestPole = getPoles(false).get(newPole);
+                closestPole = blueAlgae.get(newPole);
             }
         } else if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
             // find closest pole

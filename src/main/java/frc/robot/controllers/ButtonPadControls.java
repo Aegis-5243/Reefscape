@@ -32,7 +32,7 @@ public class ButtonPadControls {
      */
     public BooleanSupplier getDirSupplier() {
         return () -> {
-            return controller.getLeftBumperButton();
+            return !controller.getLeftBumperButton();
         };
     }
 
@@ -47,7 +47,7 @@ public class ButtonPadControls {
             return Sides.KL;
         } else if (controller.getBButton()) {
             return Sides.AB;
-        } else if (controller.getRightTriggerAxis() < 0.75) {
+        } else if (controller.getRightTriggerAxis() > 0.75) {
             return Sides.CD;
         }
 

@@ -51,6 +51,7 @@ public abstract class Elevator extends SubsystemBase {
         tab.add("Set Position Command 30 inches", setPositionCmd(30));
         tab.add("Set Position Command 40 inches", setPositionCmd(40));
         tab.add("Set Position Command 50 inches", setPositionCmd(50));
+        tab.add("Set encoder 0", runOnce(() -> this.setEncoderPosition(0)).withName("Reset elev encoder"));
 
         positions = new HashMap<>();
 
