@@ -70,6 +70,7 @@ public class RobotContainer {
     Intake intake;
 
     DriverControls driver;
+    ButtonPadControls buttonPad;
 
     SendableChooser<Command> autoChooser;
 
@@ -184,6 +185,7 @@ public class RobotContainer {
     private void configureBindings() {
         // driver = new ProConControls();
         driver = new XBoxControls();
+        buttonPad = new ButtonPadControls();
 
         Command driveDefaultCommand = driveSubsystem.driveCommandRobotCentric(driver::getDriveX, driver::getDriveY,
                 driver::getTurn);
@@ -236,7 +238,8 @@ public class RobotContainer {
         createMacroWithPosition(new Trigger(driver::getL3AlgaeCommand), ScoringPositions.L3Algae);
         createMacroWithPosition(new Trigger(driver::getLoadingPositionCommand), ScoringPositions.LoadingPosition);
 
-        vision.addForcePoleSupplier(new ButtonPadControls().getPoleSupplier());
+        vision.addForcePoleSupplier(buttonPad.getSideSupplier());
+        vision.addForcePoleDirSupplier(buttonPad.getDirSupplier());
     }
 
     private void createMacroWithPosition(Trigger trigger, ScoringPositions position) {

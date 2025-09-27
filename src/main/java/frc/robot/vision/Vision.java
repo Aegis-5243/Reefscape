@@ -40,7 +40,8 @@ public class Vision extends SubsystemBase {
     private BooleanSupplier useMt2Supplier = () -> false;
     private boolean aprilTagAllowed;
 
-    private Supplier<Poles> forceTargetSupplier;
+    private Supplier<Sides> forceTargetSupplier;
+    private BooleanSupplier forceTargetDirSupplier;
 
     private boolean doRejectUpdate = false;
 
@@ -104,7 +105,6 @@ public class Vision extends SubsystemBase {
         // }
         // });
 
-        CameraServer.startAutomaticCapture(0);
         // CameraServer.startAutomaticCapture(1);
     }
 
@@ -127,6 +127,37 @@ public class Vision extends SubsystemBase {
     // executorService.shutdownNow(); // Ensure the thread is stopped when the
     // subsystem is closed
     // }
+
+    public enum Sides {
+        AB(Poles.PoleA, Poles.PoleB, Algae.AlgaeAB), CD(Poles.PoleC, Poles.PoleD, Algae.AlgaeCD), EF(Poles.PoleE,
+                Poles.PoleF, Algae.AlgaeEF), GH(Poles.PoleG, Poles.PoleH, Algae.AlgaeGH), IJ(Poles.PoleI, Poles.PoleJ,
+                        Algae.AlgaeIJ), KL(Poles.PoleK, Poles.PoleL, Algae.AlgaeKL);
+
+        private Poles left;
+
+        public Poles getLeft() {
+            return left;
+        }
+
+        private Poles right;
+
+        public Poles getRight() {
+            return right;
+        }
+
+        private Algae algae;
+
+        public Algae getAlgae() {
+            return algae;
+        }
+
+        private Sides(Poles left, Poles right, Algae algae) {
+            this.left = left;
+            this.right = right;
+            this.algae = algae;
+        }
+
+    }
 
     public enum Poles {
         PoleA, PoleB, PoleC, PoleD, PoleE, PoleF, PoleG, PoleH, PoleI, PoleJ, PoleK, PoleL
@@ -185,7 +216,9 @@ public class Vision extends SubsystemBase {
                 }
             } else if (useMegaTag2 == true) {
                 LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
-                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees() + (alliance == Alliance.Red ? 180.0 : 0.0), 0, 0, 0, 0, 0);
+                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees()
+                                + (alliance == Alliance.Red ? 180.0 : 0.0),
+                        0, 0, 0, 0, 0);
                 LimelightHelpers.PoseEstimate mt2;
                 if (alliance == Alliance.Blue)
                     mt2 = LimelightHelpers
@@ -226,8 +259,12 @@ public class Vision extends SubsystemBase {
         isCoralSupplier = coralMode;
     }
 
-    public void addForcePoleSupplier(Supplier<Poles> forceTargetSupplier) {
+    public void addForcePoleSupplier(Supplier<Sides> forceTargetSupplier) {
         this.forceTargetSupplier = forceTargetSupplier;
+    }
+
+    public void addForcePoleDirSupplier(BooleanSupplier forcePoleDirSupplier) {
+        this.forceTargetDirSupplier = forcePoleDirSupplier;
     }
 
     public void addMt2Supplier(BooleanSupplier mt2Supplier) {
@@ -243,7 +280,49 @@ public class Vision extends SubsystemBase {
     private Pose2d coralSupplyPoint = new Pose2d();
 
     private void calcClosestPole() {
-        if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
+        
+        boolean allowTargetForcing = true;
+
+        if (allowTargetForcing && forceTargetSupplier != null && forceTargetSupplier.get() != null && forceTargetDirSupplier != null) {
+            if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
+                Sides side = forceTargetSupplier.get();
+                boolean isLeft = forceTargetDirSupplier.getAsBoolean();
+                Poles pole = isLeft ? side.getLeft() : side.getRight();
+                if (pole != null) closestPole = getPoles(false).get(pole);
+            } else {
+                Algae newPole;
+
+                switch (forceTargetSupplier.get()) {
+                    case AB:
+                        newPole = Algae.AlgaeAB;
+                        break;
+                    case CD:
+                        newPole = Algae.AlgaeCD;
+                        break;
+                    case EF:
+                        newPole = Algae.AlgaeEF;
+                        break;
+                    case GH:
+                        newPole = Algae.AlgaeGH;
+                        break;
+                    case IJ:
+                        newPole = Algae.AlgaeIJ;
+                        break;
+                    case KL:
+                        newPole = Algae.AlgaeKL;
+                        break;
+                    
+                    default:
+                        newPole = null;
+                        break;
+                }
+
+                // holy switch-case statement
+                // gone
+
+                closestPole = getPoles(false).get(newPole);
+            }
+        } else if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
             // find closest pole
             var poles = getPoles(driveSubsystem.isRedAlliance());
             var closePole = Poles.PoleA;
@@ -298,72 +377,6 @@ public class Vision extends SubsystemBase {
     }
 
     public Pose2d getClosestPole() {
-        boolean allowTargetForcing = false;
-        
-        if (allowTargetForcing && forceTargetSupplier != null && forceTargetSupplier.get() != null) {
-            if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
-                return bluePoses.getOrDefault(forceTargetSupplier.get(), closestPole);
-            } else {
-                Algae newPole;
-
-                // holy switch-case statement
-                switch (forceTargetSupplier.get()) {
-                    case PoleA:
-                        newPole = Algae.AlgaeAB;
-                        break;
-                    
-                    case PoleB:
-                        newPole = Algae.AlgaeAB;
-                        break;
-                    
-                    case PoleC:
-                        newPole = Algae.AlgaeCD;
-                        break;
-                    
-                    case PoleD:
-                        newPole = Algae.AlgaeCD;
-                        break;
-                    
-                    case PoleE:
-                        newPole = Algae.AlgaeEF;
-                        break;
-                    
-                    case PoleF:
-                        newPole = Algae.AlgaeEF;
-                        break;
-
-                    case PoleG:
-                        newPole = Algae.AlgaeGH;
-                        break;
-
-                    case PoleH:
-                        newPole = Algae.AlgaeGH;
-                        break;
-                    
-                    case PoleI:
-                        newPole = Algae.AlgaeIJ;
-                        break;
-                    
-                    case PoleJ:
-                        newPole = Algae.AlgaeIJ;
-                        break;
-                    
-                    case PoleK:
-                        newPole = Algae.AlgaeKL;
-                        break;
-
-                    case PoleL:
-                        newPole = Algae.AlgaeKL;
-                        break;
-
-                    default:
-                        newPole = null;
-                        break;
-                }
-
-                return blueAlgae.getOrDefault(newPole, closestPole);
-            }
-        }
 
         return closestPole;
     }
@@ -382,6 +395,12 @@ public class Vision extends SubsystemBase {
 
     public Pose2d getPoleLocation(Poles pole) {
         return bluePoses.get(pole);
+    }
+
+    public void initCameras() {
+
+        CameraServer.startAutomaticCapture(0);
+
     }
 
 }
