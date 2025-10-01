@@ -30,7 +30,7 @@ public class AlignToPose extends Command {
     DoubleSubscriber rkD = UtilFunctions.getSettingSub("Align/rkD", Constants.DRIVE_ROTATE_kD);
 
     public AlignToPose(DriveSubsystem swerve, Pose2d pose) {
-        this(swerve, pose, 10, 1.2);
+        this(swerve, pose, 6, 1.2);
     }
 
     public AlignToPose(DriveSubsystem swerve, Pose2d pose, int endCounts) {

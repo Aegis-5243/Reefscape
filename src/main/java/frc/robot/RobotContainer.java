@@ -244,7 +244,7 @@ public class RobotContainer {
 
     private void createMacroWithPosition(Trigger trigger, ScoringPositions position) {
         trigger.onTrue(setScoringPosition(position));
-        trigger.debounce(0.3, DebounceType.kRising).whileTrue(macroWithPosition(position));
+        trigger.debounce(0.2, DebounceType.kRising).whileTrue(macroWithPosition(position));
     }
 
     private Command macroWithPosition(ScoringPositions position) {
@@ -358,20 +358,26 @@ public class RobotContainer {
         // https://github.com/FRC2832/Robot2832-2025Njord/blob/a11e334a0eab59214d62ff34fd51ab5178f034c5/src/main/java/frc/robot/RobotContainer.java#L405
         Zones currZone = getCurrentZone();
         Zones destZone = getZone(elevator.getSetPosition(position), arm.getSetPosition(position));
-
+        
+        Command result = null;
+        
         if (isFirst) {
+            if ((destZone != Zones.ZoneA && destZone != Zones.ZoneD) && currentPosition == position) {
+                result = Commands.none();
+                return result;
+            }
             isTargetZone = true;
             targetZone = destZone;
             currentPosition = null;
         }
 
-        Command result = null;
 
         if (currZone == Zones.ZoneE || currZone == Zones.ZoneF) { // E or F to C initially since E and F cannot
             result = arm.setAngleCmd(65)
                     .until(() -> arm.getAngle() > 60)
                     .andThen(setScoringPosition(position, false));
         } else if (currZone == destZone) { // Already in the correct zone, no potential collisions
+            
             result = new ParallelCommandGroup(arm.setAngleCmd(position),
                     elevator.setPositionCmd(position));
         } else if (currZone == Zones.ZoneD) { // D to C with elevator then repeat

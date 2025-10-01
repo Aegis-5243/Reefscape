@@ -1,5 +1,7 @@
 package frc.robot.mecanumdrive;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -34,6 +36,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -424,6 +427,26 @@ public class DriveSubsystem extends SubsystemBase {
         drive(speeds);
     }
 
+    public Command driveToPoseLoose(Pose2d pose) {
+        return driveToPoseLoose(pose, 12.0, 10.0);
+    }
+
+    public Command driveToPoseLoose(Pose2d pose, double distanceTolerance, double degreeTolerance) {
+        return driveToPose(pose).until(() -> {
+            Pose2d currentPose = getPose();
+
+            Transform2d trans = pose.minus(currentPose);
+            double degrees = Math.abs(trans.getRotation().getDegrees());
+            
+            double distX = trans.getMeasureX().in(Inches);
+            double distY = trans.getMeasureY().in(Inches);
+
+            double dist = distX * distX + distY * distY;
+
+            return (dist < distanceTolerance * distanceTolerance) && degrees < degreeTolerance;
+        });
+    }
+
     public Command driveToPose(Pose2d pose) {
         return driveToPose(pose, 0);
     }
@@ -481,13 +504,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Command fineDriveToPoleDeferred(Poles pole, double offset) {
         Pose2d polePosition = vision.getPoleLocation(pole);
-        return driveToPose(polePosition.transformBy(new Transform2d(-0.2 - offset, 0, Rotation2d.kZero)), 0.03)
+        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-0.2 - offset, 0, Rotation2d.kZero)))
                 .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
     private Command fineDriveToClosestPoleDeferred(double offset) {
         Pose2d polePosition = vision.getClosestPole();
-        return driveToPose(polePosition.transformBy(new Transform2d(-0.1 - offset, 0, Rotation2d.kZero)), 0.03)
+        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-0.1 - offset, 0, Rotation2d.kZero)))
                 .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
