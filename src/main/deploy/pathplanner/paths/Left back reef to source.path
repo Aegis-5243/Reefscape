@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.392881944444444,
-        "y": 5.744010416666666
+        "x": 5.559503424657534,
+        "y": 5.8280821917808225
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.400607638888888,
-        "y": 7.365190972222222
+        "x": 4.567229119101979,
+        "y": 7.449262747336379
       },
       "isLocked": false,
       "linkedName": "Coral Station 1"
     },
     {
       "anchor": {
-        "x": 1.1774002951865266,
-        "y": 6.932041852222474
+        "x": 1.4424657534246574,
+        "y": 7.165368150684932
       },
       "prevControl": {
-        "x": 2.173453814298663,
-        "y": 5.509530004294008
+        "x": 2.8248287671232877,
+        "y": 6.083518835616438
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,8 +34,8 @@
       "rotationDegrees": -14.999999999999998
     },
     {
-      "waypointRelativePos": 0.7074148296593186,
-      "rotationDegrees": -55.0
+      "waypointRelativePos": 0.6092184368737475,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],

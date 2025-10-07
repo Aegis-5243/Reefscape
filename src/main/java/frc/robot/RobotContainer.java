@@ -215,7 +215,8 @@ public class RobotContainer {
                                 new ConditionalCommand(
                                         intake.outtakeCommand(),
                                         Commands.none(),
-                                        () -> currentPosition == null || currentPosition.getType() != ScoringPositions.Type.Algae),
+                                        () -> currentPosition == null
+                                                || currentPosition.getType() != ScoringPositions.Type.Algae),
                                 removeAlgaeCommand(),
                                 isCoralSupplier),
                         () -> currentPosition == ScoringPositions.L1Coral).withName("Outtaking right now"));
@@ -283,11 +284,10 @@ public class RobotContainer {
                     intake.outtakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Algae) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(-0.07),
+                    driveSubsystem.fineDriveToClosestPole(-0.015),
                     Commands.waitUntil(() -> currentPosition == position),
                     removeAlgaeCommand()
-                            .alongWith(Commands.runOnce(() -> arm.setAngle(100))) // TODO: make sure the bot doesn't
-                                                                                  // implode
+                            .alongWith(driveSubsystem.fineDriveToClosestPole(-0.07))
                             .withDeadline(Commands.waitSeconds(3)));
         } else {
             result = Commands.none();
@@ -358,9 +358,9 @@ public class RobotContainer {
         // https://github.com/FRC2832/Robot2832-2025Njord/blob/a11e334a0eab59214d62ff34fd51ab5178f034c5/src/main/java/frc/robot/RobotContainer.java#L405
         Zones currZone = getCurrentZone();
         Zones destZone = getZone(elevator.getSetPosition(position), arm.getSetPosition(position));
-        
+
         Command result = null;
-        
+
         if (isFirst) {
             if ((destZone != Zones.ZoneA && destZone != Zones.ZoneD) && currentPosition == position) {
                 result = Commands.none();
@@ -371,13 +371,11 @@ public class RobotContainer {
             currentPosition = null;
         }
 
-
         if (currZone == Zones.ZoneE || currZone == Zones.ZoneF) { // E or F to C initially since E and F cannot
             result = arm.setAngleCmd(65)
                     .until(() -> arm.getAngle() > 60)
                     .andThen(setScoringPosition(position, false));
         } else if (currZone == destZone) { // Already in the correct zone, no potential collisions
-            
             result = new ParallelCommandGroup(arm.setAngleCmd(position),
                     elevator.setPositionCmd(position));
         } else if (currZone == Zones.ZoneD) { // D to C with elevator then repeat
@@ -462,8 +460,9 @@ public class RobotContainer {
                 new ConditionalCommand( // Only use rollers for algae when no coral is in the arm
                         Commands.none(),
                         intake.setPowerCmd(-0.3),
-                        () -> intake.hasCoral()),
-                elevator.setPowerCommand(0.1));
+                        () -> intake.hasCoral())
+                // elevator.setPowerCommand(0.1)
+                );
     }
 
     /** For auton, assumes arm is under algae (already driven forward) */

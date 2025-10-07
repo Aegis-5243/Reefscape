@@ -113,8 +113,8 @@ public class DriveSubsystem extends SubsystemBase {
                                 .velocityConversionFactor(
                                         Constants.MECANUM_VELOCITY_CONVERSION_FACTOR))
                 .idleMode(IdleMode.kBrake) 
-                .openLoopRampRate(.5)
-                .closedLoopRampRate(.5);
+                .openLoopRampRate(.2)
+                .closedLoopRampRate(.2);
         // Match inversions on motor and alternate encoder and apply global config
         fl.configure(new SparkMaxConfig()
                 .apply(new AlternateEncoderConfig().inverted(false))
@@ -163,9 +163,9 @@ public class DriveSubsystem extends SubsystemBase {
 
         mecanum = new MecanumDrive(fl, bl, fr, br);
 
-        kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.283),
-                new Translation2d(0.259, -0.283),
-                new Translation2d(-0.259, 0.283), new Translation2d(-0.259, -0.283));
+        kinematics = new MecanumDriveKinematics(new Translation2d(0.259, 0.282),
+                new Translation2d(0.259, -0.282),
+                new Translation2d(-0.259, 0.282), new Translation2d(-0.259, -0.282));
 
         poseEstimator = new MecanumDrivePoseEstimator(kinematics, getRawHeading(),
                 new MecanumDriveWheelPositions(),
@@ -222,37 +222,36 @@ public class DriveSubsystem extends SubsystemBase {
         // (future reference) Can be replaced with SmartDashboard.putData and manually
         // added to elastic
         // https://frc-elastic.gitbook.io/docs/additional-features-and-references/widgets-list-and-properties-reference
-        Shuffleboard.getTab("Teleoperated").add("Mecanum Drive", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("SwerveDrive");
+        // Shuffleboard.getTab("Teleoperated").add("Mecanum Drive", new Sendable() {
+        //     @Override
+        //     public void initSendable(SendableBuilder builder) {
+        //         builder.setSmartDashboardType("SwerveDrive");
 
-                builder.addDoubleProperty("Front Left Angle",
-                        () -> flEncoder.getVelocity() < 0 ? 180 : 0, null);
-                builder.addDoubleProperty("Front Left Velocity",
-                        () -> Math.abs(flEncoder.getVelocity()), null);
+        //         builder.addDoubleProperty("Front Left Angle",
+        //                 () -> flEncoder.getVelocity() < 0 ? 180 : 0, null);
+        //         builder.addDoubleProperty("Front Left Velocity",
+        //                 () -> Math.abs(flEncoder.getVelocity()), null);
 
-                builder.addDoubleProperty("Front Right Angle",
-                        () -> frEncoder.getVelocity() < 0 ? 180 : 0, null);
-                builder.addDoubleProperty("Front Right Velocity",
-                        () -> Math.abs(frEncoder.getVelocity()), null);
+        //         builder.addDoubleProperty("Front Right Angle",
+        //                 () -> frEncoder.getVelocity() < 0 ? 180 : 0, null);
+        //         builder.addDoubleProperty("Front Right Velocity",
+        //                 () -> Math.abs(frEncoder.getVelocity()), null);
 
-                builder.addDoubleProperty("Back Left Angle",
-                        () -> blEncoder.getVelocity() < 0 ? 180 : 0, null);
-                builder.addDoubleProperty("Back Left Velocity", () -> Math.abs(blEncoder.getVelocity()),
-                        null);
+        //         builder.addDoubleProperty("Back Left Angle",
+        //                 () -> blEncoder.getVelocity() < 0 ? 180 : 0, null);
+        //         builder.addDoubleProperty("Back Left Velocity", () -> Math.abs(blEncoder.getVelocity()),
+        //                 null);
 
-                builder.addDoubleProperty("Back Right Angle",
-                        () -> brEncoder.getVelocity() < 0 ? 180 : 0, null);
-                builder.addDoubleProperty("Back Right Velocity",
-                        () -> Math.abs(brEncoder.getVelocity()), null);
+        //         builder.addDoubleProperty("Back Right Angle",
+        //                 () -> brEncoder.getVelocity() < 0 ? 180 : 0, null);
+        //         builder.addDoubleProperty("Back Right Velocity",
+        //                 () -> Math.abs(brEncoder.getVelocity()), null);
 
-                builder.addDoubleProperty("Robot Angle",
-                        () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond),
-                        null);
-            }
-        })
-                ;
+        //         builder.addDoubleProperty("Robot Angle",
+        //                 () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond),
+        //                 null);
+        //     }
+        // });
         Shuffleboard.getTab("Teleoperated").addDouble("Velocity", () -> getVelocity());
         tab.addDouble("xSpeed", () -> getChassisSpeeds().vxMetersPerSecond);
         tab.addDouble("ySpeed", () -> getChassisSpeeds().vyMetersPerSecond);
@@ -428,7 +427,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command driveToPoseLoose(Pose2d pose) {
-        return driveToPoseLoose(pose, 12.0, 10.0);
+        return driveToPoseLoose(pose, 3.0, 30.0);
     }
 
     public Command driveToPoseLoose(Pose2d pose, double distanceTolerance, double degreeTolerance) {

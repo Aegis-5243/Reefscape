@@ -107,14 +107,14 @@ public final class Constants {
     public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 7.0;
 
     /* Drive PID constants (meters)*/
-    public static final double DRIVE_kP = 5.0;
+    public static final double DRIVE_kP = 4.0;
     public static final double DRIVE_kI = 0;
-    public static final double DRIVE_kD = 0.8;
+    public static final double DRIVE_kD = 1.6;
 
     /* Drive rotation PID constants (degrees) */
-    public static final double DRIVE_ROTATE_kP = 0.08;
+    public static final double DRIVE_ROTATE_kP = 0.12;
     public static final double DRIVE_ROTATE_kI = 0;
-    public static final double DRIVE_ROTATE_kD = 0.009;
+    public static final double DRIVE_ROTATE_kD = 0.012;
 
     public static final double RIO_CONTROL_LOOP = 0.1;
 

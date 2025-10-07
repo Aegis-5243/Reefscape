@@ -108,7 +108,7 @@ public abstract class Intake extends SubsystemBase {
     }
 
     public Command setPowerCmd(double power) {
-        return run(() -> setPower(power)).withName("Intake power " + power);
+        return runEnd(() -> setPower(power), () -> setPower(0)).withName("Intake power " + power);
     }
 
     public Command stopIntakeCommand() {

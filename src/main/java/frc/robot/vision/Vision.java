@@ -45,7 +45,7 @@ public class Vision extends SubsystemBase {
 
     private boolean doRejectUpdate = false;
 
-    private Pose2d mt2pose;
+    private Pose2d mtPose;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // --github copilot
 
@@ -117,10 +117,10 @@ public class Vision extends SubsystemBase {
 
         driveSubsystem.field.getObject("closePole").setPose(closestPole);
 
-        if (mt2pose == null) {
+        if (mtPose == null) {
             driveSubsystem.field.getObject("mt2pose").setPose(new Pose2d(-1000, -1000, Rotation2d.kZero));
         } else {
-            driveSubsystem.field.getObject("mt2est").setPose(mt2pose);
+            driveSubsystem.field.getObject("mt2est").setPose(mtPose);
         }
     }
 
@@ -209,6 +209,8 @@ public class Vision extends SubsystemBase {
                     doRejectUpdate = true;
                 }
 
+                mtPose = mt1.pose;
+
                 if (!doRejectUpdate) {
                     driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0, 2.0, Math.PI / 6.0));
                     driveSubsystem.poseEstimator.addVisionMeasurement(
@@ -234,7 +236,7 @@ public class Vision extends SubsystemBase {
                     return;
                 }
 
-                mt2pose = mt2.pose;
+                mtPose = mt2.pose;
 
                 if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
                                                                    // degrees
@@ -247,7 +249,7 @@ public class Vision extends SubsystemBase {
                     doRejectUpdate = true;
                 }
                 if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 99999999.0));
+                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.0, 1.0, 99999999.0));
                     driveSubsystem.poseEstimator.addVisionMeasurement(
                             mt2.pose,
                             mt2.timestampSeconds);
