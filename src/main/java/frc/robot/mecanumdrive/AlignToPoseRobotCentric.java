@@ -67,6 +67,7 @@ public class AlignToPoseRobotCentric extends Command {
     @Override
     public void initialize() {
         counts = 0;
+        drive.isInAlign = true;
     }
 
     @Override
@@ -119,5 +120,6 @@ public class AlignToPoseRobotCentric extends Command {
     @Override
     public void end(boolean interrupted) {
         drive.drive(noSpeeds);
+        drive.isInAlign = false;
     }
 }

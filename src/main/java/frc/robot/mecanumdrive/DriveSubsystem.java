@@ -1,6 +1,7 @@
 package frc.robot.mecanumdrive;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 import java.util.Set;
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -87,6 +89,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Vision vision;
 
+    public boolean isInAlign;
+    public boolean isInPath;
+
     public DriveSubsystem(Field2d field) {
         this.field = field;
 
@@ -112,9 +117,9 @@ public class DriveSubsystem extends SubsystemBase {
                                         Constants.MECANUM_POSITION_CONVERSION_FACTOR)
                                 .velocityConversionFactor(
                                         Constants.MECANUM_VELOCITY_CONVERSION_FACTOR))
-                .idleMode(IdleMode.kBrake) 
-                .openLoopRampRate(.2)
-                .closedLoopRampRate(.2);
+                .idleMode(IdleMode.kBrake)
+                .openLoopRampRate(.5)
+                .closedLoopRampRate(.5);
         // Match inversions on motor and alternate encoder and apply global config
         fl.configure(new SparkMaxConfig()
                 .apply(new AlternateEncoderConfig().inverted(false))
@@ -157,7 +162,8 @@ public class DriveSubsystem extends SubsystemBase {
         blFeedForward = new SimpleMotorFeedforward(Constants.BL_kS, Constants.BL_kV, Constants.BL_kA);
         brFeedForward = new SimpleMotorFeedforward(Constants.BR_kS, Constants.BR_kV, Constants.BR_kA);
 
-        gyro = new AHRS(NavXComType.kUSB1);
+        // gyro = new AHRS(NavXComType.kUSB1);
+        gyro = new AHRS(NavXComType.kMXP_SPI);
 
         gyro.reset();
 
@@ -178,46 +184,46 @@ public class DriveSubsystem extends SubsystemBase {
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drive");
         tab.add("DriveSubsystem", this);
-        tab.addFloatArray("Encoder Velocities", () -> {
-            return new float[] {
-                    (float) fl.getEncoder().getVelocity(),
-                    (float) fr.getEncoder().getVelocity(),
-                    (float) bl.getEncoder().getVelocity(),
-                    (float) br.getEncoder().getVelocity()
-            };
-        });
-        tab.addFloatArray("Alternate Encoder Velocities", () -> {
-            return new float[] {
-                    (float) fl.getAlternateEncoder().getVelocity(),
-                    (float) fr.getAlternateEncoder().getVelocity(),
-                    (float) bl.getAlternateEncoder().getVelocity(),
-                    (float) br.getAlternateEncoder().getVelocity()
-            };
-        });
-        tab.addFloatArray("Encoder Positions", () -> {
-            return new float[] {
-                    (float) fl.getEncoder().getPosition(),
-                    (float) fr.getEncoder().getPosition(),
-                    (float) bl.getEncoder().getPosition(),
-                    (float) br.getEncoder().getPosition()
-            };
-        });
-        tab.addFloatArray("Alternate Encoder Positions", () -> {
-            return new float[] {
-                    (float) fl.getAlternateEncoder().getPosition(),
-                    (float) fr.getAlternateEncoder().getPosition(),
-                    (float) bl.getAlternateEncoder().getPosition(),
-                    (float) br.getAlternateEncoder().getPosition()
-            };
-        });
-        tab.addFloatArray("Motor Voltages", () -> {
-            return new float[] {
-                    (float) (fl.getBusVoltage() * fl.getAppliedOutput()),
-                    (float) (fr.getBusVoltage() * fr.getAppliedOutput()),
-                    (float) (bl.getBusVoltage() * bl.getAppliedOutput()),
-                    (float) (br.getBusVoltage() * br.getAppliedOutput())
-            };
-        });
+        // tab.addFloatArray("Encoder Velocities", () -> {
+        //     return new float[] {
+        //             (float) fl.getEncoder().getVelocity(),
+        //             (float) fr.getEncoder().getVelocity(),
+        //             (float) bl.getEncoder().getVelocity(),
+        //             (float) br.getEncoder().getVelocity()
+        //     };
+        // });
+        // tab.addFloatArray("Alternate Encoder Velocities", () -> {
+        //     return new float[] {
+        //             (float) fl.getAlternateEncoder().getVelocity(),
+        //             (float) fr.getAlternateEncoder().getVelocity(),
+        //             (float) bl.getAlternateEncoder().getVelocity(),
+        //             (float) br.getAlternateEncoder().getVelocity()
+        //     };
+        // });
+        // tab.addFloatArray("Encoder Positions", () -> {
+        //     return new float[] {
+        //             (float) fl.getEncoder().getPosition(),
+        //             (float) fr.getEncoder().getPosition(),
+        //             (float) bl.getEncoder().getPosition(),
+        //             (float) br.getEncoder().getPosition()
+        //     };
+        // });
+        // tab.addFloatArray("Alternate Encoder Positions", () -> {
+        //     return new float[] {
+        //             (float) fl.getAlternateEncoder().getPosition(),
+        //             (float) fr.getAlternateEncoder().getPosition(),
+        //             (float) bl.getAlternateEncoder().getPosition(),
+        //             (float) br.getAlternateEncoder().getPosition()
+        //     };
+        // });
+        // tab.addFloatArray("Motor Voltages", () -> {
+        //     return new float[] {
+        //             (float) (fl.getBusVoltage() * fl.getAppliedOutput()),
+        //             (float) (fr.getBusVoltage() * fr.getAppliedOutput()),
+        //             (float) (bl.getBusVoltage() * bl.getAppliedOutput()),
+        //             (float) (br.getBusVoltage() * br.getAppliedOutput())
+        //     };
+        // });
 
         // (future reference) Can be replaced with SmartDashboard.putData and manually
         // added to elastic
@@ -260,6 +266,13 @@ public class DriveSubsystem extends SubsystemBase {
         tab.addDouble("yPosition", () -> getPose().getY());
         tab.addDouble("Heading", () -> getHeading().getDegrees());
         tab.addDouble("Raw Heading", () -> getRawHeading().getDegrees());
+
+        tab.addDouble("navxDisplacementX", gyro::getDisplacementX);
+        tab.addDouble("navxDisplacementY", gyro::getDisplacementY);
+        
+
+        tab.addBoolean("isInPath", () -> isInPath);
+        tab.addBoolean("isInAlign", () -> isInAlign);
 
     }
 
@@ -327,7 +340,7 @@ public class DriveSubsystem extends SubsystemBase {
                     return false;
                     // Optional<Alliance> alliance = DriverStation.getAlliance();
                     // if (alliance.isPresent()) {
-                    //     return alliance.get() == DriverStation.Alliance.Red;
+                    // return alliance.get() == DriverStation.Alliance.Red;
                     // }
                     // return false;
                 },
@@ -345,17 +358,21 @@ public class DriveSubsystem extends SubsystemBase {
 
     public Command driveCommandRobotCentric(
             DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX) {
-        return run(() -> driveCartesian(
-                translationX.getAsDouble(),
-                translationY.getAsDouble(),
-                angularRotationX.getAsDouble()))
-                        .withName("driveCommandRobotCentric");
+        return run(() -> {
+            driveCartesian(
+                    translationX.getAsDouble(),
+                    translationY.getAsDouble(),
+                    angularRotationX.getAsDouble());
+            isInAlign = false;
+            isInPath = false;
+        })
+                .withName("driveCommandRobotCentric");
     }
 
     public Rotation2d getHeading() {
         return poseEstimator.getEstimatedPosition().getRotation();
     }
-    
+
     public Rotation2d getRawHeading() {
         return gyro.getRotation2d();
     }
@@ -427,22 +444,23 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command driveToPoseLoose(Pose2d pose) {
-        return driveToPoseLoose(pose, 3.0, 30.0);
+        // PathPlanner nodes are 0.5m wide
+        return driveToPoseLoose(pose, 0.5, 0.5, 180.0);
     }
 
-    public Command driveToPoseLoose(Pose2d pose, double distanceTolerance, double degreeTolerance) {
+    public Command driveToPoseLoose(Pose2d pose, double distanceToleranceX, double distanceToleranceY, double degreeTolerance) {
         return driveToPose(pose).until(() -> {
             Pose2d currentPose = getPose();
 
             Transform2d trans = pose.minus(currentPose);
             double degrees = Math.abs(trans.getRotation().getDegrees());
-            
-            double distX = trans.getMeasureX().in(Inches);
-            double distY = trans.getMeasureY().in(Inches);
 
-            double dist = distX * distX + distY * distY;
+            double distX = Math.abs(trans.getMeasureX().in(Meters));
+            double distY = Math.abs(trans.getMeasureY().in(Meters));
 
-            return (dist < distanceTolerance * distanceTolerance) && degrees < degreeTolerance;
+            // double dist = distX * distX + distY * distY;
+
+            return (distX <= distanceToleranceX && distY <= distanceToleranceY) && degrees <= degreeTolerance;
         });
     }
 
@@ -460,7 +478,12 @@ public class DriveSubsystem extends SubsystemBase {
         return AutoBuilder.pathfindToPose(
                 pose,
                 constraints,
-                endVelocity);
+                endVelocity)
+                .alongWith(Commands.startEnd(() -> {
+                    isInPath = true;
+                }, () -> {
+                    isInPath = false;
+                }));
     }
 
     public Command alignToPoseFast(Pose2d pose) {
@@ -494,8 +517,11 @@ public class DriveSubsystem extends SubsystemBase {
         return new DeferredCommand(() -> fineDriveToPoleDeferred(pole, offset), Set.of(this));
     }
 
-    /** Offset of zero means bumpers will be touching the reef
-     * @param offset meters away from reef
+    /**
+     * Offset of zero means bumpers will be touching the reef
+     * 
+     * @param offset
+     *            meters away from reef
      */
     public Command fineDriveToClosestPole(double offset) {
         return new DeferredCommand(() -> fineDriveToClosestPoleDeferred(offset), Set.of(this));
@@ -503,18 +529,19 @@ public class DriveSubsystem extends SubsystemBase {
 
     private Command fineDriveToPoleDeferred(Poles pole, double offset) {
         Pose2d polePosition = vision.getPoleLocation(pole);
-        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-0.2 - offset, 0, Rotation2d.kZero)))
+        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero)))
                 .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
     private Command fineDriveToClosestPoleDeferred(double offset) {
         Pose2d polePosition = vision.getClosestPole();
-        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-0.1 - offset, 0, Rotation2d.kZero)))
+        return driveToPoseLoose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero)))
                 .andThen(alignToPose(polePosition.transformBy(new Transform2d(-offset, 0, Rotation2d.kZero))));
     }
 
     public Command driveToClosestCoralSupply() {
-        return new DeferredCommand(() -> driveToClosestCoralSupplyDeferred(), Set.of(this)).withName("Drive to supply deferred");
+        return new DeferredCommand(() -> driveToClosestCoralSupplyDeferred(), Set.of(this))
+                .withName("Drive to supply deferred");
     }
 
     private Command driveToClosestCoralSupplyDeferred() {

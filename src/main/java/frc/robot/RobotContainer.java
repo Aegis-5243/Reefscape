@@ -229,7 +229,7 @@ public class RobotContainer {
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
         driver.macroIntakeTrigger().whileTrue(intake.setPowerCmd(-0.1));
 
-        // driver.autoTestTrigger().whileTrue();
+        driver.autoTestTrigger().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(0,0,Rotation2d.fromDegrees(0))));
 
         createMacroWithPosition(new Trigger(driver::getL1Command), ScoringPositions.L1Coral);
         createMacroWithPosition(new Trigger(driver::getL2Command), ScoringPositions.L2Coral);
@@ -284,10 +284,10 @@ public class RobotContainer {
                     intake.outtakeCommand());
         } else if (position.getType() == ScoringPositions.Type.Algae) {
             result = new SequentialCommandGroup(
-                    driveSubsystem.fineDriveToClosestPole(-0.015),
+                    driveSubsystem.fineDriveToClosestPole(-0.5),
                     Commands.waitUntil(() -> currentPosition == position),
                     removeAlgaeCommand()
-                            .alongWith(driveSubsystem.fineDriveToClosestPole(-0.07))
+                            .alongWith(driveSubsystem.fineDriveToClosestPole(-0.16))
                             .withDeadline(Commands.waitSeconds(3)));
         } else {
             result = Commands.none();

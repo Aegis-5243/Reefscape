@@ -31,9 +31,14 @@ public class Robot extends TimedRobot {
     private final RobotContainer robotContainer;
     
         static boolean teleopFlag = false;
+        static boolean testFlag = false;
 
         public static boolean robotIsTeleop() {
         return teleopFlag;
+        }
+
+        public static boolean robotIsTest() {
+            return testFlag;
         }
   
     
@@ -54,8 +59,6 @@ public class Robot extends TimedRobot {
     
             SmartDashboard.putData(CommandScheduler.getInstance());
 
-            
-    
             robotContainer = new RobotContainer();
         }
     
@@ -114,6 +117,7 @@ public class Robot extends TimedRobot {
         @Override
         public void teleopInit() {
             teleopFlag = true;
+            testFlag = false;
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -151,6 +155,8 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        teleopFlag = true;
+        testFlag = true;
     }
 
     /** This function is called periodically during test mode. */
@@ -158,6 +164,12 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
         if (robotContainer.driver instanceof ProConControls) {
             ProConControls driv = (ProConControls) robotContainer.driver;
+            if (!driv.controller.isConnected() || xBoxFullStopDebouncer.calculate(driv.getStopTeleop())) {
+                // Apparently teleOp can't be cancelled so we'll just call the reset command
+                robotContainer.reset();
+            }
+        } else if (robotContainer.driver instanceof XBoxControls) {
+            XBoxControls driv = (XBoxControls) robotContainer.driver;
             if (!driv.controller.isConnected() || xBoxFullStopDebouncer.calculate(driv.getStopTeleop())) {
                 // Apparently teleOp can't be cancelled so we'll just call the reset command
                 robotContainer.reset();

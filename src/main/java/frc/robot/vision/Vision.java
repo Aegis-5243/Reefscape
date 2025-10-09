@@ -111,9 +111,9 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
+        updateOdometry();
         calcClosestPole();
         calcClosestCoralSupplyPoint();
-        updateOdometry();
 
         driveSubsystem.field.getObject("closePole").setPose(closestPole);
 

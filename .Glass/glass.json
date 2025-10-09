@@ -1,0 +1,73 @@
+{
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arm/Arm to 120deg": "Command",
+      "/Shuffleboard/Arm/Arm to 17deg": "Command",
+      "/Shuffleboard/Arm/Arm to 45deg": "Command",
+      "/Shuffleboard/Arm/Arm to 60deg": "Command",
+      "/Shuffleboard/Arm/Arm to 90deg": "Command",
+      "/Shuffleboard/Arm/Reset arm home position": "Command",
+      "/Shuffleboard/Drive/DriveSubsystem": "Subsystem",
+      "/Shuffleboard/Elevator/Set Position Command 0 inches": "Command",
+      "/Shuffleboard/Elevator/Set Position Command 10 inches": "Command",
+      "/Shuffleboard/Elevator/Set Position Command 20 inches": "Command",
+      "/Shuffleboard/Elevator/Set Position Command 30 inches": "Command",
+      "/Shuffleboard/Elevator/Set Position Command 40 inches": "Command",
+      "/Shuffleboard/Elevator/Set Position Command 50 inches": "Command",
+      "/Shuffleboard/Elevator/Set encoder 0": "Command",
+      "/Shuffleboard/Intake/Set power 0.0": "Command",
+      "/Shuffleboard/Intake/Set power 0.1": "Command",
+      "/Shuffleboard/Intake/Set power 0.2": "Command",
+      "/Shuffleboard/Intake/Set vel -3": "Command",
+      "/Shuffleboard/Intake/Set vel 0": "Command",
+      "/Shuffleboard/Intake/Set vel 3": "Command",
+      "/Shuffleboard/Intake/Set vel 6": "Command",
+      "/Shuffleboard/Preferences/Reset All Preferences": "Command",
+      "/Shuffleboard/Teleoperated/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Teleoperated/Field": "Field2d",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/Scheduler": "Scheduler"
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    }
+  },
+  "NetworkTables Log": {
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "5243"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 338
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    }
+  }
+}
