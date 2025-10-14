@@ -121,6 +121,7 @@ public final class Constants {
     /* Vision */
     /** The name of the limelight on the bottom front of the bot */
     public static final String FRONT_LIMELIGHT = "limelight";
+    public static final String BACK_LIMELIGHT = "limelight-two";
 
     /* Elevator */
 

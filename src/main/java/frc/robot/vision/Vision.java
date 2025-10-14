@@ -1,5 +1,6 @@
 package frc.robot.vision;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +45,7 @@ public class Vision extends SubsystemBase {
     private BooleanSupplier forceTargetDirSupplier;
 
     private boolean doRejectUpdate = false;
+    private boolean alwaysRejectUpdate = true;
 
     private Pose2d mtPose;
 
@@ -55,9 +57,10 @@ public class Vision extends SubsystemBase {
         this.driveSubsystem = driveSubsystem;
 
         Shuffleboard.getTab("Teleoperated").addBoolean("IsUsingVision", () -> aprilTagAllowed);
-        Shuffleboard.getTab("Teleoperated").addBoolean("IsSeeing", () -> !doRejectUpdate);
+        Shuffleboard.getTab("Teleoperated").addBoolean("IsSeeing", () -> !alwaysRejectUpdate);
 
         LimelightHelpers.setPipelineIndex(Constants.FRONT_LIMELIGHT, 0);
+        LimelightHelpers.setPipelineIndex(Constants.BACK_LIMELIGHT, 0);
 
         // get blue poles
         Transform2d reefCenter = new Transform2d(4.497, 4.045, Rotation2d.fromDegrees(0));
@@ -177,85 +180,129 @@ public class Vision extends SubsystemBase {
 
     public void updateOdometry() {
         boolean useMegaTag2 = useMt2Supplier.getAsBoolean() && Robot.robotIsTeleop(); // set to false to use MegaTag1
-        doRejectUpdate = false;
 
         Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        // Pose2d properMt = null;
 
-        if (aprilTagAllowed) {
-            if (useMegaTag2 == false) {
-                LimelightHelpers.PoseEstimate mt1;
-                if (alliance == Alliance.Blue)
-                    mt1 = LimelightHelpers
-                            .getBotPoseEstimate_wpiBlue(Constants.FRONT_LIMELIGHT);
-                else {
-                    mt1 = LimelightHelpers
-                            .getBotPoseEstimate_wpiRed(Constants.FRONT_LIMELIGHT);
-                }
-                if (mt1 == null) {
+        LimelightHelpers.PoseEstimate[] mtPoses = { null, null };
 
-                    doRejectUpdate = true;
-                    return;
-                }
-                ;
-                if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-                    if (mt1.rawFiducials[0].ambiguity > .7) {
+        for (int i = 0; i < 2; i++) {
+            String limelightName = Arrays.asList(Constants.FRONT_LIMELIGHT, Constants.BACK_LIMELIGHT).get(i);
+            if (aprilTagAllowed) {
+                doRejectUpdate = false;
+                if (useMegaTag2 == false) {
+                    LimelightHelpers.PoseEstimate mt1;
+                    if (alliance == Alliance.Blue)
+                        mt1 = LimelightHelpers
+                                .getBotPoseEstimate_wpiBlue(limelightName);
+                    else {
+                        mt1 = LimelightHelpers
+                                .getBotPoseEstimate_wpiRed(limelightName);
+                    }
+                    if (mt1 == null) {
+
+                        doRejectUpdate = true;
+                        continue;
+                    }
+
+                    if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+                        if (mt1.rawFiducials[0].ambiguity > .7) {
+                            doRejectUpdate = true;
+                        }
+                        if (mt1.rawFiducials[0].distToCamera > 3) {
+                            doRejectUpdate = true;
+                        }
+                    }
+                    if (mt1.tagCount == 0) {
                         doRejectUpdate = true;
                     }
-                    if (mt1.rawFiducials[0].distToCamera > 3) {
+
+                    if (!doRejectUpdate) {
+                        mtPoses[i] = mt1;
+                        // mtPose = mt1.pose;
+                        // alwaysRejectUpdate = false;
+                        // driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0,
+                        // 2.0, Math.PI / 6.0));
+                        // driveSubsystem.poseEstimator.addVisionMeasurement(
+                        // mt1.pose,
+                        // mt1.timestampSeconds);
+                    }
+                } else if (useMegaTag2 == true) {
+                    LimelightHelpers.SetRobotOrientation(limelightName,
+                            driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees()
+                                    + (alliance == Alliance.Red ? 180.0 : 0.0),
+                            0, 0, 0, 0, 0);
+                    LimelightHelpers.PoseEstimate mt2;
+                    if (alliance == Alliance.Blue)
+                        mt2 = LimelightHelpers
+                                .getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+                    else {
+                        mt2 = LimelightHelpers
+                                .getBotPoseEstimate_wpiRed_MegaTag2(limelightName);
+                    }
+
+                    if (mt2 == null) {
+                        doRejectUpdate = true;
+                        continue;
+                    }
+
+                    if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
+                    // degrees
+                    // per second,
+                    // ignore vision updates
+                    {
                         doRejectUpdate = true;
                     }
-                }
-                if (mt1.tagCount == 0) {
-                    doRejectUpdate = true;
-                }
-
-                mtPose = mt1.pose;
-
-                if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2.0, 2.0, Math.PI / 6.0));
-                    driveSubsystem.poseEstimator.addVisionMeasurement(
-                            mt1.pose,
-                            mt1.timestampSeconds);
-                }
-            } else if (useMegaTag2 == true) {
-                LimelightHelpers.SetRobotOrientation(Constants.FRONT_LIMELIGHT,
-                        driveSubsystem.poseEstimator.getEstimatedPosition().getRotation().getDegrees()
-                                + (alliance == Alliance.Red ? 180.0 : 0.0),
-                        0, 0, 0, 0, 0);
-                LimelightHelpers.PoseEstimate mt2;
-                if (alliance == Alliance.Blue)
-                    mt2 = LimelightHelpers
-                            .getBotPoseEstimate_wpiBlue_MegaTag2(Constants.FRONT_LIMELIGHT);
-                else {
-                    mt2 = LimelightHelpers
-                            .getBotPoseEstimate_wpiRed_MegaTag2(Constants.FRONT_LIMELIGHT);
-                }
-
-                if (mt2 == null) {
-                    doRejectUpdate = true;
-                    return;
-                }
-
-                mtPose = mt2.pose;
-
-                if (Math.abs(driveSubsystem.gyro.getRate()) > 720) // if our angular velocity is greater than 720
-                                                                   // degrees
-                                                                   // per second,
-                // ignore vision updates
-                {
-                    doRejectUpdate = true;
-                }
-                if (mt2.tagCount == 0) {
-                    doRejectUpdate = true;
-                }
-                if (!doRejectUpdate) {
-                    driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.0, 1.0, 99999999.0));
-                    driveSubsystem.poseEstimator.addVisionMeasurement(
-                            mt2.pose,
-                            mt2.timestampSeconds);
+                    if (mt2.tagCount == 0) {
+                        doRejectUpdate = true;
+                    }
+                    if (!doRejectUpdate) {
+                        mtPoses[i] = mt2;
+                        // mtPose = mt2.pose;
+                        // alwaysRejectUpdate = false;
+                        // driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(3.0,
+                        // 3.0, 99999999.0));
+                        // driveSubsystem.poseEstimator.addVisionMeasurement(
+                        // mt2.pose,
+                        // mt2.timestampSeconds);
+                    }
                 }
             }
         }
+
+        alwaysRejectUpdate = false;
+
+        if (mtPoses[0] == null && mtPoses[1] == null) {
+            alwaysRejectUpdate = true;
+            return;
+        } else {
+            driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(
+                    (useMegaTag2) ? VecBuilder.fill(3.0, 3.0, 99999999.0) : VecBuilder.fill(2.0, 2.0, Math.PI / 6.0));
+            if (mtPoses[0] == null) {
+                if (mtPoses[1].pose
+                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0)) {
+                    alwaysRejectUpdate = true;
+                    return;
+                }
+                mtPose = mtPoses[1].pose;
+                driveSubsystem.poseEstimator.addVisionMeasurement(
+                        mtPoses[1].pose,
+                        mtPoses[1].timestampSeconds);
+            } else if (mtPoses[1] == null) {
+                mtPose = mtPoses[0].pose;
+                driveSubsystem.poseEstimator.addVisionMeasurement(
+                        mtPoses[0].pose,
+                        mtPoses[0].timestampSeconds);
+            } else {
+                LimelightHelpers.PoseEstimate properPose = (mtPoses[1].pose
+                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) ? mtPoses[0] : mtPoses[1];
+                mtPose = properPose.pose;
+                driveSubsystem.poseEstimator.addVisionMeasurement(
+                        properPose.pose,
+                        properPose.timestampSeconds);
+            }
+        }
+
     };
 
     public void addCoralModeSupplier(BooleanSupplier coralMode) {
@@ -283,15 +330,17 @@ public class Vision extends SubsystemBase {
     private Pose2d coralSupplyPoint = new Pose2d();
 
     private void calcClosestPole() {
-        
+
         boolean allowTargetForcing = true;
 
-        if (allowTargetForcing && forceTargetSupplier != null && forceTargetSupplier.get() != null && forceTargetDirSupplier != null) {
+        if (allowTargetForcing && forceTargetSupplier != null && forceTargetSupplier.get() != null
+                && forceTargetDirSupplier != null) {
             if (isCoralSupplier == null || isCoralSupplier.getAsBoolean()) {
                 Sides side = forceTargetSupplier.get();
                 boolean isLeft = forceTargetDirSupplier.getAsBoolean();
                 Poles pole = isLeft ? side.getLeft() : side.getRight();
-                if (pole != null) closestPole = getPoles(false).get(pole);
+                if (pole != null)
+                    closestPole = getPoles(false).get(pole);
             } else {
                 Algae newPole;
 
@@ -314,7 +363,7 @@ public class Vision extends SubsystemBase {
                     case KL:
                         newPole = Algae.AlgaeKL;
                         break;
-                    
+
                     default:
                         newPole = null;
                         break;

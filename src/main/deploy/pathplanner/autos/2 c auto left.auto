@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 c auto start to coral left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FineDriveK"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 c auto coral to source left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 c auto source to coral left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FineDriveL"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

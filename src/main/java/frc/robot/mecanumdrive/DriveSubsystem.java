@@ -550,13 +550,17 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command fineDriveToClosestCoralSupply() {
-        return new DeferredCommand(this::fineDriveToClosestCoralSupplyDeferred, Set.of(this));
+        return fineDriveToClosestCoralSupply(-0.1);
     }
 
-    public Command fineDriveToClosestCoralSupplyDeferred() {
+    public Command fineDriveToClosestCoralSupply(double offset) {
+        return new DeferredCommand(() -> fineDriveToClosestCoralSupplyDeferred(offset), Set.of(this));
+    }
+
+    public Command fineDriveToClosestCoralSupplyDeferred(double offset) {
         Pose2d coralPose = vision.getClosestCoralSupplyPoint();
-        return driveToPose(coralPose.transformBy(new Transform2d(0.1, 0, Rotation2d.kZero)), 0.1)
-                .andThen(alignToPose(coralPose));
+        return driveToPoseLoose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero)))
+                .andThen(alignToPose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero))));
     }
 
 }
