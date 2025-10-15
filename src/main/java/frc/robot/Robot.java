@@ -12,6 +12,8 @@ import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -48,19 +50,23 @@ public class Robot extends TimedRobot {
          * initialization code.
          */
         public Robot() {
-    
+            
             // add webserver to allow download of the dashboard in Elastic
             WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    
+            
             // turn off hot reload at the competition. (from 2832)
             if (DriverStation.isFMSAttached()) {
                 PPLibTelemetry.enableCompetitionMode();
             }
+
+            ShuffleboardTab tab = Shuffleboard.getTab("teleoperated");
     
             SmartDashboard.putData(CommandScheduler.getInstance());
 
             robotContainer = new RobotContainer();
         }
+
+        private int ticksWithoutGC = 0;
     
         /**
          * This function is called every 20 ms, no matter the mode. Use this for items
@@ -82,7 +88,12 @@ public class Robot extends TimedRobot {
             // robot's periodic
             // block in order for anything in the Command-based framework to work.
             CommandScheduler.getInstance().run();
+            if (ticksWithoutGC++ > 50*10) {// every 10s
+                ticksWithoutGC = 0;
+                System.gc();
+            }
         }
+
     
         /** This function is called once each time the robot enters Disabled mode. */
         @Override

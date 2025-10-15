@@ -5,39 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2 c auto start to coral left"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2 c auto start to coral left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorL4Coral"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "FineDriveK"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "2 c auto coral to source left"
+            "name": "ScoreL4K"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "SourceAndIntakeLeft"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2 c auto source to coral left"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2 c auto source to coral left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorL4Coral"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "FineDriveL"
+            "name": "ScoreL4L"
           }
         }
       ]

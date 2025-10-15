@@ -105,17 +105,41 @@ public class RobotContainer {
         vision.addCoralModeSupplier(isCoralSupplier);
 
         NamedCommands.registerCommand("FineDriveA", driveSubsystem.fineDrivetoPole(Poles.PoleA));
+        NamedCommands.registerCommand("ScoreL2or3A", driveAndScoreL2And3Command(Poles.PoleA));
+        NamedCommands.registerCommand("ScoreL4A", driveAndScoreL4Command(Poles.PoleA));
         NamedCommands.registerCommand("FineDriveB", driveSubsystem.fineDrivetoPole(Poles.PoleB));
+        NamedCommands.registerCommand("ScoreL2or3B", driveAndScoreL2And3Command(Poles.PoleB));
+        NamedCommands.registerCommand("ScoreL4B", driveAndScoreL4Command(Poles.PoleB));
         NamedCommands.registerCommand("FineDriveC", driveSubsystem.fineDrivetoPole(Poles.PoleC));
+        NamedCommands.registerCommand("ScoreL2or3C", driveAndScoreL2And3Command(Poles.PoleC));
+        NamedCommands.registerCommand("ScoreL4C", driveAndScoreL4Command(Poles.PoleC));
         NamedCommands.registerCommand("FineDriveD", driveSubsystem.fineDrivetoPole(Poles.PoleD));
+        NamedCommands.registerCommand("ScoreL2or3D", driveAndScoreL2And3Command(Poles.PoleD));
+        NamedCommands.registerCommand("ScoreL4D", driveAndScoreL4Command(Poles.PoleD));
         NamedCommands.registerCommand("FineDriveE", driveSubsystem.fineDrivetoPole(Poles.PoleE));
+        NamedCommands.registerCommand("ScoreL2or3E", driveAndScoreL2And3Command(Poles.PoleE));
+        NamedCommands.registerCommand("ScoreL4E", driveAndScoreL4Command(Poles.PoleE));
         NamedCommands.registerCommand("FineDriveF", driveSubsystem.fineDrivetoPole(Poles.PoleF));
+        NamedCommands.registerCommand("ScoreL2or3F", driveAndScoreL2And3Command(Poles.PoleF));
+        NamedCommands.registerCommand("ScoreL4F", driveAndScoreL4Command(Poles.PoleF));
         NamedCommands.registerCommand("FineDriveG", driveSubsystem.fineDrivetoPole(Poles.PoleG));
+        NamedCommands.registerCommand("ScoreL2or3G", driveAndScoreL2And3Command(Poles.PoleG));
+        NamedCommands.registerCommand("ScoreL4G", driveAndScoreL4Command(Poles.PoleG));
         NamedCommands.registerCommand("FineDriveH", driveSubsystem.fineDrivetoPole(Poles.PoleH));
+        NamedCommands.registerCommand("ScoreL2or3H", driveAndScoreL2And3Command(Poles.PoleH));
+        NamedCommands.registerCommand("ScoreL4H", driveAndScoreL4Command(Poles.PoleH));
         NamedCommands.registerCommand("FineDriveI", driveSubsystem.fineDrivetoPole(Poles.PoleI));
+        NamedCommands.registerCommand("ScoreL2or3I", driveAndScoreL2And3Command(Poles.PoleI));
+        NamedCommands.registerCommand("ScoreL4I", driveAndScoreL4Command(Poles.PoleI));
         NamedCommands.registerCommand("FineDriveJ", driveSubsystem.fineDrivetoPole(Poles.PoleJ));
+        NamedCommands.registerCommand("ScoreL2or3J", driveAndScoreL2And3Command(Poles.PoleJ));
+        NamedCommands.registerCommand("ScoreL4J", driveAndScoreL4Command(Poles.PoleJ));
         NamedCommands.registerCommand("FineDriveK", driveSubsystem.fineDrivetoPole(Poles.PoleK));
+        NamedCommands.registerCommand("ScoreL2or3K", driveAndScoreL2And3Command(Poles.PoleK));
+        NamedCommands.registerCommand("ScoreL4K", driveAndScoreL4Command(Poles.PoleK));
         NamedCommands.registerCommand("FineDriveL", driveSubsystem.fineDrivetoPole(Poles.PoleL));
+        NamedCommands.registerCommand("ScoreL2or3L", driveAndScoreL2And3Command(Poles.PoleL));
+        NamedCommands.registerCommand("ScoreL4L", driveAndScoreL4Command(Poles.PoleL));
         NamedCommands.registerCommand("FineDriveIntakeL", driveSubsystem.driveToClosestCoralSupply());
         NamedCommands.registerCommand("ElevatorL1Coral", setScoringPosition(ScoringPositions.L1Coral));
         NamedCommands.registerCommand("ElevatorL2Coral", setScoringPosition(ScoringPositions.L2Coral));
@@ -127,6 +151,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("BackupCoral", intake.backupCoralCommand());
         NamedCommands.registerCommand("RemoveAlgaeWithArm", removeAlgaeWithArmCommand());
         NamedCommands.registerCommand("Intake", new HomeCoral(intake));
+        NamedCommands.registerCommand("SourceAndIntakeLeft", fullIntakeWithPathCommand(false));
+        NamedCommands.registerCommand("SourceAndIntakeRight", fullIntakeWithPathCommand(true));
         NamedCommands.registerCommand("HomeCoral", new HomeCoral(intake));
         // NamedCommands.registerCommand("HomeCoral", intake.homeCoralCommand());
         NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
@@ -229,7 +255,7 @@ public class RobotContainer {
         // driver.macroIntakeTrigger().whileTrue(driveSubsystem.driveToClosestCoralSupply());
         driver.macroIntakeTrigger().whileTrue(intake.setPowerCmd(-0.1));
 
-        driver.autoTestTrigger().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(0,0,Rotation2d.fromDegrees(0))));
+        driver.autoTestTrigger().onTrue(driveSubsystem.resetPoseCommand(new Pose2d(0, 0, Rotation2d.fromDegrees(0))));
 
         createMacroWithPosition(new Trigger(driver::getL1Command), ScoringPositions.L1Coral);
         createMacroWithPosition(new Trigger(driver::getL2Command), ScoringPositions.L2Coral);
@@ -295,6 +321,27 @@ public class RobotContainer {
 
         result.setName("Macro with SSP " + position.name());
         return result;
+    }
+
+    private Command driveAndScoreL2And3Command(Poles pole) {
+        return driveSubsystem.fineDriveToPole(pole, -0.07)
+                .andThen(intake.outtakeCommand())
+                .andThen(driveSubsystem.fineDriveToPole(pole, 0.15));
+    }
+
+    private Command driveAndScoreL4Command(Poles pole) {
+        return new SequentialCommandGroup(
+                driveSubsystem.fineDriveToPole(pole, 0.15),
+                intake.backupCoralCommand(),
+                driveSubsystem.fineDriveToPole(pole, -0.1),
+                intake.outtakeCommand(),
+                driveSubsystem.fineDriveToPole(pole, 0.15));
+    }
+
+    private Command fullIntakeWithPathCommand(boolean isRight) {
+        return driveSubsystem.fineDriveToCoralSupply(isRight)
+                .alongWith(setScoringPosition(ScoringPositions.LoadingPosition))
+                .andThen(intake.homeCoralCommand());
     }
 
     private boolean isCoralUnsafe() {
@@ -461,8 +508,8 @@ public class RobotContainer {
                         Commands.none(),
                         intake.setPowerCmd(-0.3),
                         () -> intake.hasCoral())
-                // elevator.setPowerCommand(0.1)
-                );
+        // elevator.setPowerCommand(0.1)
+        );
     }
 
     /** For auton, assumes arm is under algae (already driven forward) */

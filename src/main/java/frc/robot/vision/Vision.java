@@ -282,7 +282,7 @@ public class Vision extends SubsystemBase {
                 // if back limelight estimates closer to the reef, reject the update
                 // https://www.desmos.com/calculator/tfk41mpjir
                 if (mtPoses[1].pose
-                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0)) {
+                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) {
                     alwaysRejectUpdate = true;
                     return;
                 }
@@ -294,7 +294,7 @@ public class Vision extends SubsystemBase {
                 // if front limelight estimates closer to the supplier, reject the update
                 // https://www.desmos.com/calculator/tfk41mpjir
                 if (mtPoses[0].pose
-                        .getX() <= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) { 
+                        .getX() <= 1.481 * Math.abs(mtPoses[0].pose.getY() - 4.0) + 1.0) { 
                     alwaysRejectUpdate = true;
                     return; 
                 }
@@ -306,7 +306,7 @@ public class Vision extends SubsystemBase {
                 // pick which one to use by which is closer: front closer to reef or back closer to supplier
                 // https://www.desmos.com/calculator/tfk41mpjir
                 LimelightHelpers.PoseEstimate properPose = (mtPoses[1].pose
-                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) ? mtPoses[0] : mtPoses[1];
+                        .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0)) ? mtPoses[0] : mtPoses[1];
                 mtPose = properPose.pose;
                 driveSubsystem.poseEstimator.addVisionMeasurement(
                         properPose.pose,
@@ -422,10 +422,13 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    public void calcClosestCoralSupplyPoint() {
+    public Pose2d getCoralSupplyPointPose(boolean isRight) {
+        double sgn = isRight ? -1 : 1;
+        return new Pose2d(1.187, 4 + 2.978 * sgn, Rotation2d.fromDegrees(-55 * sgn));
+    }
 
-        double sgn = driveSubsystem.getPose().getY() > 4 ? 1 : -1;
-        coralSupplyPoint = new Pose2d(1.187, 4 + 2.978 * sgn, Rotation2d.fromDegrees(-55 * sgn));
+    public void calcClosestCoralSupplyPoint() {
+        coralSupplyPoint = getCoralSupplyPointPose(driveSubsystem.getPose().getY() < 4);
     }
 
     /**

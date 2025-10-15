@@ -445,7 +445,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public Command driveToPoseLoose(Pose2d pose) {
         // PathPlanner nodes are 0.5m wide
-        return driveToPoseLoose(pose, 0.5, 0.5, 180.0);
+        return driveToPoseLoose(pose, 0.6, 0.6, 180.0);
     }
 
     public Command driveToPoseLoose(Pose2d pose, double distanceToleranceX, double distanceToleranceY, double degreeTolerance) {
@@ -558,6 +558,20 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command fineDriveToClosestCoralSupplyDeferred(double offset) {
+        Pose2d coralPose = vision.getClosestCoralSupplyPoint();
+        return driveToPoseLoose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero)))
+                .andThen(alignToPose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero))));
+    }
+
+    public Command fineDriveToCoralSupply(boolean isRight) {
+        return fineDriveToCoralSupply(isRight, -0.1);
+    }
+
+    public Command fineDriveToCoralSupply(boolean isRight, double offset) {
+        return new DeferredCommand(() -> fineDriveToCoralSupplyDeferred(isRight, offset), Set.of(this));
+    }
+
+    public Command fineDriveToCoralSupplyDeferred(boolean isRight, double offset) {
         Pose2d coralPose = vision.getClosestCoralSupplyPoint();
         return driveToPoseLoose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero)))
                 .andThen(alignToPose(coralPose.transformBy(new Transform2d(offset, 0, Rotation2d.kZero))));

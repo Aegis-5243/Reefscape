@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4424657534246574,
-        "y": 7.165368150684932
+        "x": 1.697902397260274,
+        "y": 6.804751712328767
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.444010416666666,
-        "y": 6.568576388888889
+        "x": 2.6994470605022824,
+        "y": 6.207959950532724
       },
       "isLocked": false,
-      "linkedName": "Source"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "2 c auto reef left"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
