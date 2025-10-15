@@ -279,6 +279,8 @@ public class Vision extends SubsystemBase {
             driveSubsystem.poseEstimator.setVisionMeasurementStdDevs(
                     (useMegaTag2) ? VecBuilder.fill(3.0, 3.0, 99999999.0) : VecBuilder.fill(2.0, 2.0, Math.PI / 6.0));
             if (mtPoses[0] == null) {
+                // if back limelight estimates closer to the reef, reject the update
+                // https://www.desmos.com/calculator/tfk41mpjir
                 if (mtPoses[1].pose
                         .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0)) {
                     alwaysRejectUpdate = true;
@@ -289,11 +291,20 @@ public class Vision extends SubsystemBase {
                         mtPoses[1].pose,
                         mtPoses[1].timestampSeconds);
             } else if (mtPoses[1] == null) {
+                // if front limelight estimates closer to the supplier, reject the update
+                // https://www.desmos.com/calculator/tfk41mpjir
+                if (mtPoses[0].pose
+                        .getX() <= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) { 
+                    alwaysRejectUpdate = true;
+                    return; 
+                }
                 mtPose = mtPoses[0].pose;
                 driveSubsystem.poseEstimator.addVisionMeasurement(
                         mtPoses[0].pose,
                         mtPoses[0].timestampSeconds);
             } else {
+                // pick which one to use by which is closer: front closer to reef or back closer to supplier
+                // https://www.desmos.com/calculator/tfk41mpjir
                 LimelightHelpers.PoseEstimate properPose = (mtPoses[1].pose
                         .getX() >= 1.481 * Math.abs(mtPoses[1].pose.getY() - 4.0) - 1.0) ? mtPoses[0] : mtPoses[1];
                 mtPose = properPose.pose;
