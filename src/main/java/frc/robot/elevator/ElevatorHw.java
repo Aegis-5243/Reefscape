@@ -12,7 +12,9 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
@@ -71,6 +73,9 @@ public class ElevatorHw extends Elevator {
                 PersistMode.kPersistParameters);
 
         setEncoderPosition(0);
+        
+        
+        Shuffleboard.getTab("Elevator").add("Set encoder 0", Commands.runOnce(() -> this.setEncoderPosition(0)).ignoringDisable(true).withName("Reset elev encoder"));
     }
 
     @Override

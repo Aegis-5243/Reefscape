@@ -30,6 +30,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "2 c coral left rotate"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "SourceAndIntakeLeft"

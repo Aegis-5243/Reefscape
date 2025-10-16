@@ -185,78 +185,79 @@ public class DriveSubsystem extends SubsystemBase {
         ShuffleboardTab tab = Shuffleboard.getTab("Drive");
         tab.add("DriveSubsystem", this);
         // tab.addFloatArray("Encoder Velocities", () -> {
-        //     return new float[] {
-        //             (float) fl.getEncoder().getVelocity(),
-        //             (float) fr.getEncoder().getVelocity(),
-        //             (float) bl.getEncoder().getVelocity(),
-        //             (float) br.getEncoder().getVelocity()
-        //     };
+        // return new float[] {
+        // (float) fl.getEncoder().getVelocity(),
+        // (float) fr.getEncoder().getVelocity(),
+        // (float) bl.getEncoder().getVelocity(),
+        // (float) br.getEncoder().getVelocity()
+        // };
         // });
         // tab.addFloatArray("Alternate Encoder Velocities", () -> {
-        //     return new float[] {
-        //             (float) fl.getAlternateEncoder().getVelocity(),
-        //             (float) fr.getAlternateEncoder().getVelocity(),
-        //             (float) bl.getAlternateEncoder().getVelocity(),
-        //             (float) br.getAlternateEncoder().getVelocity()
-        //     };
+        // return new float[] {
+        // (float) fl.getAlternateEncoder().getVelocity(),
+        // (float) fr.getAlternateEncoder().getVelocity(),
+        // (float) bl.getAlternateEncoder().getVelocity(),
+        // (float) br.getAlternateEncoder().getVelocity()
+        // };
         // });
         // tab.addFloatArray("Encoder Positions", () -> {
-        //     return new float[] {
-        //             (float) fl.getEncoder().getPosition(),
-        //             (float) fr.getEncoder().getPosition(),
-        //             (float) bl.getEncoder().getPosition(),
-        //             (float) br.getEncoder().getPosition()
-        //     };
+        // return new float[] {
+        // (float) fl.getEncoder().getPosition(),
+        // (float) fr.getEncoder().getPosition(),
+        // (float) bl.getEncoder().getPosition(),
+        // (float) br.getEncoder().getPosition()
+        // };
         // });
         // tab.addFloatArray("Alternate Encoder Positions", () -> {
-        //     return new float[] {
-        //             (float) fl.getAlternateEncoder().getPosition(),
-        //             (float) fr.getAlternateEncoder().getPosition(),
-        //             (float) bl.getAlternateEncoder().getPosition(),
-        //             (float) br.getAlternateEncoder().getPosition()
-        //     };
+        // return new float[] {
+        // (float) fl.getAlternateEncoder().getPosition(),
+        // (float) fr.getAlternateEncoder().getPosition(),
+        // (float) bl.getAlternateEncoder().getPosition(),
+        // (float) br.getAlternateEncoder().getPosition()
+        // };
         // });
         // tab.addFloatArray("Motor Voltages", () -> {
-        //     return new float[] {
-        //             (float) (fl.getBusVoltage() * fl.getAppliedOutput()),
-        //             (float) (fr.getBusVoltage() * fr.getAppliedOutput()),
-        //             (float) (bl.getBusVoltage() * bl.getAppliedOutput()),
-        //             (float) (br.getBusVoltage() * br.getAppliedOutput())
-        //     };
+        // return new float[] {
+        // (float) (fl.getBusVoltage() * fl.getAppliedOutput()),
+        // (float) (fr.getBusVoltage() * fr.getAppliedOutput()),
+        // (float) (bl.getBusVoltage() * bl.getAppliedOutput()),
+        // (float) (br.getBusVoltage() * br.getAppliedOutput())
+        // };
         // });
 
         // (future reference) Can be replaced with SmartDashboard.putData and manually
         // added to elastic
         // https://frc-elastic.gitbook.io/docs/additional-features-and-references/widgets-list-and-properties-reference
         // Shuffleboard.getTab("Teleoperated").add("Mecanum Drive", new Sendable() {
-        //     @Override
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("SwerveDrive");
+        // @Override
+        // public void initSendable(SendableBuilder builder) {
+        // builder.setSmartDashboardType("SwerveDrive");
 
-        //         builder.addDoubleProperty("Front Left Angle",
-        //                 () -> flEncoder.getVelocity() < 0 ? 180 : 0, null);
-        //         builder.addDoubleProperty("Front Left Velocity",
-        //                 () -> Math.abs(flEncoder.getVelocity()), null);
+        // builder.addDoubleProperty("Front Left Angle",
+        // () -> flEncoder.getVelocity() < 0 ? 180 : 0, null);
+        // builder.addDoubleProperty("Front Left Velocity",
+        // () -> Math.abs(flEncoder.getVelocity()), null);
 
-        //         builder.addDoubleProperty("Front Right Angle",
-        //                 () -> frEncoder.getVelocity() < 0 ? 180 : 0, null);
-        //         builder.addDoubleProperty("Front Right Velocity",
-        //                 () -> Math.abs(frEncoder.getVelocity()), null);
+        // builder.addDoubleProperty("Front Right Angle",
+        // () -> frEncoder.getVelocity() < 0 ? 180 : 0, null);
+        // builder.addDoubleProperty("Front Right Velocity",
+        // () -> Math.abs(frEncoder.getVelocity()), null);
 
-        //         builder.addDoubleProperty("Back Left Angle",
-        //                 () -> blEncoder.getVelocity() < 0 ? 180 : 0, null);
-        //         builder.addDoubleProperty("Back Left Velocity", () -> Math.abs(blEncoder.getVelocity()),
-        //                 null);
+        // builder.addDoubleProperty("Back Left Angle",
+        // () -> blEncoder.getVelocity() < 0 ? 180 : 0, null);
+        // builder.addDoubleProperty("Back Left Velocity", () ->
+        // Math.abs(blEncoder.getVelocity()),
+        // null);
 
-        //         builder.addDoubleProperty("Back Right Angle",
-        //                 () -> brEncoder.getVelocity() < 0 ? 180 : 0, null);
-        //         builder.addDoubleProperty("Back Right Velocity",
-        //                 () -> Math.abs(brEncoder.getVelocity()), null);
+        // builder.addDoubleProperty("Back Right Angle",
+        // () -> brEncoder.getVelocity() < 0 ? 180 : 0, null);
+        // builder.addDoubleProperty("Back Right Velocity",
+        // () -> Math.abs(brEncoder.getVelocity()), null);
 
-        //         builder.addDoubleProperty("Robot Angle",
-        //                 () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond),
-        //                 null);
-        //     }
+        // builder.addDoubleProperty("Robot Angle",
+        // () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond),
+        // null);
+        // }
         // });
         Shuffleboard.getTab("Teleoperated").addDouble("Velocity", () -> getVelocity());
         tab.addDouble("xSpeed", () -> getChassisSpeeds().vxMetersPerSecond);
@@ -269,7 +270,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         tab.addDouble("navxDisplacementX", gyro::getDisplacementX);
         tab.addDouble("navxDisplacementY", gyro::getDisplacementY);
-        
 
         tab.addBoolean("isInPath", () -> isInPath);
         tab.addBoolean("isInAlign", () -> isInAlign);
@@ -358,11 +358,18 @@ public class DriveSubsystem extends SubsystemBase {
 
     public Command driveCommandRobotCentric(
             DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX) {
+        // return run(() -> {
+        // driveCartesian(
+        // translationX.getAsDouble(),
+        // translationY.getAsDouble(),
+        // angularRotationX.getAsDouble());
+        // isInAlign = false;
+        // isInPath = false;
+        // })
         return run(() -> {
-            driveCartesian(
-                    translationX.getAsDouble(),
-                    translationY.getAsDouble(),
-                    angularRotationX.getAsDouble());
+            drive(new ChassisSpeeds(translationX.getAsDouble() * Constants.DRIVE_MAX_SPEED,
+                    -translationY.getAsDouble() * Constants.DRIVE_MAX_SPEED,
+                    -angularRotationX.getAsDouble() * Constants.DRIVE_MAX_ANGULAR_SPEED));
             isInAlign = false;
             isInPath = false;
         })
@@ -420,7 +427,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         speeds.vyMetersPerSecond *= strafeSpeedScale.getAsDouble();
-        speeds.omegaRadiansPerSecond *= turnSpeedScale.getAsDouble();
+        // speeds.omegaRadiansPerSecond *= turnSpeedScale.getAsDouble();
 
         MecanumDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
 
@@ -448,7 +455,8 @@ public class DriveSubsystem extends SubsystemBase {
         return driveToPoseLoose(pose, 0.6, 0.6, 180.0);
     }
 
-    public Command driveToPoseLoose(Pose2d pose, double distanceToleranceX, double distanceToleranceY, double degreeTolerance) {
+    public Command driveToPoseLoose(Pose2d pose, double distanceToleranceX, double distanceToleranceY,
+            double degreeTolerance) {
         return driveToPose(pose).until(() -> {
             Pose2d currentPose = getPose();
 
@@ -564,7 +572,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command fineDriveToCoralSupply(boolean isRight) {
-        return fineDriveToCoralSupply(isRight, -0.1);
+        return fineDriveToCoralSupply(isRight, -0.05);
     }
 
     public Command fineDriveToCoralSupply(boolean isRight, double offset) {

@@ -98,13 +98,13 @@ public final class Constants {
     public static final Distance TRACK_HEIGHT = Units.Inches.of(20.3599);
 
     /** Maximum drive speed in meters per second. */
-    public static final double DRIVE_MAX_SPEED = 1.0;
+    public static final double DRIVE_MAX_SPEED = 1.25;
     /** Maximum drive acceleration in meters per second squared. */
     public static final double DRIVE_MAX_ACCELERATION = 2.0;
     /** Maximum drive angular speed in radians per second. */
-    public static final double DRIVE_MAX_ANGULAR_SPEED = 6.0;
+    public static final double DRIVE_MAX_ANGULAR_SPEED = 3.2; // 1 sec per 180
     /** Maximum drive angular acceleration in radians per second squared. */
-    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 7.0;
+    public static final double DRIVE_MAX_ANGULAR_ACCELERATION = 5.0;
 
     /* Drive PID constants (meters)*/
     public static final double DRIVE_kP = 6.0;
